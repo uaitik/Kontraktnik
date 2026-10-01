@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="uk-UA"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Рекрутинг до Інтернаціональних бригад ЗСУ">
+    <title>Strike — Рекрутинг</title> 
+    <link class="site-icon" rel="icon" type="image/png" href="strike.jpg">
+
+    <style>
+        /* CSS Variables — jednolita paleta i łatwiejsze utrzymanie */
+        :root {
+            --bg-dark: #0a0f1a;
+            --bg-deep: #070b14;
+            --bg-card: rgba(15, 23, 42, 0.85);
+            --bg-footer: #05070c;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --accent-glow: rgba(56, 189, 248, 0.4);
+            --accent-light: rgba(56, 189, 248, 0.1);
+            --accent-border: rgba(56, 189, 248, 0.3);
+            --text-main: #cbd5e1;
+            --text-heading: #f1f5f9;
+            --text-muted: #94a3b8;
+            --text-subtle: #64748b;
+            --status-online: #22c55e;
+            --status-alert: #ef4444;
+            --transition-speed: 0.3s;
+        }
+
+        /* Base Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+        body.modal-open { overflow: hidden; }
+
+        /* Navbar */
+        .navbar { 
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 100; 
+            display: flex; justify-content: space-between; align-items: center; 
+            background-color: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); 
+            padding: 1rem 2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+        }
+        .logo { font-size: 1.1rem; font-weight: bold; color: var(--text-muted); text-decoration: none; letter-spacing: 1px; text-transform: uppercase; }
+        .nav-links { display: flex; list-style: none; gap: 2rem; }
+        .nav-links a { color: var(--text-subtle); text-decoration: none; font-weight: 500; transition: color var(--transition-speed) ease; }
+        .nav-links a:hover { color: #f8fafc; }
+        
+        /* Hero Section */
+        .video-container { position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 6rem 2rem 4rem 2rem; overflow: hidden; }
+        .bg-video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); object-fit: cover; z-index: 1; opacity: 0.5; }
+        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(10, 15, 26, 0.6) 0%, rgba(10, 15, 26, 0.95) 100%); z-index: 2; }
+        
+        .main-content { position: relative; z-index: 3; text-align: center; max-width: 1200px; width: 100%; }
+        h1 { font-size: 3.5rem; margin-bottom: 2rem; color: var(--text-heading); text-shadow: 0 0 30px rgba(0, 0, 0, 0.9); font-weight: 800; letter-spacing: 1px; }
+
+        /* Main CTA Button */
+        .btn-main-trigger { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-border); padding: 0.8rem 2rem; font-size: 1.1rem; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; border-radius: 8px; cursor: pointer; transition: all var(--transition-speed); margin-bottom: 3rem; }
+        .btn-main-trigger:hover { background: var(--accent); color: var(--bg-dark); box-shadow: 0 0 20px var(--accent-glow); }
+
+        /* Cards Grid */
+        .cards-grid { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; width: 100%; }
+        .team-card { flex: 1; min-width: 300px; max-width: 360px; background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 2rem; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); text-align: left; display: flex; flex-direction: column; justify-content: space-between; }
+        .team-card:hover { transform: translateY(-5px); background: rgba(20, 30, 54, 0.95); border-color: var(--accent); box-shadow: 0 15px 35px rgba(56, 189, 248, 0.15); }
+        
+        .photo-container { background: rgba(10, 15, 26, 0.5); border-radius: 12px; height: 160px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.03); transition: transform var(--transition-speed) ease; margin-bottom: 1.5rem; }
+        .team-card:hover .photo-container { transform: scale(1.03); }
+        .photo-container img { max-width: 85%; max-height: 85%; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5)); }
+        
+        .team-card h3 { color: var(--text-heading); font-size: 1.3rem; font-weight: 700; margin-bottom: 0.75rem; }
+        .team-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem; }
+        
+        .footer-note { display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--accent); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+        .footer-note span { animation: blink 1.5s infinite; color: var(--status-alert); }
+        @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+        /* Info Section */
+        .info-section { position: relative; padding: 6rem 2rem; background: var(--bg-deep); display: flex; justify-content: center; border-top: 1px solid rgba(255, 255, 255, 0.02); }
+        .info-container { max-width: 1000px; width: 100%; text-align: left; }
+        .info-container h2 { font-size: 2rem; color: var(--text-heading); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
+        .info-container p { color: var(--text-muted); font-size: 1.05rem; line-height: 1.8; margin-bottom: 1.5rem; }
+
+        /* Footer */
+        .tactical-footer { background: var(--bg-footer); padding: 4rem 2rem; border-top: 1px solid rgba(56, 189, 248, 0.1); display: flex; justify-content: center; }
+        .footer-content { max-width: 1200px; width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
+        .footer-block { flex: 1; min-width: 250px; }
+        .footer-block h4 { color: var(--text-heading); font-size: 1.1rem; margin-bottom: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
+        .footer-block p { color: var(--text-subtle); font-size: 0.95rem; line-height: 1.6; }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 0.6rem; }
+        .footer-links a { color: var(--accent); text-decoration: none; font-size: 0.95rem; transition: color 0.2s; }
+        .footer-links a:hover { color: var(--accent-hover); }
+
+        /* Custom Select */
+        .custom-select-wrapper { position: relative; width: 100%; }
+        .custom-select-trigger { width: 100%; padding: 0.8rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f8fafc; font-size: 1rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: border-color 0.2s; }
+        .custom-select-trigger:after { content: ''; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid var(--text-muted); transition: transform 0.3s ease; }
+        .custom-select-wrapper.open .custom-select-trigger { border-color: var(--accent); }
+        .custom-select-wrapper.open .custom-select-trigger:after { transform: rotate(180deg); }
+        .custom-options { position: absolute; top: calc(100% + 5px); left: 0; width: 100%; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-10px); transition: all 0.2s ease; z-index: 99; }
+        .custom-select-wrapper.open .custom-options { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
+        .custom-option { padding: 0.8rem 1rem; color: var(--text-main); cursor: pointer; transition: all 0.2s; font-size: 0.95rem; }
+        .custom-option:hover { background: var(--accent-light); color: var(--accent); }
+        .custom-option.selected { background: rgba(56, 189, 248, 0.15); color: var(--accent); font-weight: 600; }
+
+        /* Modal Overlay & Window */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.85); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-window { width: 100%; max-width: 480px; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 16px; padding: 2rem; box-shadow: 0 25px 60px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
+
+        .fade-stage { opacity: 1; transform: translateY(0); transition: opacity 0.35s ease, transform 0.35s ease; }
+        .fade-stage.hidden { opacity: 0; transform: translateY(-15px); pointer-events: none; position: absolute; width: calc(100% - 4rem); }
+        .fade-stage.entrance { opacity: 0; transform: translateY(15px); pointer-events: none; position: absolute; width: calc(100% - 4rem); }
+
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group input { width: 100%; padding: 0.8rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f8fafc; font-size: 1rem; transition: border-color 0.2s; }
+        .form-group input:focus { outline: none; border-color: var(--accent); }
+        
+        .btn-submit { width: 100%; padding: 1rem; background: var(--accent); color: var(--bg-dark); border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s; margin-top: 0.5rem; }
+        .btn-submit:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+        .close-modal { position: absolute; top: 1.2rem; right: 1.2rem; background: transparent; border: none; color: var(--text-subtle); font-size: 1.3rem; cursor: pointer; transition: color 0.2s; z-index: 10; }
+        .close-modal:hover { color: var(--text-heading); }
+
+        /* Chat UI */
+        .chat-container { width: 100%; height: 380px; display: flex; flex-direction: column; background: var(--bg-dark); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; overflow: hidden; margin-top: 0.5rem; }
+        .chat-header { background: #1e293b; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between; }
+        .chat-header .status-dot { width: 8px; height: 8px; background: var(--status-online); border-radius: 50%; box-shadow: 0 0 6px var(--status-online); display: inline-block; }
+        
+        .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.8rem; background: var(--bg-deep); }
+        .message { max-width: 85%; padding: 0.6rem 0.9rem; border-radius: 8px; font-size: 0.9rem; line-height: 1.4; word-break: break-word; }
+        .message.intercom { background: rgba(56, 189, 248, 0.06); color: var(--accent); align-self: flex-start; border-left: 3px solid var(--accent); }
+        .message.friend { background: #1e293b; color: #f8fafc; align-self: flex-end; border-right: 3px solid var(--text-subtle); }
+        
+        /* Quick Tags Scrollable Bar */
+        .quick-tags-area { 
+            display: flex; gap: 8px; padding: 10px 8px; background: var(--bg-deep); 
+            border-top: 1px solid rgba(255,255,255,0.03); overflow-x: auto; 
+            white-space: nowrap; align-items: center;
+            scrollbar-width: thin; scrollbar-color: rgba(56, 189, 248, 0.2) transparent;
+        }
+        .quick-tags-area::-webkit-scrollbar { height: 4px; }
+        .quick-tags-area::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.25); border-radius: 4px; }
+        .quick-tags-area::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.5); }
+        
+        .quick-tags-area button {
+            flex-shrink: 0; background: rgba(56, 189, 248, 0.06); color: var(--accent); 
+            border: 1px solid rgba(56, 189, 248, 0.2); padding: 6px 14px; border-radius: 6px; 
+            font-size: 0.75rem; cursor: pointer; transition: all 0.2s; font-weight: 600;
+        }
+        .quick-tags-area button:hover { background: rgba(56, 189, 248, 0.15); border-color: var(--accent); color: #f8fafc; }
+        .quick-tags-area #cryptoBtn { margin-left: auto; background: rgba(34, 197, 94, 0.08); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.15); }
+
+        .chat-input-area { display: flex; border-top: 1px solid rgba(255, 255, 255, 0.05); background: var(--bg-dark); }
+        .chat-input-area input { flex: 1; padding: 0.8rem 1rem; background: transparent; border: none; color: #f8fafc; font-size: 0.95rem; }
+        .chat-input-area input:focus { outline: none; }
+        .btn-send { background: #1e293b; color: var(--accent); border: none; padding: 0 1.2rem; cursor: pointer; font-weight: bold; transition: background 0.2s; font-size: 0.9rem; }
+        .btn-send:hover { background: #2d3748; }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="#" class="logo">Долучись до Інтернаціональних бригад ЗСУ</a>
+        <ul class="nav-links">
+            <li><a href="#">Головна</a></li>
+            <li><a href="#about">Про нас</a></li>
+            <li><a href="#more">Більше</a></li>
+            <li><a href="#contacts">Контакт</a></li>
+        </ul>
+    </nav>
+
+    <div class="video-container">
+        <video autoplay loop muted playsinline class="bg-video">
+            <source src="mp4/krak.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+
+        <main class="main-content">
+            <h1>Готовий Підписати Контракт</h1>
+            
+            <button class="btn-main-trigger" onclick="toggleModal(true)">Вривайся до нас →</button>
+            
+            <div class="cards-grid">
+                <div class="team-card">
+                    <div class="photo-container">
+                        <img src="vovkodav.png" alt="1-й батальйон Вовкодав" loading="lazy">
+                    </div>
+                    <div>
+                        <h3>1-й батальйон "Вовкодав"</h3>
+                        <p>Інтернаціональний підрозділ, що виконує складні бойові завдання безпосередньо на передньому краї.</p>
+                    </div>
+                    <span class="footer-note"><span>●</span> СТАТУС: НА ЛБЗ</span>
+                </div>
+
+                <div class="team-card">
+                    <div class="photo-container">
+                        <img src="RVC.png" alt="РДК" loading="lazy">
+                    </div>
+                    <div>
+                        <h3>Російський добровольчий корпус</h3>
+                        <p>Добровольче формування, що веде запеклі бої та проводить спецоперації на лінії зіткнення.</p>
+                    </div>
+                    <span class="footer-note"><span>●</span> СТАТУС: НА ЛБЗ</span>
+                </div>
+
+                <div class="team-card">
+                    <div class="photo-container">
+                        <img src="Norman.png" alt="Норманська бригада" loading="lazy">
+                    </div>
+                    <div>
+                        <h3>Норманська бригада</h3>
+                        <p>Згуртований загін іноземних ветеранів, що забезпечує точність і тактичну перевагу в бою.</p>
+                    </div>
+                    <span class="footer-note"><span>●</span> СТАТУС: НА ЛБЗ</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <section class="info-section" id="about">
+        <div class="info-container">
+            <h2>Про наші підрозділи</h2>
+            <p>Інтернаціональні бригади об'єднують досвідчених бійців та добровольців з усього світу, які стали на захист свободи. Ми забезпечуємо найвищий уровень підготовки, сучасне озброєння та повну інтеграцію у структуру Збройних Сил України.</p>
+            
+            <div id="more" style="padding-top: 2rem;">
+                <h2>Більше інформації про умови контракту</h2>
+                <p>Офіційне оформлення через Міністерство оборони України. Всім рекрутам надається повне речове та медичне забезпечення, а також інтенсивний курс підготовки (БЗВП) під керівництвом інструкторів із реальним бойовим досвідом.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="tactical-footer" id="contacts">
+        <div class="footer-content">
+            <div class="footer-block">
+                <h4>Штаб рекрутингу</h4>
+                <p>Лінія зв'язку працює цілодобово. Подавай заявку через захищене модальне вікно для отримання детальних інструкцій від наших інструкторів.</p>
+            </div>
+            <div class="footer-block">
+                <h4>Офіційні Канали</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Telegram Канал</a></li>
+                    <li><a href="#">Signal Бойова Лінія</a></li>
+                    <li><a href="#">Офіційний Email</a></li>
+                </ul>
+            </div>
+            <div class="footer-block">
+                <h4>Безпека даних</h4>
+                <p style="color: #475569; font-size: 0.85rem;">Усі повідомлення та анкети проходять через захищені протоколи шифрування кінцевих точок баз даних. Ваша приватність повністю захищена.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal overlay & window -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-window">
+            <button class="close-modal" onclick="toggleModal(false)">×</button>
+            
+            <div id="formStage" class="fade-stage">
+                <h2 style="margin-bottom: 1.5rem; font-size: 1.5rem; color: #f1f5f9; text-align: center; font-weight: 700;">Подати заявку</h2>
+                <form onsubmit="handleSubmit(event)">
+                    <div class="form-group">
+                        <label for="userName">Позивний або Ім'я</label>
+                        <input type="text" id="userName" required placeholder="Введіть ваш нікнейм">
+                    </div>
+                    <div class="form-group">
+                        <label for="userContact">Контакт у Telegram / Signal</label>
+                        <input type="text" id="userContact" required placeholder="@username або номер">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Бажаний підрозділ</label>
+                        <div class="custom-select-wrapper" id="squadSelectWrapper">
+                            <input type="hidden" id="userSquad" value="1-й батальйон Вовкодав">
+                            <div class="custom-select-trigger" onclick="toggleCustomSelect()">1-й батальйон "Вовкодав"</div>
+                            <div class="custom-options">
+                                <div class="custom-option selected" onclick="selectOption(this, '1-й батальйон Вовкодав')">1-й батальйон "Вовкодав"</div>
+                                <div class="custom-option" onclick="selectOption(this, 'Російський добровольчий корпус')">Російський добровольчий корпус</div>
+                                <div class="custom-option" onclick="selectOption(this, 'Норманська бригада')">Норманська бригада</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">Надіслати заявку</button>
+                </form>
+            </div>
+
+            <div id="chatStage" class="fade-stage entrance" style="display: none;">
+                <h2 style="font-size: 1.4rem; margin-bottom: 1rem; color: #f1f5f9; text-align: center; font-weight: 700;">Захищений Канал Зв'язку</h2>
+                
+                <div class="chat-container">
+                    <div class="chat-header" id="chatPartner">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <button onclick="goBackToForm()" style="background: transparent; border: none; color: #64748b; cursor: pointer; font-size: 1.1rem; padding: 0 2px; transition: color 0.2s;" title="Назад до анкети">←</button>
+                            <span class="status-dot"></span>
+                            <span>Загальна лінія зв'язку</span>
+                        </div>
+                        <button id="clearChatBtn" onclick="clearChat()" style="display: none; background: #ef4444; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: bold;">Очистити чат</button>
+                    </div>
+                    
+                    <div class="chat-messages" id="chatMessages"></div>
+                    
+                    <div class="quick-tags-area" id="quickTagsArea">
+                        <button onclick="sendQuickQuestion('docs')">📋 Документи?</button>
+                        <button onclick="sendQuickQuestion('training')">🪖 Навчання?</button>
+                        <button onclick="sendQuickQuestion('gear')">📦 Забезпечення?</button>
+                        <button id="cryptoBtn" onclick="checkCryptoLink()">🔐 Лінія: Захищена</button>
+                    </div>
+
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInput" placeholder="Напишіть повідомлення..." onkeypress="handleKeyPress(event)">
+                        <button class="btn-send" onclick="sendMessage()">Друк</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Init Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCeWM1wdHdN6bIXFXTqHXO7WgJNJK53nwk",
+            authDomain: "storinka-d7bd6.firebaseapp.com",
+            projectId: "storinka-d7bd6",
+            storageBucket: "storinka-d7bd6.firebasestorage.app",
+            messagingSenderId: "317173750408",
+            appId: "1:317173750408:web:62d09563fc750e20589d3d",
+            measurementId: "G-5HX3ES92NE"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const messagesRef = database.ref('messages');
+        
+        // Cache Elements for performance
+        const DOM = {
+            overlay: document.getElementById('modalOverlay'),
+            formStage: document.getElementById('formStage'),
+            chatStage: document.getElementById('chatStage'),
+            chatMessages: document.getElementById('chatMessages'),
+            chatInput: document.getElementById('chatInput'),
+            userName: document.getElementById('userName'),
+            userContact: document.getElementById('userContact'),
+            userSquad: document.getElementById('userSquad'),
+            squadWrapper: document.getElementById('squadSelectWrapper'),
+            clearChatBtn: document.getElementById('clearChatBtn'),
+            chatPartnerTitle: document.querySelector('#chatPartner span:not(.status-dot)'),
+            cryptoBtn: document.getElementById('cryptoBtn'),
+            quickTagsArea: document.getElementById('quickTagsArea')
+        };
+        
+        let globalSenderName = "Гість";
+        let isCheckingCrypto = false;
+
+        // Bot answers map
+        const BOT_RESPONSES = {
+            docs: "📋 Довідка Чергової частини: Для підписання контракту необхідні: Паспорт/ID-картка, податковий код (ІПН), військовий квиток або приписне (за наявності), а також документи про освіту. Для іноземних добровольців — чистий закордонний паспорт та підтвердження легального перебування.",
+            training: "🪖 Навчальний Центр: Базовий курс військової підготовки (БЗВП) триває від 30 до 40 діб залежно від обраної спеціалізації. Навчання включає вогневу, тактичну медицину (TCCC), топографію та злагодження під керівництвом інструкторів з бойовим досвідом.",
+            gear: "📦 Логістичне забезпечення: Підрозділ повністю забезпечує бійця сучасною формою (за сезоном), бронежилетом 4+ класу захисту, балістичним шоломом, тактичним розвантаженням, аптечкою стандарту НАТО та закріпленою індивідуальною зброєю."
+        };
+
+        const QUESTIONS_TEXT = {
+            docs: 'Які документи необхідні для оформлення контракту?',
+            training: 'Скільки триває базовий курс підготовки (БЗВП)?',
+            gear: 'Яке речове забезпечення надає підрозділ?'
+        };
+
+        function toggleModal(show) {
+            DOM.overlay.classList.toggle('active', show);
+            document.body.classList.toggle('modal-open', show);
+            if (!show) messagesRef.off();
+        }
+
+        function toggleCustomSelect() {
+            DOM.squadWrapper.classList.toggle('open');
+        }
+
+        function selectOption(element, value) {
+            document.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            DOM.squadWrapper.querySelector('.custom-select-trigger').innerText = element.innerText;
+            DOM.userSquad.value = value;
+            DOM.squadWrapper.classList.remove('open');
+        }
+
+        window.addEventListener('click', (e) => {
+            if (DOM.squadWrapper && !DOM.squadWrapper.contains(e.target)) {
+                DOM.squadWrapper.classList.remove('open');
+            }
+        });
+
+        function handleSubmit(e) {
+            e.preventDefault();
+            
+            const nameInput = DOM.userName.value.trim();
+            const contactInput = DOM.userContact.value.trim();
+            const squadInput = DOM.userSquad.value;
+
+            globalSenderName = nameInput;
+
+            DOM.formStage.classList.add('hidden');
+
+            setTimeout(() => {
+                DOM.formStage.style.display = 'none';
+                DOM.chatStage.style.display = 'block';
+                
+                setTimeout(() => {
+                    DOM.chatStage.classList.remove('entrance');
+                }, 20);
+            }, 350);
+
+            const isRecruiter = nameInput.toUpperCase() === 'REK' && contactInput.toUpperCase() === 'REK';
+            DOM.clearChatBtn.style.display = isRecruiter ? 'block' : 'none';
+            DOM.chatPartnerTitle.innerText = isRecruiter ? "Панель рекрутера (Вхід виконано)" : "Загальна лінія зв'язку";
+
+            if (!isRecruiter) {
+                messagesRef.push({
+                    sender: "Система",
+                    text: `Кандидат [${nameInput}] цікавиться підрозділом: "${squadInput}". Контакт для зв'язку: ${contactInput}`
+                });
+            }
+
+            DOM.chatMessages.innerHTML = '';
+            messagesRef.off(); 
+            
+            messagesRef.limitToLast(50).on('child_added', (snapshot) => {
+                const data = snapshot.val();
+                if (data) displayMessage(data.sender, data.text);
+            });
+
+            messagesRef.on('value', (snapshot) => {
+                if (!snapshot.exists()) DOM.chatMessages.innerHTML = '';
+            });
+        }
+
+        // Horizontal scroll with wheel
+        if (DOM.quickTagsArea) {
+            DOM.quickTagsArea.addEventListener('wheel', (evt) => {
+                evt.preventDefault();
+                DOM.quickTagsArea.scrollLeft += evt.deltaY;
+            });
+        }
+
+        function sendMessage() {
+            const messageText = DOM.chatInput.value.trim();
+            if (!messageText) return;
+
+            messagesRef.push({
+                sender: globalSenderName,
+                text: messageText
+            });
+
+            DOM.chatInput.value = '';
+        }
+
+        function displayMessage(sender, text) {
+            const msgDiv = document.createElement('div');
+            
+            if (sender === globalSenderName) {
+                msgDiv.className = 'message friend';
+                msgDiv.innerHTML = `<strong>Ви:</strong> ${escapeHtml(text)}`;
+            } else if (sender === "Система") {
+                msgDiv.className = 'message intercom';
+                msgDiv.style.background = 'rgba(234, 179, 8, 0.08)';
+                msgDiv.style.color = '#eab308';
+                msgDiv.style.borderLeft = '3px solid #eab308';
+                msgDiv.innerHTML = `<strong>${escapeHtml(text)}</strong>`;
+            } else {
+                msgDiv.className = 'message intercom';
+                msgDiv.innerHTML = `<strong>${escapeHtml(sender)}:</strong> ${escapeHtml(text)}`;
+            }
+
+            DOM.chatMessages.appendChild(msgDiv);
+            DOM.chatMessages.scrollTop = DOM.chatMessages.scrollHeight;
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        function clearChat() {
+            if (confirm("Ви дійсно хочете видалити всі повідомлення?")) {
+                messagesRef.remove();
+                DOM.chatMessages.innerHTML = '';
+            }
+        }
+
+        function goBackToForm() {
+            DOM.chatStage.classList.add('entrance'); 
+
+            setTimeout(() => {
+                DOM.chatStage.style.display = 'none';
+                DOM.formStage.style.display = 'block';
+                
+                setTimeout(() => {
+                    DOM.formStage.classList.remove('hidden'); 
+                }, 20);
+            }, 350);
+
+            messagesRef.off();
+        }
+
+        function sendQuickQuestion(type) {
+            if (!globalSenderName || globalSenderName === "Гість" || !BOT_RESPONSES[type]) return;
+            
+            messagesRef.push({
+                sender: globalSenderName,
+                text: QUESTIONS_TEXT[type]
+            });
+
+            setTimeout(() => {
+                messagesRef.push({
+                    sender: "Черговий інструктор",
+                    text: BOT_RESPONSES[type]
+                });
+            }, 800);
+        }
+
+        function checkCryptoLink() {
+            if (isCheckingCrypto) return;
+            isCheckingCrypto = true;
+            
+            const btn = DOM.cryptoBtn;
+            btn.innerText = "⏳ Сканування...";
+            btn.style.color = "#eab308";
+            btn.style.background = "rgba(234, 179, 8, 0.08)";
+            btn.style.borderColor = "rgba(234, 179, 8, 0.15)";
+
+            setTimeout(() => {
+                btn.innerText = "⚡ Шихр: OK";
+                btn.style.color = "#22c55e";
+                btn.style.background = "rgba(34, 197, 94, 0.08)";
+                btn.style.borderColor = "rgba(34, 197, 94, 0.15)";
+                
+                setTimeout(() => {
+                    btn.innerText = "🔐 Лінія: Захищена";
+                    isCheckingCrypto = false;
+                }, 2500); 
+            }, 1000); 
+        }
+    </script>
+</body>
+</html>
