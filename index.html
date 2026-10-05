@@ -32,12 +32,7 @@
         body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
         body.modal-open { overflow: hidden; }
 
-        /* Base Buttons Styling */
-        button {
-            font-family: inherit;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
+        button { font-family: inherit; user-select: none; -webkit-tap-highlight-color: transparent; }
 
         /* Navbar */
         .navbar { 
@@ -61,7 +56,6 @@
             z-index: 2; 
         }
 
-        /* Tactical Grid Overlay */
         .tactical-grid {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;
             background-image: linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
@@ -72,22 +66,16 @@
         .main-content { position: relative; z-index: 3; text-align: center; max-width: 1200px; width: 100%; }
         h1 { font-size: 3.5rem; margin-bottom: 2rem; color: var(--text-heading); text-shadow: 0 0 30px rgba(0, 0, 0, 0.9); font-weight: 800; letter-spacing: 1px; }
 
-        /* Main CTA Button */
         .btn-main-trigger { 
             background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(56, 189, 248, 0.05)); 
             color: var(--accent); border: 1px solid var(--accent-border); 
             padding: 1rem 2.5rem; font-size: 1.1rem; font-weight: 700; letter-spacing: 1.5px; 
             text-transform: uppercase; border-radius: 10px; cursor: pointer; transition: all var(--transition-speed); 
-            margin-bottom: 3rem; position: relative; overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 3rem; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
-        .btn-main-trigger:hover { 
-            background: var(--accent); color: var(--bg-dark); 
-            box-shadow: 0 0 25px var(--accent-glow); transform: translateY(-2px); 
-        }
-        .btn-main-trigger:active { transform: translateY(1px); }
+        .btn-main-trigger:hover { background: var(--accent); color: var(--bg-dark); box-shadow: 0 0 25px var(--accent-glow); transform: translateY(-2px); }
 
-        /* Cards Grid with Scroll Reveal */
+        /* Cards Grid */
         .cards-grid { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         .team-card { 
             flex: 1; min-width: 300px; max-width: 360px; background: var(--bg-card); backdrop-filter: blur(10px); 
@@ -110,13 +98,12 @@
         .footer-note span { animation: blink 1.5s infinite; color: var(--status-alert); }
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        /* Info Section */
+        /* Info Section & Footer */
         .info-section { position: relative; padding: 6rem 2rem; background: var(--bg-deep); display: flex; justify-content: center; border-top: 1px solid rgba(255, 255, 255, 0.02); }
         .info-container { max-width: 1000px; width: 100%; text-align: left; }
         .info-container h2 { font-size: 2rem; color: var(--text-heading); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
         .info-container p { color: var(--text-muted); font-size: 1.05rem; line-height: 1.8; margin-bottom: 1.5rem; }
 
-        /* Footer */
         .tactical-footer { background: var(--bg-footer); padding: 4rem 2rem; border-top: 1px solid rgba(56, 189, 248, 0.1); display: flex; justify-content: center; }
         .footer-content { max-width: 1200px; width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
         .footer-block { flex: 1; min-width: 250px; }
@@ -130,7 +117,6 @@
         /* Custom Select */
         .custom-select-wrapper { position: relative; width: 100%; }
         .custom-select-trigger { width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f8fafc; font-size: 1rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
-        .custom-select-trigger:hover { border-color: rgba(56, 189, 248, 0.5); }
         .custom-select-trigger:after { content: ''; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid var(--text-muted); transition: transform 0.3s ease; }
         .custom-select-wrapper.open .custom-select-trigger { border-color: var(--accent); box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
         .custom-select-wrapper.open .custom-select-trigger:after { transform: rotate(180deg); }
@@ -143,7 +129,7 @@
         /* Modal Overlay & Window */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.85); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-window { width: 100%; max-width: 480px; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 16px; padding: 2rem; box-shadow: 0 25px 60px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
+        .modal-window { width: 100%; max-width: 500px; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 16px; padding: 2rem; box-shadow: 0 25px 60px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
 
         .fade-stage { opacity: 1; transform: translateY(0); transition: opacity 0.35s ease, transform 0.35s ease; }
         .fade-stage.hidden { opacity: 0; transform: translateY(-15px); pointer-events: none; position: absolute; width: calc(100% - 4rem); }
@@ -159,25 +145,21 @@
             background: linear-gradient(135deg, var(--accent), var(--accent-hover)); 
             color: var(--bg-dark); border: none; border-radius: 8px; 
             font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; 
-            cursor: pointer; transition: all 0.2s; margin-top: 0.5rem;
-            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+            cursor: pointer; transition: all 0.2s; margin-top: 0.5rem; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
         }
         .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4); }
-        .btn-submit:active { transform: translateY(1px); }
 
         .close-modal { 
-            position: absolute; top: 1rem; right: 1rem; 
-            width: 32px; height: 32px; border-radius: 50%;
+            position: absolute; top: 1rem; right: 1rem; width: 32px; height: 32px; border-radius: 50%;
             background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); 
-            color: var(--text-subtle); font-size: 1.2rem; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center;
+            color: var(--text-subtle); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
             transition: all 0.2s; z-index: 10; 
         }
         .close-modal:hover { color: #f8fafc; background: rgba(239, 68, 68, 0.2); border-color: var(--status-alert); transform: rotate(90deg); }
 
         /* Chat UI */
         .chat-container { width: 100%; height: 380px; display: flex; flex-direction: column; background: var(--bg-dark); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; overflow: hidden; margin-top: 0.5rem; }
-        .chat-header { background: #1e293b; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .chat-header { background: #1e293b; padding: 0.75rem 1rem; font-size: 0.85rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
         .chat-header .status-dot { width: 8px; height: 8px; background: var(--status-online); border-radius: 50%; box-shadow: 0 0 6px var(--status-online); display: inline-block; }
         
         .btn-back-chat {
@@ -188,22 +170,24 @@
         }
         .btn-back-chat:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
 
-        /* Interactive Clear Chat Button */
-        .btn-clear-chat {
-            background: rgba(239, 68, 68, 0.1); color: var(--status-alert); 
-            border: 1px solid rgba(239, 68, 68, 0.3); padding: 5px 12px; 
+        /* Recruiter Actions Container */
+        .recruiter-actions { display: none; gap: 6px; align-items: center; }
+        
+        .btn-candidates {
+            background: rgba(56, 189, 248, 0.1); color: var(--accent);
+            border: 1px solid rgba(56, 189, 248, 0.3); padding: 5px 10px;
             border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold;
-            transition: all 0.2s ease; display: none;
+            transition: all 0.2s;
         }
-        .btn-clear-chat:hover { background: rgba(239, 68, 68, 0.25); border-color: var(--status-alert); }
-        .btn-clear-chat.confirming {
-            background: var(--status-alert); color: #fff; border-color: var(--status-alert);
-            animation: pulse-danger 1s infinite alternate;
+        .btn-candidates:hover { background: rgba(56, 189, 248, 0.25); border-color: var(--accent); }
+
+        .btn-clear-chat {
+            background: rgba(239, 68, 68, 0.15); color: var(--status-alert); 
+            border: 1px solid rgba(239, 68, 68, 0.3); padding: 5px 10px; 
+            border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold;
+            transition: all 0.2s;
         }
-        @keyframes pulse-danger {
-            0% { box-shadow: 0 0 0 rgba(239, 68, 68, 0.4); }
-            100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.8); }
-        }
+        .btn-clear-chat:hover { background: var(--status-alert); color: #fff; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
 
         .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.8rem; background: var(--bg-deep); }
         .message { max-width: 85%; padding: 0.6rem 0.9rem; border-radius: 8px; font-size: 0.9rem; line-height: 1.4; word-break: break-word; position: relative; }
@@ -225,29 +209,27 @@
             white-space: nowrap; align-items: center;
             scrollbar-width: thin; scrollbar-color: rgba(56, 189, 248, 0.2) transparent;
         }
-        .quick-tags-area::-webkit-scrollbar { height: 4px; }
-        .quick-tags-area::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.25); border-radius: 4px; }
-        .quick-tags-area::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.5); }
-        
         .quick-tags-area button {
             flex-shrink: 0; background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(56, 189, 248, 0.02)); 
             color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.2); padding: 6px 14px; border-radius: 6px; 
             font-size: 0.78rem; cursor: pointer; transition: all 0.2s; font-weight: 600;
         }
-        .quick-tags-area button:hover { background: rgba(56, 189, 248, 0.18); border-color: var(--accent); color: #f8fafc; transform: translateY(-1px); }
-        .quick-tags-area button:active { transform: translateY(1px); }
+        .quick-tags-area button:hover { background: rgba(56, 189, 248, 0.18); border-color: var(--accent); color: #f8fafc; }
         .quick-tags-area #cryptoBtn { margin-left: auto; background: rgba(34, 197, 94, 0.08); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.2); }
 
         .chat-input-area { display: flex; border-top: 1px solid rgba(255, 255, 255, 0.05); background: var(--bg-dark); }
         .chat-input-area input { flex: 1; padding: 0.8rem 1rem; background: transparent; border: none; color: #f8fafc; font-size: 0.95rem; }
         .chat-input-area input:focus { outline: none; }
-        .btn-send { 
-            background: linear-gradient(135deg, #1e293b, #0f172a); 
-            color: var(--accent); border: none; border-left: 1px solid rgba(255,255,255,0.05); 
-            padding: 0 1.4rem; cursor: pointer; font-weight: bold; transition: all 0.2s; font-size: 0.9rem;
-        }
+        .btn-send { background: linear-gradient(135deg, #1e293b, #0f172a); color: var(--accent); border: none; border-left: 1px solid rgba(255,255,255,0.05); padding: 0 1.4rem; cursor: pointer; font-weight: bold; transition: all 0.2s; font-size: 0.9rem; }
         .btn-send:hover { background: var(--accent); color: var(--bg-dark); }
-        .btn-send:active { opacity: 0.8; }
+
+        /* Candidates List Stage */
+        .candidates-list { height: 320px; overflow-y: auto; background: var(--bg-dark); border-radius: 8px; padding: 10px; border: 1px solid rgba(255, 255, 255, 0.05); margin-top: 10px; }
+        .candidate-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.15); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; text-align: left; }
+        .candidate-card h4 { color: #f8fafc; font-size: 0.95rem; margin-bottom: 4px; display: flex; justify-content: space-between; }
+        .candidate-card h4 span { font-size: 0.75rem; color: var(--text-subtle); font-weight: normal; }
+        .candidate-card p { color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; }
+        .candidate-card strong { color: var(--accent); }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -352,6 +334,7 @@
         <div class="modal-window">
             <button class="close-modal" onclick="toggleModal(false)" title="Закрити">×</button>
             
+            <!-- STAGE 1: FORM -->
             <div id="formStage" class="fade-stage">
                 <h2 style="margin-bottom: 1.5rem; font-size: 1.5rem; color: #f1f5f9; text-align: center; font-weight: 700;">Подати заявку</h2>
                 <form onsubmit="handleSubmit(event)">
@@ -381,17 +364,21 @@
                 </form>
             </div>
 
+            <!-- STAGE 2: CHAT -->
             <div id="chatStage" class="fade-stage entrance" style="display: none;">
                 <h2 style="font-size: 1.4rem; margin-bottom: 1rem; color: #f1f5f9; text-align: center; font-weight: 700;">Захищений Канал Зв'язку</h2>
                 
                 <div class="chat-container">
                     <div class="chat-header" id="chatPartner">
-                        <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 6px;">
                             <button class="btn-back-chat" onclick="goBackToForm()" title="Назад до анкети">←</button>
                             <span class="status-dot"></span>
                             <span>Загальна лінія зв'язку</span>
                         </div>
-                        <button id="clearChatBtn" class="btn-clear-chat" onclick="handleClearChat()">Очистити чат</button>
+                        <div class="recruiter-actions" id="recruiterActions">
+                            <button class="btn-candidates" onclick="openCandidatesList()">👥 Кандидати</button>
+                            <button class="btn-clear-chat" onclick="directClearChat()">Очистити чат</button>
+                        </div>
                     </div>
                     
                     <div class="chat-messages" id="chatMessages"></div>
@@ -407,6 +394,18 @@
                         <input type="text" id="chatInput" placeholder="Напишіть повідомлення..." onkeypress="handleKeyPress(event)">
                         <button class="btn-send" onclick="sendMessage()">Друк</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- STAGE 3: RECRUITER CANDIDATES LIST -->
+            <div id="candidatesStage" class="fade-stage entrance" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2 style="font-size: 1.3rem; color: #f1f5f9; font-weight: 700;">База Кандидатів</h2>
+                    <button class="btn-back-chat" onclick="backToChatFromCandidates()" style="width: auto; padding: 4px 10px; font-size: 0.8rem;">← В чат</button>
+                </div>
+                
+                <div class="candidates-list" id="candidatesListContainer">
+                    <p style="text-align: center; color: var(--text-subtle); margin-top: 2rem;">Завантаження списку...</p>
                 </div>
             </div>
         </div>
@@ -428,6 +427,7 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const messagesRef = database.ref('messages');
+        const candidatesRef = database.ref('candidates');
         
         // Audio Effects (Web Audio API Synthesizer)
         const playBeep = (freq = 600, duration = 0.05) => {
@@ -450,13 +450,15 @@
             overlay: document.getElementById('modalOverlay'),
             formStage: document.getElementById('formStage'),
             chatStage: document.getElementById('chatStage'),
+            candidatesStage: document.getElementById('candidatesStage'),
+            candidatesListContainer: document.getElementById('candidatesListContainer'),
             chatMessages: document.getElementById('chatMessages'),
             chatInput: document.getElementById('chatInput'),
             userName: document.getElementById('userName'),
             userContact: document.getElementById('userContact'),
             userSquad: document.getElementById('userSquad'),
             squadWrapper: document.getElementById('squadSelectWrapper'),
-            clearChatBtn: document.getElementById('clearChatBtn'),
+            recruiterActions: document.getElementById('recruiterActions'),
             chatPartnerTitle: document.querySelector('#chatPartner span:not(.status-dot)'),
             cryptoBtn: document.getElementById('cryptoBtn'),
             quickTagsArea: document.getElementById('quickTagsArea')
@@ -464,7 +466,6 @@
         
         let globalSenderName = "Гість";
         let isCheckingCrypto = false;
-        let clearConfirmTimer = null;
 
         const BOT_RESPONSES = {
             docs: "📋 Довідка Чергової частини: Для підписання контракту необхідні: Паспорт/ID-картка, податковий код (ІПН), військовий квиток або приписне (за наявності), а також документи про освіту. Для іноземних добровольців — чистий закордонний паспорт та підтвердження легального перебування.",
@@ -495,7 +496,6 @@
             document.body.classList.toggle('modal-open', show);
             if (!show) {
                 messagesRef.off();
-                resetClearButton();
             }
         }
 
@@ -542,13 +542,22 @@
             }, 350);
 
             const isRecruiter = nameInput.toUpperCase() === 'REK' && contactInput.toUpperCase() === 'REK';
-            DOM.clearChatBtn.style.display = isRecruiter ? 'inline-block' : 'none';
+            DOM.recruiterActions.style.display = isRecruiter ? 'flex' : 'none';
             DOM.chatPartnerTitle.innerText = isRecruiter ? "Панель рекрутера" : "Загальна лінія зв'язку";
 
             if (!isRecruiter) {
+                // Save to Messages
                 messagesRef.push({
                     sender: "Система",
                     text: `Кандидат [${nameInput}] цікавиться підрозділом: "${squadInput}". Контакт для зв'язку: ${contactInput}`
+                });
+
+                // Save to Candidates DB list for Recruiter
+                candidatesRef.push({
+                    name: nameInput,
+                    contact: contactInput,
+                    squad: squadInput,
+                    timestamp: new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })
                 });
             }
 
@@ -621,33 +630,61 @@
             if (e.key === 'Enter') sendMessage();
         }
 
-        /* Two-step confirm clear chat */
-        function handleClearChat() {
-            const btn = DOM.clearChatBtn;
-            
-            if (!btn.classList.contains('confirming')) {
-                playBeep(450, 0.08);
-                btn.classList.add('confirming');
-                btn.innerText = "Підтвердити?";
-                
-                clearConfirmTimer = setTimeout(() => {
-                    resetClearButton();
-                }, 3000);
-            } else {
-                playBeep(300, 0.12);
-                clearTimeout(clearConfirmTimer);
-                messagesRef.remove();
-                DOM.chatMessages.innerHTML = '';
-                resetClearButton();
-            }
+        /* Direct Instant Clear without Browser Confirm Alert */
+        function directClearChat() {
+            playBeep(300, 0.1);
+            messagesRef.remove();
+            DOM.chatMessages.innerHTML = '';
         }
 
-        function resetClearButton() {
-            const btn = DOM.clearChatBtn;
-            if (btn) {
-                btn.classList.remove('confirming');
-                btn.innerText = "Очистити чат";
-            }
+        /* Open Candidates List Stage for REK */
+        function openCandidatesList() {
+            playBeep(750);
+            DOM.chatStage.classList.add('hidden');
+            
+            setTimeout(() => {
+                DOM.chatStage.style.display = 'none';
+                DOM.candidatesStage.style.display = 'block';
+                
+                setTimeout(() => {
+                    DOM.candidatesStage.classList.remove('entrance');
+                }, 20);
+            }, 350);
+
+            // Load candidates list from Firebase
+            candidatesRef.once('value', (snapshot) => {
+                DOM.candidatesListContainer.innerHTML = '';
+                if (!snapshot.exists()) {
+                    DOM.candidatesListContainer.innerHTML = '<p style="text-align: center; color: var(--text-subtle); margin-top: 2rem;">Список кандидатів порожній.</p>';
+                    return;
+                }
+
+                snapshot.forEach((child) => {
+                    const c = child.val();
+                    const card = document.createElement('div');
+                    card.className = 'candidate-card';
+                    card.innerHTML = `
+                        <h4>${escapeHtml(c.name || 'Анонім')} <span>${c.timestamp || ''}</span></h4>
+                        <p><strong>Контакт:</strong> ${escapeHtml(c.contact || '-')}</p>
+                        <p><strong>Підрозділ:</strong> ${escapeHtml(c.squad || '-')}</p>
+                    `;
+                    DOM.candidatesListContainer.prepend(card);
+                });
+            });
+        }
+
+        function backToChatFromCandidates() {
+            playBeep(400);
+            DOM.candidatesStage.classList.add('entrance');
+            
+            setTimeout(() => {
+                DOM.candidatesStage.style.display = 'none';
+                DOM.chatStage.style.display = 'block';
+                
+                setTimeout(() => {
+                    DOM.chatStage.classList.remove('hidden');
+                }, 20);
+            }, 350);
         }
 
         function goBackToForm() {
@@ -664,7 +701,6 @@
             }, 350);
 
             messagesRef.off();
-            resetClearButton();
         }
 
         function sendQuickQuestion(type) {
