@@ -39,10 +39,10 @@
             position: fixed; top: 0; left: 0; width: 100%; z-index: 100; 
             display: flex; justify-content: space-between; align-items: center; 
             background-color: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); 
-            padding: 1rem 2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+            padding: 1rem 3rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
         }
         .logo { font-size: 1.1rem; font-weight: bold; color: var(--text-muted); text-decoration: none; letter-spacing: 1px; text-transform: uppercase; }
-        .nav-links { display: flex; list-style: none; gap: 2rem; }
+        .nav-links { display: flex; list-style: none; gap: 2.5rem; }
         .nav-links a { color: var(--text-subtle); text-decoration: none; font-weight: 500; transition: color var(--transition-speed) ease; }
         .nav-links a:hover { color: #f8fafc; }
         
@@ -63,23 +63,23 @@
             background-size: 40px 40px;
         }
         
-        .main-content { position: relative; z-index: 3; text-align: center; max-width: 1200px; width: 100%; }
-        h1 { font-size: 3.5rem; margin-bottom: 2rem; color: var(--text-heading); text-shadow: 0 0 30px rgba(0, 0, 0, 0.9); font-weight: 800; letter-spacing: 1px; }
+        .main-content { position: relative; z-index: 3; text-align: center; max-width: 1400px; width: 100%; }
+        h1 { font-size: 3.8rem; margin-bottom: 2rem; color: var(--text-heading); text-shadow: 0 0 30px rgba(0, 0, 0, 0.9); font-weight: 800; letter-spacing: 1px; }
 
         .btn-main-trigger { 
             background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(56, 189, 248, 0.05)); 
             color: var(--accent); border: 1px solid var(--accent-border); 
-            padding: 1rem 2.5rem; font-size: 1.1rem; font-weight: 700; letter-spacing: 1.5px; 
+            padding: 1.2rem 3rem; font-size: 1.2rem; font-weight: 700; letter-spacing: 1.5px; 
             text-transform: uppercase; border-radius: 10px; cursor: pointer; transition: all var(--transition-speed); 
-            margin-bottom: 3rem; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 3.5rem; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
         .btn-main-trigger:hover { background: var(--accent); color: var(--bg-dark); box-shadow: 0 0 25px var(--accent-glow); transform: translateY(-2px); }
 
-        /* Cards Grid */
+        /* Expanded Cards Grid */
         .cards-grid { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         .team-card { 
-            flex: 1; min-width: 300px; max-width: 360px; background: var(--bg-card); backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 2rem; 
+            flex: 1; min-width: 320px; max-width: 420px; background: var(--bg-card); backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 2.2rem; 
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
             text-align: left; display: flex; flex-direction: column; justify-content: space-between;
             opacity: 0; transform: translateY(30px);
@@ -87,12 +87,12 @@
         .team-card.visible { opacity: 1; transform: translateY(0); }
         .team-card:hover { transform: translateY(-5px); background: rgba(20, 30, 54, 0.95); border-color: var(--accent); box-shadow: 0 15px 35px rgba(56, 189, 248, 0.15); }
         
-        .photo-container { background: rgba(10, 15, 26, 0.5); border-radius: 12px; height: 160px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.03); transition: transform var(--transition-speed) ease; margin-bottom: 1.5rem; }
+        .photo-container { background: rgba(10, 15, 26, 0.5); border-radius: 12px; height: 180px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.03); transition: transform var(--transition-speed) ease; margin-bottom: 1.5rem; }
         .team-card:hover .photo-container { transform: scale(1.03); }
         .photo-container img { max-width: 85%; max-height: 85%; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5)); }
         
-        .team-card h3 { color: var(--text-heading); font-size: 1.3rem; font-weight: 700; margin-bottom: 0.75rem; }
-        .team-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem; }
+        .team-card h3 { color: var(--text-heading); font-size: 1.4rem; font-weight: 700; margin-bottom: 0.75rem; }
+        .team-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; }
         
         .footer-note { display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--accent); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
         .footer-note span { animation: blink 1.5s infinite; color: var(--status-alert); }
@@ -100,13 +100,13 @@
 
         /* Info Section & Footer */
         .info-section { position: relative; padding: 6rem 2rem; background: var(--bg-deep); display: flex; justify-content: center; border-top: 1px solid rgba(255, 255, 255, 0.02); }
-        .info-container { max-width: 1000px; width: 100%; text-align: left; }
-        .info-container h2 { font-size: 2rem; color: var(--text-heading); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
-        .info-container p { color: var(--text-muted); font-size: 1.05rem; line-height: 1.8; margin-bottom: 1.5rem; }
+        .info-container { max-width: 1200px; width: 100%; text-align: left; }
+        .info-container h2 { font-size: 2.2rem; color: var(--text-heading); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
+        .info-container p { color: var(--text-muted); font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem; }
 
-        .tactical-footer { background: var(--bg-footer); padding: 4rem 2rem; border-top: 1px solid rgba(56, 189, 248, 0.1); display: flex; justify-content: center; }
-        .footer-content { max-width: 1200px; width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
-        .footer-block { flex: 1; min-width: 250px; }
+        .tactical-footer { background: var(--bg-footer); padding: 4rem 3rem; border-top: 1px solid rgba(56, 189, 248, 0.1); display: flex; justify-content: center; }
+        .footer-content { max-width: 1400px; width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
+        .footer-block { flex: 1; min-width: 280px; }
         .footer-block h4 { color: var(--text-heading); font-size: 1.1rem; margin-bottom: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
         .footer-block p { color: var(--text-subtle); font-size: 0.95rem; line-height: 1.6; }
         .footer-links { list-style: none; }
@@ -126,14 +126,16 @@
         .custom-option:hover { background: var(--accent-light); color: var(--accent); }
         .custom-option.selected { background: rgba(56, 189, 248, 0.15); color: var(--accent); font-weight: 600; }
 
-        /* Modal Overlay & Window */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.85); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+        /* Modal Overlay & Expanded Window */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.85); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; padding: 1rem; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-window { width: 100%; max-width: 520px; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 16px; padding: 2rem; box-shadow: 0 25px 60px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
+        
+        /* Expanded modal container to 720px for better workspace */
+        .modal-window { width: 100%; max-width: 720px; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 16px; padding: 2.2rem; box-shadow: 0 25px 60px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
 
         .fade-stage { opacity: 1; transform: translateY(0); transition: opacity 0.35s ease, transform 0.35s ease; }
-        .fade-stage.hidden { opacity: 0; transform: translateY(-15px); pointer-events: none; position: absolute; width: calc(100% - 4rem); }
-        .fade-stage.entrance { opacity: 0; transform: translateY(15px); pointer-events: none; position: absolute; width: calc(100% - 4rem); }
+        .fade-stage.hidden { opacity: 0; transform: translateY(-15px); pointer-events: none; position: absolute; width: calc(100% - 4.4rem); }
+        .fade-stage.entrance { opacity: 0; transform: translateY(15px); pointer-events: none; position: absolute; width: calc(100% - 4.4rem); }
 
         .form-group { margin-bottom: 1.2rem; }
         .form-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -157,55 +159,53 @@
         }
         .close-modal:hover { color: #f8fafc; background: rgba(239, 68, 68, 0.2); border-color: var(--status-alert); transform: rotate(90deg); }
 
-        /* Chat UI */
-        .chat-container { width: 100%; height: 380px; display: flex; flex-direction: column; background: var(--bg-dark); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; overflow: hidden; margin-top: 0.5rem; }
-        .chat-header { background: #1e293b; padding: 0.75rem 1rem; font-size: 0.85rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        /* Expanded Chat UI (Height set to 440px) */
+        .chat-container { width: 100%; height: 440px; display: flex; flex-direction: column; background: var(--bg-dark); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; overflow: hidden; margin-top: 0.5rem; }
+        .chat-header { background: #1e293b; padding: 0.85rem 1.2rem; font-size: 0.9rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
         .chat-header .status-dot { width: 8px; height: 8px; background: var(--status-online); border-radius: 50%; box-shadow: 0 0 6px var(--status-online); display: inline-block; }
         
         .btn-back-chat {
             background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); 
-            color: var(--text-muted); width: 28px; height: 28px; border-radius: 6px;
+            color: var(--text-muted); width: 30px; height: 30px; border-radius: 6px;
             cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; 
             transition: all 0.2s;
         }
         .btn-back-chat:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
 
-        .recruiter-actions { display: none; gap: 6px; align-items: center; }
+        .recruiter-actions { display: none; gap: 8px; align-items: center; }
         
         .btn-candidates {
             background: rgba(56, 189, 248, 0.1); color: var(--accent);
-            border: 1px solid rgba(56, 189, 248, 0.3); padding: 5px 10px;
-            border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold;
+            border: 1px solid rgba(56, 189, 248, 0.3); padding: 6px 12px;
+            border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold;
             transition: all 0.2s;
         }
         .btn-candidates:hover { background: rgba(56, 189, 248, 0.25); border-color: var(--accent); }
 
         .btn-clear-chat {
             background: rgba(239, 68, 68, 0.15); color: var(--status-alert); 
-            border: 1px solid rgba(239, 68, 68, 0.3); padding: 5px 10px; 
-            border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold;
+            border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px 12px; 
+            border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold;
             transition: all 0.2s;
         }
         .btn-clear-chat:hover { background: var(--status-alert); color: #fff; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
 
-        .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.8rem; background: var(--bg-deep); }
-        .message { max-width: 85%; padding: 0.6rem 0.9rem; border-radius: 8px; font-size: 0.9rem; line-height: 1.4; word-break: break-word; position: relative; }
+        .chat-messages { flex: 1; padding: 1.2rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.9rem; background: var(--bg-deep); }
+        .message { max-width: 80%; padding: 0.7rem 1rem; border-radius: 8px; font-size: 0.92rem; line-height: 1.45; word-break: break-word; position: relative; }
         .message .msg-time { display: block; font-size: 0.65rem; color: var(--text-subtle); margin-top: 4px; text-align: right; }
         .message.intercom { background: rgba(56, 189, 248, 0.06); color: var(--accent); align-self: flex-start; border-left: 3px solid var(--accent); }
         .message.friend { background: #1e293b; color: #f8fafc; align-self: flex-end; border-right: 3px solid var(--text-subtle); }
-        .message.approved { background: rgba(34, 197, 94, 0.1); color: #4ade80; align-self: center; border: 1px solid rgba(34, 197, 94, 0.3); width: 90%; text-align: center; }
-        .message.rejected { background: rgba(239, 68, 68, 0.1); color: #f87171; align-self: center; border: 1px solid rgba(239, 68, 68, 0.3); width: 90%; text-align: center; }
+        .message.approved { background: rgba(34, 197, 94, 0.1); color: #4ade80; align-self: center; border: 1px solid rgba(34, 197, 94, 0.3); width: 95%; text-align: center; }
+        .message.rejected { background: rgba(239, 68, 68, 0.1); color: #f87171; align-self: center; border: 1px solid rgba(239, 68, 68, 0.3); width: 95%; text-align: center; }
         
-        /* Typing Indicator Animation */
         .typing-indicator { display: flex; gap: 4px; padding: 0.5rem 0.8rem; background: rgba(56, 189, 248, 0.06); border-radius: 8px; width: fit-content; border-left: 3px solid var(--accent); }
         .typing-indicator span { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: typing 1s infinite ease-in-out; }
         .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
         .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
         @keyframes typing { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
 
-        /* Quick Tags Scrollable Bar */
         .quick-tags-area { 
-            display: flex; gap: 8px; padding: 10px 8px; background: var(--bg-deep); 
+            display: flex; gap: 8px; padding: 10px 12px; background: var(--bg-deep); 
             border-top: 1px solid rgba(255,255,255,0.03); overflow-x: auto; 
             white-space: nowrap; align-items: center;
             scrollbar-width: thin; scrollbar-color: rgba(56, 189, 248, 0.2) transparent;
@@ -213,38 +213,36 @@
         .quick-tags-area button {
             flex-shrink: 0; background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(56, 189, 248, 0.02)); 
             color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.2); padding: 6px 14px; border-radius: 6px; 
-            font-size: 0.78rem; cursor: pointer; transition: all 0.2s; font-weight: 600;
+            font-size: 0.8rem; cursor: pointer; transition: all 0.2s; font-weight: 600;
         }
         .quick-tags-area button:hover { background: rgba(56, 189, 248, 0.18); border-color: var(--accent); color: #f8fafc; }
         .quick-tags-area #cryptoBtn { margin-left: auto; background: rgba(34, 197, 94, 0.08); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.2); }
 
         .chat-input-area { display: flex; border-top: 1px solid rgba(255, 255, 255, 0.05); background: var(--bg-dark); }
-        .chat-input-area input { flex: 1; padding: 0.8rem 1rem; background: transparent; border: none; color: #f8fafc; font-size: 0.95rem; }
+        .chat-input-area input { flex: 1; padding: 0.9rem 1.2rem; background: transparent; border: none; color: #f8fafc; font-size: 0.95rem; }
         .chat-input-area input:focus { outline: none; }
-        .btn-send { background: linear-gradient(135deg, #1e293b, #0f172a); color: var(--accent); border: none; border-left: 1px solid rgba(255,255,255,0.05); padding: 0 1.4rem; cursor: pointer; font-weight: bold; transition: all 0.2s; font-size: 0.9rem; }
+        .btn-send { background: linear-gradient(135deg, #1e293b, #0f172a); color: var(--accent); border: none; border-left: 1px solid rgba(255,255,255,0.05); padding: 0 1.6rem; cursor: pointer; font-weight: bold; transition: all 0.2s; font-size: 0.9rem; }
         .btn-send:hover { background: var(--accent); color: var(--bg-dark); }
 
-        /* Candidates List Stage */
-        .candidates-list { height: 320px; overflow-y: auto; background: var(--bg-dark); border-radius: 8px; padding: 10px; border: 1px solid rgba(255, 255, 255, 0.05); margin-top: 10px; }
-        .candidate-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.15); border-radius: 8px; padding: 12px; margin-bottom: 8px; text-align: left; display: flex; justify-content: space-between; align-items: center; }
-        .candidate-info h4 { color: #f8fafc; font-size: 0.95rem; margin-bottom: 4px; display: flex; gap: 8px; align-items: center; }
+        /* Expanded Candidates List Stage */
+        .candidates-list { height: 380px; overflow-y: auto; background: var(--bg-dark); border-radius: 8px; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.05); margin-top: 10px; }
+        .candidate-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.15); border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; text-align: left; display: flex; justify-content: space-between; align-items: center; }
+        .candidate-info h4 { color: #f8fafc; font-size: 1rem; margin-bottom: 4px; display: flex; gap: 10px; align-items: center; }
         .candidate-info h4 span { font-size: 0.75rem; color: var(--text-subtle); font-weight: normal; }
-        .candidate-info p { color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; }
+        .candidate-info p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; }
         .candidate-info strong { color: var(--accent); }
         
-        .candidate-actions { display: flex; gap: 6px; align-items: center; }
-        .btn-action-open { background: rgba(56, 189, 248, 0.15); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: all 0.2s; }
+        .candidate-actions { display: flex; gap: 8px; align-items: center; }
+        .btn-action-open { background: rgba(56, 189, 248, 0.15); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: bold; transition: all 0.2s; }
         .btn-action-open:hover { background: var(--accent); color: var(--bg-dark); }
 
-        .btn-approve { background: rgba(34, 197, 94, 0.15); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.4); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-approve { background: rgba(34, 197, 94, 0.15); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.4); width: 34px; height: 34px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
         .btn-approve:hover { background: var(--status-online); color: #fff; box-shadow: 0 0 10px rgba(34, 197, 94, 0.4); }
 
-        .btn-reject { background: rgba(239, 68, 68, 0.15); color: var(--status-alert); border: 1px solid rgba(239, 68, 68, 0.4); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-reject { background: rgba(239, 68, 68, 0.15); color: var(--status-alert); border: 1px solid rgba(239, 68, 68, 0.4); width: 34px; height: 34px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
         .btn-reject:hover { background: var(--status-alert); color: #fff; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
-        
-        .status-badge { font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: bold; display: inline-block; margin-left: 6px; }
-        .status-badge.approved { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
-        .status-badge.rejected { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+        .candidate-count-badge { background: rgba(56, 189, 248, 0.15); color: var(--accent); padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; border: 1px solid rgba(56, 189, 248, 0.3); margin-left: 8px; }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -292,7 +290,7 @@
                     </div>
                     <div>
                         <h3>Російський добровольчий корпус</h3>
-                        <p>Добровольче формування, що веде запеклі бої та проводити спецоперації на лінії зіткнення.</p>
+                        <p>Добровольче формування, що веде запеклі бої та проводить спецоперації на лінії зіткнення.</p>
                     </div>
                     <span class="footer-note"><span>●</span> СТАТУС: НА ЛБЗ</span>
                 </div>
@@ -351,7 +349,7 @@
             
             <!-- STAGE 1: FORM -->
             <div id="formStage" class="fade-stage">
-                <h2 style="margin-bottom: 1.5rem; font-size: 1.5rem; color: #f1f5f9; text-align: center; font-weight: 700;">Подати заявку</h2>
+                <h2 style="margin-bottom: 1.5rem; font-size: 1.6rem; color: #f1f5f9; text-align: center; font-weight: 700;">Подати заявку</h2>
                 <form onsubmit="handleSubmit(event)">
                     <div class="form-group">
                         <label for="userName">Позивний або Ім'я</label>
@@ -381,11 +379,11 @@
 
             <!-- STAGE 2: CHAT -->
             <div id="chatStage" class="fade-stage entrance" style="display: none;">
-                <h2 style="font-size: 1.4rem; margin-bottom: 1rem; color: #f1f5f9; text-align: center; font-weight: 700;">Захищений Канал Зв'язку</h2>
+                <h2 style="font-size: 1.5rem; margin-bottom: 1rem; color: #f1f5f9; text-align: center; font-weight: 700;">Захищений Канал Зв'язку</h2>
                 
                 <div class="chat-container">
                     <div class="chat-header" id="chatPartner">
-                        <div style="display: flex; align-items: center; gap: 6px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
                             <button class="btn-back-chat" onclick="goBackToForm()" title="Назад до анкети">←</button>
                             <span class="status-dot"></span>
                             <span id="chatHeaderTitle">Персональний чат</span>
@@ -415,8 +413,10 @@
             <!-- STAGE 3: RECRUITER CANDIDATES LIST -->
             <div id="candidatesStage" class="fade-stage entrance" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h2 style="font-size: 1.3rem; color: #f1f5f9; font-weight: 700;">База Кандидатів</h2>
-                    <button class="btn-back-chat" onclick="backToChatFromCandidates()" style="width: auto; padding: 4px 10px; font-size: 0.8rem;">← В чат</button>
+                    <h2 style="font-size: 1.4rem; color: #f1f5f9; font-weight: 700; display: flex; align-items: center;">
+                        База Кандидатів <span class="candidate-count-badge" id="candidatesCount">0</span>
+                    </h2>
+                    <button class="btn-back-chat" onclick="backToChatFromCandidates()" style="width: auto; padding: 4px 12px; font-size: 0.85rem;">← В чат</button>
                 </div>
                 
                 <div class="candidates-list" id="candidatesListContainer">
@@ -427,7 +427,7 @@
     </div>
 
     <script>
-        // Init Firebase
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyCeWM1wdHdN6bIXFXTqHXO7WgJNJK53nwk",
             authDomain: "storinka-d7bd6.firebaseapp.com",
@@ -448,7 +448,7 @@
         let globalSenderName = "Гість";
         let isCheckingCrypto = false;
 
-        // Audio Effects (Web Audio API Synthesizer)
+        // Audio Effects Synthesizer
         const playBeep = (freq = 600, duration = 0.05) => {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -464,13 +464,13 @@
             } catch(e) {}
         };
 
-        // Cache Elements
         const DOM = {
             overlay: document.getElementById('modalOverlay'),
             formStage: document.getElementById('formStage'),
             chatStage: document.getElementById('chatStage'),
             candidatesStage: document.getElementById('candidatesStage'),
             candidatesListContainer: document.getElementById('candidatesListContainer'),
+            candidatesCount: document.getElementById('candidatesCount'),
             chatMessages: document.getElementById('chatMessages'),
             chatInput: document.getElementById('chatInput'),
             userName: document.getElementById('userName'),
@@ -495,12 +495,9 @@
             gear: 'Яке речове забезпечення надає підрозділ?'
         };
 
-        // Scroll Reveal Effect
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if(entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
+                if(entry.isIntersecting) entry.target.classList.add('visible');
             });
         }, { threshold: 0.1 });
 
@@ -556,19 +553,16 @@
                     DOM.recruiterActions.style.display = 'flex';
                     openCandidatesList();
                 } else {
-                    // Check local session room or create new unique room for this candidate
                     let existingRoom = localStorage.getItem('strike_chat_room_id');
                     if (!existingRoom) {
                         existingRoom = 'room_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
                         localStorage.setItem('strike_chat_room_id', existingRoom);
                         
-                        // Register candidate in database
                         candidatesRef.child(existingRoom).set({
                             id: existingRoom,
                             name: nameInput,
                             contact: contactInput,
                             squad: squadInput,
-                            status: 'pending',
                             timestamp: new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })
                         });
                     }
@@ -672,7 +666,7 @@
             DOM.chatMessages.innerHTML = '';
         }
 
-        /* Candidates Management for Recruiter */
+        /* Candidates Management */
         function openCandidatesList() {
             playBeep(750);
             DOM.chatStage.classList.add('hidden');
@@ -689,54 +683,55 @@
 
             candidatesRef.on('value', (snapshot) => {
                 DOM.candidatesListContainer.innerHTML = '';
+                
                 if (!snapshot.exists()) {
-                    DOM.candidatesListContainer.innerHTML = '<p style="text-align: center; color: var(--text-subtle); margin-top: 2rem;">Список кандидатів порожній.</p>';
+                    DOM.candidatesCount.innerText = "0";
+                    DOM.candidatesListContainer.innerHTML = '<p style="text-align: center; color: var(--text-subtle); margin-top: 3rem;">Усі заявки опрацьовані. Кандидатів немає.</p>';
                     return;
                 }
 
+                let count = 0;
                 snapshot.forEach((child) => {
+                    count++;
                     const c = child.val();
                     const card = document.createElement('div');
                     card.className = 'candidate-card';
-                    
-                    let statusHtml = '';
-                    if (c.status === 'approved') {
-                        statusHtml = '<span class="status-badge approved">Прийнято</span>';
-                    } else if (c.status === 'rejected') {
-                        statusHtml = '<span class="status-badge rejected">Відхилено</span>';
-                    }
 
                     card.innerHTML = `
                         <div class="candidate-info">
-                            <h4>${escapeHtml(c.name || 'Анонім')} ${statusHtml} <span>${c.timestamp || ''}</span></h4>
+                            <h4>${escapeHtml(c.name || 'Анонім')} <span>${c.timestamp || ''}</span></h4>
                             <p><strong>Контакт:</strong> ${escapeHtml(c.contact || '-')}</p>
                             <p><strong>Підрозділ:</strong> ${escapeHtml(c.squad || '-')}</p>
                         </div>
                         <div class="candidate-actions">
                             <button class="btn-action-open" onclick="openChatRoom('${c.id}', 'Чат: ${escapeHtml(c.name)}')">💬 Чат</button>
-                            <button class="btn-approve" title="Прийняти кандидата" onclick="setCandidateStatus('${c.id}', '${escapeHtml(c.name)}', 'approved')">✔</button>
-                            <button class="btn-reject" title="Відхилити кандидата" onclick="setCandidateStatus('${c.id}', '${escapeHtml(c.name)}', 'rejected')">✖</button>
+                            <button class="btn-approve" title="Прийняти кандидата" onclick="processCandidateDecision('${c.id}', '${escapeHtml(c.name)}', 'approved')">✔</button>
+                            <button class="btn-reject" title="Відхилити кандидата" onclick="processCandidateDecision('${c.id}', '${escapeHtml(c.name)}', 'rejected')">✖</button>
                         </div>
                     `;
                     DOM.candidatesListContainer.prepend(card);
                 });
+
+                DOM.candidatesCount.innerText = count;
             });
         }
 
-        function setCandidateStatus(roomId, candidateName, status) {
-            playBeep(status === 'approved' ? 900 : 300);
+        function processCandidateDecision(roomId, candidateName, decision) {
+            playBeep(decision === 'approved' ? 900 : 300);
             
-            candidatesRef.child(roomId).update({ status: status });
-
-            const statusText = status === 'approved' 
-                ? `Рекрутер розглянув вашу заявку: ВАС ПРИЙНЯТО ДО СКЛАДУ! Очікуйте на подальші інструкції.`
+            const statusText = decision === 'approved' 
+                ? `Рекрутер розглянув вашу заявку: ВАС ПРИЙНЯТО ДО СКЛАДУ! Очікуйте на подальші інструкції у цьому чаті.`
                 : `Рекрутер розглянув вашу заявку: На жаль, вашу кандидатуру ВІДХИЛЕНО.`;
 
+            // 1. Відправляємо рішення в особистий чат кандидата
             database.ref('rooms/' + roomId).push({
                 sender: "Штаб Рекрутингу",
                 text: statusText,
-                type: status
+                type: decision
             });
+
+            // 2. Видаляємо кандидата зі списку активних
+            candidatesRef.child(roomId).remove();
         }
 
         function backToChatFromCandidates() {
@@ -825,7 +820,7 @@
 
             setTimeout(() => {
                 playBeep(1500, 0.1);
-                btn.innerText = "⚡ Шихр: OK";
+                btn.innerText = "⚡ Шифр: OK";
                 btn.style.color = "#22c55e";
                 btn.style.background = "rgba(34, 197, 94, 0.08)";
                 btn.style.borderColor = "rgba(34, 197, 94, 0.2)";
