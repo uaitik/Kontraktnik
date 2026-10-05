@@ -24,13 +24,20 @@
             --text-subtle: #64748b;
             --status-online: #22c55e;
             --status-alert: #ef4444;
-            --transition-speed: 0.3s;
+            --transition-speed: 0.25s;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         html { scroll-behavior: smooth; }
         body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
         body.modal-open { overflow: hidden; }
+
+        /* Base Buttons Styling */
+        button {
+            font-family: inherit;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
 
         /* Navbar */
         .navbar { 
@@ -67,12 +74,18 @@
 
         /* Main CTA Button */
         .btn-main-trigger { 
-            background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-border); 
-            padding: 0.9rem 2.2rem; font-size: 1.1rem; font-weight: bold; letter-spacing: 1.5px; 
-            text-transform: uppercase; border-radius: 8px; cursor: pointer; transition: all var(--transition-speed); 
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(56, 189, 248, 0.05)); 
+            color: var(--accent); border: 1px solid var(--accent-border); 
+            padding: 1rem 2.5rem; font-size: 1.1rem; font-weight: 700; letter-spacing: 1.5px; 
+            text-transform: uppercase; border-radius: 10px; cursor: pointer; transition: all var(--transition-speed); 
             margin-bottom: 3rem; position: relative; overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
-        .btn-main-trigger:hover { background: var(--accent); color: var(--bg-dark); box-shadow: 0 0 25px var(--accent-glow); transform: translateY(-2px); }
+        .btn-main-trigger:hover { 
+            background: var(--accent); color: var(--bg-dark); 
+            box-shadow: 0 0 25px var(--accent-glow); transform: translateY(-2px); 
+        }
+        .btn-main-trigger:active { transform: translateY(1px); }
 
         /* Cards Grid with Scroll Reveal */
         .cards-grid { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; width: 100%; }
@@ -116,13 +129,14 @@
 
         /* Custom Select */
         .custom-select-wrapper { position: relative; width: 100%; }
-        .custom-select-trigger { width: 100%; padding: 0.8rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f8fafc; font-size: 1rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: border-color 0.2s; }
+        .custom-select-trigger { width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f8fafc; font-size: 1rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
+        .custom-select-trigger:hover { border-color: rgba(56, 189, 248, 0.5); }
         .custom-select-trigger:after { content: ''; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid var(--text-muted); transition: transform 0.3s ease; }
-        .custom-select-wrapper.open .custom-select-trigger { border-color: var(--accent); }
+        .custom-select-wrapper.open .custom-select-trigger { border-color: var(--accent); box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
         .custom-select-wrapper.open .custom-select-trigger:after { transform: rotate(180deg); }
         .custom-options { position: absolute; top: calc(100% + 5px); left: 0; width: 100%; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-10px); transition: all 0.2s ease; z-index: 99; }
         .custom-select-wrapper.open .custom-options { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
-        .custom-option { padding: 0.8rem 1rem; color: var(--text-main); cursor: pointer; transition: all 0.2s; font-size: 0.95rem; }
+        .custom-option { padding: 0.85rem 1rem; color: var(--text-main); cursor: pointer; transition: all 0.2s; font-size: 0.95rem; }
         .custom-option:hover { background: var(--accent-light); color: var(--accent); }
         .custom-option.selected { background: rgba(56, 189, 248, 0.15); color: var(--accent); font-weight: 600; }
 
@@ -137,20 +151,60 @@
 
         .form-group { margin-bottom: 1.2rem; }
         .form-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        .form-group input { width: 100%; padding: 0.8rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f8fafc; font-size: 1rem; transition: border-color 0.2s; }
-        .form-group input:focus { outline: none; border-color: var(--accent); }
+        .form-group input { width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f8fafc; font-size: 1rem; transition: border-color 0.2s; }
+        .form-group input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
         
-        .btn-submit { width: 100%; padding: 1rem; background: var(--accent); color: var(--bg-dark); border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s; margin-top: 0.5rem; }
-        .btn-submit:hover { background: var(--accent-hover); transform: translateY(-1px); }
+        .btn-submit { 
+            width: 100%; padding: 1rem; 
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover)); 
+            color: var(--bg-dark); border: none; border-radius: 8px; 
+            font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; 
+            cursor: pointer; transition: all 0.2s; margin-top: 0.5rem;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+        }
+        .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4); }
+        .btn-submit:active { transform: translateY(1px); }
 
-        .close-modal { position: absolute; top: 1.2rem; right: 1.2rem; background: transparent; border: none; color: var(--text-subtle); font-size: 1.3rem; cursor: pointer; transition: color 0.2s; z-index: 10; }
-        .close-modal:hover { color: var(--text-heading); }
+        .close-modal { 
+            position: absolute; top: 1rem; right: 1rem; 
+            width: 32px; height: 32px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); 
+            color: var(--text-subtle); font-size: 1.2rem; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s; z-index: 10; 
+        }
+        .close-modal:hover { color: #f8fafc; background: rgba(239, 68, 68, 0.2); border-color: var(--status-alert); transform: rotate(90deg); }
 
         /* Chat UI */
         .chat-container { width: 100%; height: 380px; display: flex; flex-direction: column; background: var(--bg-dark); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; overflow: hidden; margin-top: 0.5rem; }
-        .chat-header { background: #1e293b; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between; }
+        .chat-header { background: #1e293b; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .chat-header .status-dot { width: 8px; height: 8px; background: var(--status-online); border-radius: 50%; box-shadow: 0 0 6px var(--status-online); display: inline-block; }
         
+        .btn-back-chat {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); 
+            color: var(--text-muted); width: 28px; height: 28px; border-radius: 6px;
+            cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; 
+            transition: all 0.2s;
+        }
+        .btn-back-chat:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+
+        /* Interactive Clear Chat Button */
+        .btn-clear-chat {
+            background: rgba(239, 68, 68, 0.1); color: var(--status-alert); 
+            border: 1px solid rgba(239, 68, 68, 0.3); padding: 5px 12px; 
+            border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold;
+            transition: all 0.2s ease; display: none;
+        }
+        .btn-clear-chat:hover { background: rgba(239, 68, 68, 0.25); border-color: var(--status-alert); }
+        .btn-clear-chat.confirming {
+            background: var(--status-alert); color: #fff; border-color: var(--status-alert);
+            animation: pulse-danger 1s infinite alternate;
+        }
+        @keyframes pulse-danger {
+            0% { box-shadow: 0 0 0 rgba(239, 68, 68, 0.4); }
+            100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.8); }
+        }
+
         .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.8rem; background: var(--bg-deep); }
         .message { max-width: 85%; padding: 0.6rem 0.9rem; border-radius: 8px; font-size: 0.9rem; line-height: 1.4; word-break: break-word; position: relative; }
         .message .msg-time { display: block; font-size: 0.65rem; color: var(--text-subtle); margin-top: 4px; text-align: right; }
@@ -176,18 +230,24 @@
         .quick-tags-area::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.5); }
         
         .quick-tags-area button {
-            flex-shrink: 0; background: rgba(56, 189, 248, 0.06); color: var(--accent); 
-            border: 1px solid rgba(56, 189, 248, 0.2); padding: 6px 14px; border-radius: 6px; 
-            font-size: 0.75rem; cursor: pointer; transition: all 0.2s; font-weight: 600;
+            flex-shrink: 0; background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(56, 189, 248, 0.02)); 
+            color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.2); padding: 6px 14px; border-radius: 6px; 
+            font-size: 0.78rem; cursor: pointer; transition: all 0.2s; font-weight: 600;
         }
-        .quick-tags-area button:hover { background: rgba(56, 189, 248, 0.15); border-color: var(--accent); color: #f8fafc; }
-        .quick-tags-area #cryptoBtn { margin-left: auto; background: rgba(34, 197, 94, 0.08); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.15); }
+        .quick-tags-area button:hover { background: rgba(56, 189, 248, 0.18); border-color: var(--accent); color: #f8fafc; transform: translateY(-1px); }
+        .quick-tags-area button:active { transform: translateY(1px); }
+        .quick-tags-area #cryptoBtn { margin-left: auto; background: rgba(34, 197, 94, 0.08); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.2); }
 
         .chat-input-area { display: flex; border-top: 1px solid rgba(255, 255, 255, 0.05); background: var(--bg-dark); }
         .chat-input-area input { flex: 1; padding: 0.8rem 1rem; background: transparent; border: none; color: #f8fafc; font-size: 0.95rem; }
         .chat-input-area input:focus { outline: none; }
-        .btn-send { background: #1e293b; color: var(--accent); border: none; padding: 0 1.2rem; cursor: pointer; font-weight: bold; transition: background 0.2s; font-size: 0.9rem; }
-        .btn-send:hover { background: #2d3748; }
+        .btn-send { 
+            background: linear-gradient(135deg, #1e293b, #0f172a); 
+            color: var(--accent); border: none; border-left: 1px solid rgba(255,255,255,0.05); 
+            padding: 0 1.4rem; cursor: pointer; font-weight: bold; transition: all 0.2s; font-size: 0.9rem;
+        }
+        .btn-send:hover { background: var(--accent); color: var(--bg-dark); }
+        .btn-send:active { opacity: 0.8; }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -290,7 +350,7 @@
     <!-- Modal overlay & window -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-window">
-            <button class="close-modal" onclick="toggleModal(false)">×</button>
+            <button class="close-modal" onclick="toggleModal(false)" title="Закрити">×</button>
             
             <div id="formStage" class="fade-stage">
                 <h2 style="margin-bottom: 1.5rem; font-size: 1.5rem; color: #f1f5f9; text-align: center; font-weight: 700;">Подати заявку</h2>
@@ -327,11 +387,11 @@
                 <div class="chat-container">
                     <div class="chat-header" id="chatPartner">
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <button onclick="goBackToForm()" style="background: transparent; border: none; color: #64748b; cursor: pointer; font-size: 1.1rem; padding: 0 2px; transition: color 0.2s;" title="Назад до анкети">←</button>
+                            <button class="btn-back-chat" onclick="goBackToForm()" title="Назад до анкети">←</button>
                             <span class="status-dot"></span>
                             <span>Загальна лінія зв'язку</span>
                         </div>
-                        <button id="clearChatBtn" onclick="clearChat()" style="display: none; background: #ef4444; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: bold;">Очистити чат</button>
+                        <button id="clearChatBtn" class="btn-clear-chat" onclick="handleClearChat()">Очистити чат</button>
                     </div>
                     
                     <div class="chat-messages" id="chatMessages"></div>
@@ -404,6 +464,7 @@
         
         let globalSenderName = "Гість";
         let isCheckingCrypto = false;
+        let clearConfirmTimer = null;
 
         const BOT_RESPONSES = {
             docs: "📋 Довідка Чергової частини: Для підписання контракту необхідні: Паспорт/ID-картка, податковий код (ІПН), військовий квиток або приписне (за наявності), а також документи про освіту. Для іноземних добровольців — чистий закордонний паспорт та підтвердження легального перебування.",
@@ -432,7 +493,10 @@
             playBeep(show ? 800 : 400);
             DOM.overlay.classList.toggle('active', show);
             document.body.classList.toggle('modal-open', show);
-            if (!show) messagesRef.off();
+            if (!show) {
+                messagesRef.off();
+                resetClearButton();
+            }
         }
 
         function toggleCustomSelect() {
@@ -478,8 +542,8 @@
             }, 350);
 
             const isRecruiter = nameInput.toUpperCase() === 'REK' && contactInput.toUpperCase() === 'REK';
-            DOM.clearChatBtn.style.display = isRecruiter ? 'block' : 'none';
-            DOM.chatPartnerTitle.innerText = isRecruiter ? "Панель рекрутера (Вхід виконано)" : "Загальна лінія зв'язку";
+            DOM.clearChatBtn.style.display = isRecruiter ? 'inline-block' : 'none';
+            DOM.chatPartnerTitle.innerText = isRecruiter ? "Панель рекрутера" : "Загальна лінія зв'язку";
 
             if (!isRecruiter) {
                 messagesRef.push({
@@ -557,10 +621,32 @@
             if (e.key === 'Enter') sendMessage();
         }
 
-        function clearChat() {
-            if (confirm("Ви дійсно хочете видалити всі повідомлення?")) {
+        /* Two-step confirm clear chat */
+        function handleClearChat() {
+            const btn = DOM.clearChatBtn;
+            
+            if (!btn.classList.contains('confirming')) {
+                playBeep(450, 0.08);
+                btn.classList.add('confirming');
+                btn.innerText = "Підтвердити?";
+                
+                clearConfirmTimer = setTimeout(() => {
+                    resetClearButton();
+                }, 3000);
+            } else {
+                playBeep(300, 0.12);
+                clearTimeout(clearConfirmTimer);
                 messagesRef.remove();
                 DOM.chatMessages.innerHTML = '';
+                resetClearButton();
+            }
+        }
+
+        function resetClearButton() {
+            const btn = DOM.clearChatBtn;
+            if (btn) {
+                btn.classList.remove('confirming');
+                btn.innerText = "Очистити чат";
             }
         }
 
@@ -578,6 +664,7 @@
             }, 350);
 
             messagesRef.off();
+            resetClearButton();
         }
 
         function sendQuickQuestion(type) {
@@ -589,7 +676,6 @@
                 text: QUESTIONS_TEXT[type]
             });
 
-            // Typing Indicator Before Reply
             showTypingIndicator();
 
             setTimeout(() => {
@@ -625,14 +711,14 @@
             btn.innerText = "⏳ Сканування...";
             btn.style.color = "#eab308";
             btn.style.background = "rgba(234, 179, 8, 0.08)";
-            btn.style.borderColor = "rgba(234, 179, 8, 0.15)";
+            btn.style.borderColor = "rgba(234, 179, 8, 0.2)";
 
             setTimeout(() => {
                 playBeep(1500, 0.1);
                 btn.innerText = "⚡ Шихр: OK";
                 btn.style.color = "#22c55e";
                 btn.style.background = "rgba(34, 197, 94, 0.08)";
-                btn.style.borderColor = "rgba(34, 197, 94, 0.15)";
+                btn.style.borderColor = "rgba(34, 197, 94, 0.2)";
                 
                 setTimeout(() => {
                     btn.innerText = "🔐 Лінія: Захищена";
