@@ -8,7 +8,6 @@
     <link class="site-icon" rel="icon" type="image/png" href="strike.jpg">
 
     <style>
-        /* CSS Variables — jednolita paleta i łatwiejsze utrzymanie */
         :root {
             --bg-dark: #0a0f1a;
             --bg-deep: #070b14;
@@ -28,7 +27,6 @@
             --transition-speed: 0.3s;
         }
 
-        /* Base Reset */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         html { scroll-behavior: smooth; }
         body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
@@ -46,21 +44,46 @@
         .nav-links a { color: var(--text-subtle); text-decoration: none; font-weight: 500; transition: color var(--transition-speed) ease; }
         .nav-links a:hover { color: #f8fafc; }
         
-        /* Hero Section */
+        /* Hero Section & Tactical Overlay */
         .video-container { position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 6rem 2rem 4rem 2rem; overflow: hidden; }
-        .bg-video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); object-fit: cover; z-index: 1; opacity: 0.5; }
-        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(10, 15, 26, 0.6) 0%, rgba(10, 15, 26, 0.95) 100%); z-index: 2; }
+        .bg-video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); object-fit: cover; z-index: 1; opacity: 0.4; }
+        .video-overlay { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(180deg, rgba(10, 15, 26, 0.6) 0%, rgba(10, 15, 26, 0.95) 100%),
+                        radial-gradient(circle at center, transparent 0%, rgba(7, 11, 20, 0.8) 100%); 
+            z-index: 2; 
+        }
+
+        /* Tactical Grid Overlay */
+        .tactical-grid {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;
+            background-image: linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
         
         .main-content { position: relative; z-index: 3; text-align: center; max-width: 1200px; width: 100%; }
         h1 { font-size: 3.5rem; margin-bottom: 2rem; color: var(--text-heading); text-shadow: 0 0 30px rgba(0, 0, 0, 0.9); font-weight: 800; letter-spacing: 1px; }
 
         /* Main CTA Button */
-        .btn-main-trigger { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-border); padding: 0.8rem 2rem; font-size: 1.1rem; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; border-radius: 8px; cursor: pointer; transition: all var(--transition-speed); margin-bottom: 3rem; }
-        .btn-main-trigger:hover { background: var(--accent); color: var(--bg-dark); box-shadow: 0 0 20px var(--accent-glow); }
+        .btn-main-trigger { 
+            background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-border); 
+            padding: 0.9rem 2.2rem; font-size: 1.1rem; font-weight: bold; letter-spacing: 1.5px; 
+            text-transform: uppercase; border-radius: 8px; cursor: pointer; transition: all var(--transition-speed); 
+            margin-bottom: 3rem; position: relative; overflow: hidden;
+        }
+        .btn-main-trigger:hover { background: var(--accent); color: var(--bg-dark); box-shadow: 0 0 25px var(--accent-glow); transform: translateY(-2px); }
 
-        /* Cards Grid */
+        /* Cards Grid with Scroll Reveal */
         .cards-grid { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; width: 100%; }
-        .team-card { flex: 1; min-width: 300px; max-width: 360px; background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 2rem; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); text-align: left; display: flex; flex-direction: column; justify-content: space-between; }
+        .team-card { 
+            flex: 1; min-width: 300px; max-width: 360px; background: var(--bg-card); backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 2rem; 
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
+            text-align: left; display: flex; flex-direction: column; justify-content: space-between;
+            opacity: 0; transform: translateY(30px);
+        }
+        .team-card.visible { opacity: 1; transform: translateY(0); }
         .team-card:hover { transform: translateY(-5px); background: rgba(20, 30, 54, 0.95); border-color: var(--accent); box-shadow: 0 15px 35px rgba(56, 189, 248, 0.15); }
         
         .photo-container { background: rgba(10, 15, 26, 0.5); border-radius: 12px; height: 160px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.03); transition: transform var(--transition-speed) ease; margin-bottom: 1.5rem; }
@@ -129,10 +152,18 @@
         .chat-header .status-dot { width: 8px; height: 8px; background: var(--status-online); border-radius: 50%; box-shadow: 0 0 6px var(--status-online); display: inline-block; }
         
         .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.8rem; background: var(--bg-deep); }
-        .message { max-width: 85%; padding: 0.6rem 0.9rem; border-radius: 8px; font-size: 0.9rem; line-height: 1.4; word-break: break-word; }
+        .message { max-width: 85%; padding: 0.6rem 0.9rem; border-radius: 8px; font-size: 0.9rem; line-height: 1.4; word-break: break-word; position: relative; }
+        .message .msg-time { display: block; font-size: 0.65rem; color: var(--text-subtle); margin-top: 4px; text-align: right; }
         .message.intercom { background: rgba(56, 189, 248, 0.06); color: var(--accent); align-self: flex-start; border-left: 3px solid var(--accent); }
         .message.friend { background: #1e293b; color: #f8fafc; align-self: flex-end; border-right: 3px solid var(--text-subtle); }
         
+        /* Typing Indicator Animation */
+        .typing-indicator { display: flex; gap: 4px; padding: 0.5rem 0.8rem; background: rgba(56, 189, 248, 0.06); border-radius: 8px; width: fit-content; border-left: 3px solid var(--accent); }
+        .typing-indicator span { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: typing 1s infinite ease-in-out; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+
         /* Quick Tags Scrollable Bar */
         .quick-tags-area { 
             display: flex; gap: 8px; padding: 10px 8px; background: var(--bg-deep); 
@@ -179,6 +210,7 @@
             <source src="mp4/krak.mp4" type="video/mp4">
         </video>
         <div class="video-overlay"></div>
+        <div class="tactical-grid"></div>
 
         <main class="main-content">
             <h1>Готовий Підписати Контракт</h1>
@@ -203,7 +235,7 @@
                     </div>
                     <div>
                         <h3>Російський добровольчий корпус</h3>
-                        <p>Добровольче формування, що веде запеклі бої та проводить спецоперації на лінії зіткнення.</p>
+                        <p>Добровольче формування, що веде запеклі бої та проводити спецоперації на лінії зіткнення.</p>
                     </div>
                     <span class="footer-note"><span>●</span> СТАТУС: НА ЛБЗ</span>
                 </div>
@@ -225,7 +257,7 @@
     <section class="info-section" id="about">
         <div class="info-container">
             <h2>Про наші підрозділи</h2>
-            <p>Інтернаціональні бригади об'єднують досвідчених бійців та добровольців з усього світу, які стали на захист свободи. Ми забезпечуємо найвищий уровень підготовки, сучасне озброєння та повну інтеграцію у структуру Збройних Сил України.</p>
+            <p>Інтернаціональні бригади об'єднують досвідчених бійців та добровольців з усього світу, які стали на захист свободи. Ми забезпечуємо найвищий рівень підготовки, сучасне озброєння та повну інтеграцію у структуру Збройних Сил України.</p>
             
             <div id="more" style="padding-top: 2rem;">
                 <h2>Більше інформації про умови контракту</h2>
@@ -323,21 +355,37 @@
     <script>
         // Init Firebase
         const firebaseConfig = {
-    apiKey: "AIzaSyCeWM1wdHdN6bIXFXTqHXO7WgJNJK53nwk",
-    authDomain: "storinka-d7bd6.firebaseapp.com",
-    databaseURL: "https://storinka-d7bd6-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "storinka-d7bd6",
-    storageBucket: "storinka-d7bd6.firebasestorage.app",
-    messagingSenderId: "317173750408",
-    appId: "1:317173750408:web:62d09563fc750e20589d3d",
-    measurementId: "G-5HX3ES92NE"
-};
+            apiKey: "AIzaSyCeWM1wdHdN6bIXFXTqHXO7WgJNJK53nwk",
+            authDomain: "storinka-d7bd6.firebaseapp.com",
+            databaseURL: "https://storinka-d7bd6-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "storinka-d7bd6",
+            storageBucket: "storinka-d7bd6.firebasestorage.app",
+            messagingSenderId: "317173750408",
+            appId: "1:317173750408:web:62d09563fc750e20589d3d",
+            measurementId: "G-5HX3ES92NE"
+        };
 
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const messagesRef = database.ref('messages');
         
-        // Cache Elements for performance
+        // Audio Effects (Web Audio API Synthesizer)
+        const playBeep = (freq = 600, duration = 0.05) => {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.05, ctx.currentTime);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch(e) {}
+        };
+
+        // Cache Elements
         const DOM = {
             overlay: document.getElementById('modalOverlay'),
             formStage: document.getElementById('formStage'),
@@ -357,7 +405,6 @@
         let globalSenderName = "Гість";
         let isCheckingCrypto = false;
 
-        // Bot answers map
         const BOT_RESPONSES = {
             docs: "📋 Довідка Чергової частини: Для підписання контракту необхідні: Паспорт/ID-картка, податковий код (ІПН), військовий квиток або приписне (за наявності), а також документи про освіту. Для іноземних добровольців — чистий закордонний паспорт та підтвердження легального перебування.",
             training: "🪖 Навчальний Центр: Базовий курс військової підготовки (БЗВП) триває від 30 до 40 діб залежно від обраної спеціалізації. Навчання включає вогневу, тактичну медицину (TCCC), топографію та злагодження під керівництвом інструкторів з бойовим досвідом.",
@@ -370,17 +417,31 @@
             gear: 'Яке речове забезпечення надає підрозділ?'
         };
 
+        // Scroll Reveal Effect
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.team-card').forEach(card => observer.observe(card));
+
         function toggleModal(show) {
+            playBeep(show ? 800 : 400);
             DOM.overlay.classList.toggle('active', show);
             document.body.classList.toggle('modal-open', show);
             if (!show) messagesRef.off();
         }
 
         function toggleCustomSelect() {
+            playBeep(700);
             DOM.squadWrapper.classList.toggle('open');
         }
 
         function selectOption(element, value) {
+            playBeep(900);
             document.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
             element.classList.add('selected');
             
@@ -397,6 +458,7 @@
 
         function handleSubmit(e) {
             e.preventDefault();
+            playBeep(1000);
             
             const nameInput = DOM.userName.value.trim();
             const contactInput = DOM.userContact.value.trim();
@@ -439,7 +501,6 @@
             });
         }
 
-        // Horizontal scroll with wheel
         if (DOM.quickTagsArea) {
             DOM.quickTagsArea.addEventListener('wheel', (evt) => {
                 evt.preventDefault();
@@ -450,7 +511,8 @@
         function sendMessage() {
             const messageText = DOM.chatInput.value.trim();
             if (!messageText) return;
-
+            
+            playBeep(650);
             messagesRef.push({
                 sender: globalSenderName,
                 text: messageText
@@ -459,21 +521,28 @@
             DOM.chatInput.value = '';
         }
 
+        function getCurrentTime() {
+            const now = new Date();
+            return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+        }
+
         function displayMessage(sender, text) {
+            playBeep(500, 0.03);
             const msgDiv = document.createElement('div');
+            const timeSpan = `<span class="msg-time">${getCurrentTime()}</span>`;
             
             if (sender === globalSenderName) {
                 msgDiv.className = 'message friend';
-                msgDiv.innerHTML = `<strong>Ви:</strong> ${escapeHtml(text)}`;
+                msgDiv.innerHTML = `<strong>Ви:</strong> ${escapeHtml(text)}${timeSpan}`;
             } else if (sender === "Система") {
                 msgDiv.className = 'message intercom';
                 msgDiv.style.background = 'rgba(234, 179, 8, 0.08)';
                 msgDiv.style.color = '#eab308';
                 msgDiv.style.borderLeft = '3px solid #eab308';
-                msgDiv.innerHTML = `<strong>${escapeHtml(text)}</strong>`;
+                msgDiv.innerHTML = `<strong>${escapeHtml(text)}</strong>${timeSpan}`;
             } else {
                 msgDiv.className = 'message intercom';
-                msgDiv.innerHTML = `<strong>${escapeHtml(sender)}:</strong> ${escapeHtml(text)}`;
+                msgDiv.innerHTML = `<strong>${escapeHtml(sender)}:</strong> ${escapeHtml(text)}${timeSpan}`;
             }
 
             DOM.chatMessages.appendChild(msgDiv);
@@ -496,6 +565,7 @@
         }
 
         function goBackToForm() {
+            playBeep(400);
             DOM.chatStage.classList.add('entrance'); 
 
             setTimeout(() => {
@@ -513,22 +583,43 @@
         function sendQuickQuestion(type) {
             if (!globalSenderName || globalSenderName === "Гість" || !BOT_RESPONSES[type]) return;
             
+            playBeep(700);
             messagesRef.push({
                 sender: globalSenderName,
                 text: QUESTIONS_TEXT[type]
             });
 
+            // Typing Indicator Before Reply
+            showTypingIndicator();
+
             setTimeout(() => {
+                removeTypingIndicator();
                 messagesRef.push({
                     sender: "Черговий інструктор",
                     text: BOT_RESPONSES[type]
                 });
-            }, 800);
+            }, 1200);
+        }
+
+        function showTypingIndicator() {
+            removeTypingIndicator();
+            const indicator = document.createElement('div');
+            indicator.id = 'typingIndicator';
+            indicator.className = 'typing-indicator';
+            indicator.innerHTML = '<span></span><span></span><span></span>';
+            DOM.chatMessages.appendChild(indicator);
+            DOM.chatMessages.scrollTop = DOM.chatMessages.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const existing = document.getElementById('typingIndicator');
+            if (existing) existing.remove();
         }
 
         function checkCryptoLink() {
             if (isCheckingCrypto) return;
             isCheckingCrypto = true;
+            playBeep(1200, 0.08);
             
             const btn = DOM.cryptoBtn;
             btn.innerText = "⏳ Сканування...";
@@ -537,6 +628,7 @@
             btn.style.borderColor = "rgba(234, 179, 8, 0.15)";
 
             setTimeout(() => {
+                playBeep(1500, 0.1);
                 btn.innerText = "⚡ Шихр: OK";
                 btn.style.color = "#22c55e";
                 btn.style.background = "rgba(34, 197, 94, 0.08)";
