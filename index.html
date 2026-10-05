@@ -129,7 +129,7 @@
         /* Modal Overlay & Window */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.85); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-window { width: 100%; max-width: 500px; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 16px; padding: 2rem; box-shadow: 0 25px 60px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
+        .modal-window { width: 100%; max-width: 520px; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 16px; padding: 2rem; box-shadow: 0 25px 60px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
 
         .fade-stage { opacity: 1; transform: translateY(0); transition: opacity 0.35s ease, transform 0.35s ease; }
         .fade-stage.hidden { opacity: 0; transform: translateY(-15px); pointer-events: none; position: absolute; width: calc(100% - 4rem); }
@@ -170,7 +170,6 @@
         }
         .btn-back-chat:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
 
-        /* Recruiter Actions Container */
         .recruiter-actions { display: none; gap: 6px; align-items: center; }
         
         .btn-candidates {
@@ -194,6 +193,8 @@
         .message .msg-time { display: block; font-size: 0.65rem; color: var(--text-subtle); margin-top: 4px; text-align: right; }
         .message.intercom { background: rgba(56, 189, 248, 0.06); color: var(--accent); align-self: flex-start; border-left: 3px solid var(--accent); }
         .message.friend { background: #1e293b; color: #f8fafc; align-self: flex-end; border-right: 3px solid var(--text-subtle); }
+        .message.approved { background: rgba(34, 197, 94, 0.1); color: #4ade80; align-self: center; border: 1px solid rgba(34, 197, 94, 0.3); width: 90%; text-align: center; }
+        .message.rejected { background: rgba(239, 68, 68, 0.1); color: #f87171; align-self: center; border: 1px solid rgba(239, 68, 68, 0.3); width: 90%; text-align: center; }
         
         /* Typing Indicator Animation */
         .typing-indicator { display: flex; gap: 4px; padding: 0.5rem 0.8rem; background: rgba(56, 189, 248, 0.06); border-radius: 8px; width: fit-content; border-left: 3px solid var(--accent); }
@@ -225,11 +226,25 @@
 
         /* Candidates List Stage */
         .candidates-list { height: 320px; overflow-y: auto; background: var(--bg-dark); border-radius: 8px; padding: 10px; border: 1px solid rgba(255, 255, 255, 0.05); margin-top: 10px; }
-        .candidate-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.15); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; text-align: left; }
-        .candidate-card h4 { color: #f8fafc; font-size: 0.95rem; margin-bottom: 4px; display: flex; justify-content: space-between; }
-        .candidate-card h4 span { font-size: 0.75rem; color: var(--text-subtle); font-weight: normal; }
-        .candidate-card p { color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; }
-        .candidate-card strong { color: var(--accent); }
+        .candidate-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.15); border-radius: 8px; padding: 12px; margin-bottom: 8px; text-align: left; display: flex; justify-content: space-between; align-items: center; }
+        .candidate-info h4 { color: #f8fafc; font-size: 0.95rem; margin-bottom: 4px; display: flex; gap: 8px; align-items: center; }
+        .candidate-info h4 span { font-size: 0.75rem; color: var(--text-subtle); font-weight: normal; }
+        .candidate-info p { color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; }
+        .candidate-info strong { color: var(--accent); }
+        
+        .candidate-actions { display: flex; gap: 6px; align-items: center; }
+        .btn-action-open { background: rgba(56, 189, 248, 0.15); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: all 0.2s; }
+        .btn-action-open:hover { background: var(--accent); color: var(--bg-dark); }
+
+        .btn-approve { background: rgba(34, 197, 94, 0.15); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.4); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-approve:hover { background: var(--status-online); color: #fff; box-shadow: 0 0 10px rgba(34, 197, 94, 0.4); }
+
+        .btn-reject { background: rgba(239, 68, 68, 0.15); color: var(--status-alert); border: 1px solid rgba(239, 68, 68, 0.4); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-reject:hover { background: var(--status-alert); color: #fff; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
+        
+        .status-badge { font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: bold; display: inline-block; margin-left: 6px; }
+        .status-badge.approved { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+        .status-badge.rejected { background: rgba(239, 68, 68, 0.2); color: #f87171; }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -373,7 +388,7 @@
                         <div style="display: flex; align-items: center; gap: 6px;">
                             <button class="btn-back-chat" onclick="goBackToForm()" title="Назад до анкети">←</button>
                             <span class="status-dot"></span>
-                            <span>Загальна лінія зв'язку</span>
+                            <span id="chatHeaderTitle">Персональний чат</span>
                         </div>
                         <div class="recruiter-actions" id="recruiterActions">
                             <button class="btn-candidates" onclick="openCandidatesList()">👥 Кандидати</button>
@@ -426,9 +441,13 @@
 
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const messagesRef = database.ref('messages');
         const candidatesRef = database.ref('candidates');
         
+        let currentRoomId = null;
+        let isRecruiter = false;
+        let globalSenderName = "Гість";
+        let isCheckingCrypto = false;
+
         // Audio Effects (Web Audio API Synthesizer)
         const playBeep = (freq = 600, duration = 0.05) => {
             try {
@@ -459,13 +478,10 @@
             userSquad: document.getElementById('userSquad'),
             squadWrapper: document.getElementById('squadSelectWrapper'),
             recruiterActions: document.getElementById('recruiterActions'),
-            chatPartnerTitle: document.querySelector('#chatPartner span:not(.status-dot)'),
+            chatHeaderTitle: document.getElementById('chatHeaderTitle'),
             cryptoBtn: document.getElementById('cryptoBtn'),
             quickTagsArea: document.getElementById('quickTagsArea')
         };
-        
-        let globalSenderName = "Гість";
-        let isCheckingCrypto = false;
 
         const BOT_RESPONSES = {
             docs: "📋 Довідка Чергової частини: Для підписання контракту необхідні: Паспорт/ID-картка, податковий код (ІПН), військовий квиток або приписне (за наявності), а також документи про освіту. Для іноземних добровольців — чистий закордонний паспорт та підтвердження легального перебування.",
@@ -494,8 +510,8 @@
             playBeep(show ? 800 : 400);
             DOM.overlay.classList.toggle('active', show);
             document.body.classList.toggle('modal-open', show);
-            if (!show) {
-                messagesRef.off();
+            if (!show && currentRoomId) {
+                database.ref('rooms/' + currentRoomId).off();
             }
         }
 
@@ -529,47 +545,65 @@
             const squadInput = DOM.userSquad.value;
 
             globalSenderName = nameInput;
+            isRecruiter = (nameInput.toUpperCase() === 'REK' && contactInput.toUpperCase() === 'REK');
 
             DOM.formStage.classList.add('hidden');
 
             setTimeout(() => {
                 DOM.formStage.style.display = 'none';
-                DOM.chatStage.style.display = 'block';
                 
-                setTimeout(() => {
-                    DOM.chatStage.classList.remove('entrance');
-                }, 20);
+                if (isRecruiter) {
+                    DOM.recruiterActions.style.display = 'flex';
+                    openCandidatesList();
+                } else {
+                    // Check local session room or create new unique room for this candidate
+                    let existingRoom = localStorage.getItem('strike_chat_room_id');
+                    if (!existingRoom) {
+                        existingRoom = 'room_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+                        localStorage.setItem('strike_chat_room_id', existingRoom);
+                        
+                        // Register candidate in database
+                        candidatesRef.child(existingRoom).set({
+                            id: existingRoom,
+                            name: nameInput,
+                            contact: contactInput,
+                            squad: squadInput,
+                            status: 'pending',
+                            timestamp: new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })
+                        });
+                    }
+                    
+                    DOM.recruiterActions.style.display = 'none';
+                    openChatRoom(existingRoom, `Лінія зв'язку: ${nameInput}`);
+                }
             }, 350);
+        }
 
-            const isRecruiter = nameInput.toUpperCase() === 'REK' && contactInput.toUpperCase() === 'REK';
-            DOM.recruiterActions.style.display = isRecruiter ? 'flex' : 'none';
-            DOM.chatPartnerTitle.innerText = isRecruiter ? "Панель рекрутера" : "Загальна лінія зв'язку";
-
-            if (!isRecruiter) {
-                // Save to Messages
-                messagesRef.push({
-                    sender: "Система",
-                    text: `Кандидат [${nameInput}] цікавиться підрозділом: "${squadInput}". Контакт для зв'язку: ${contactInput}`
-                });
-
-                // Save to Candidates DB list for Recruiter
-                candidatesRef.push({
-                    name: nameInput,
-                    contact: contactInput,
-                    squad: squadInput,
-                    timestamp: new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })
-                });
+        function openChatRoom(roomId, roomTitle) {
+            if (currentRoomId) {
+                database.ref('rooms/' + currentRoomId).off();
             }
 
+            currentRoomId = roomId;
+            DOM.chatHeaderTitle.innerText = roomTitle;
             DOM.chatMessages.innerHTML = '';
-            messagesRef.off(); 
+
+            DOM.candidatesStage.style.display = 'none';
+            DOM.chatStage.style.display = 'block';
             
-            messagesRef.limitToLast(50).on('child_added', (snapshot) => {
+            setTimeout(() => {
+                DOM.chatStage.classList.remove('entrance');
+                DOM.chatStage.classList.remove('hidden');
+            }, 20);
+
+            const roomRef = database.ref('rooms/' + roomId);
+            
+            roomRef.limitToLast(50).on('child_added', (snapshot) => {
                 const data = snapshot.val();
-                if (data) displayMessage(data.sender, data.text);
+                if (data) displayMessage(data.sender, data.text, data.type);
             });
 
-            messagesRef.on('value', (snapshot) => {
+            roomRef.on('value', (snapshot) => {
                 if (!snapshot.exists()) DOM.chatMessages.innerHTML = '';
             });
         }
@@ -583,12 +617,13 @@
 
         function sendMessage() {
             const messageText = DOM.chatInput.value.trim();
-            if (!messageText) return;
+            if (!messageText || !currentRoomId) return;
             
             playBeep(650);
-            messagesRef.push({
-                sender: globalSenderName,
-                text: messageText
+            database.ref('rooms/' + currentRoomId).push({
+                sender: isRecruiter ? "Рекрутер" : globalSenderName,
+                text: messageText,
+                type: 'normal'
             });
 
             DOM.chatInput.value = '';
@@ -599,20 +634,20 @@
             return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
         }
 
-        function displayMessage(sender, text) {
+        function displayMessage(sender, text, type = 'normal') {
             playBeep(500, 0.03);
             const msgDiv = document.createElement('div');
             const timeSpan = `<span class="msg-time">${getCurrentTime()}</span>`;
             
-            if (sender === globalSenderName) {
+            if (type === 'approved') {
+                msgDiv.className = 'message approved';
+                msgDiv.innerHTML = `<strong>✅ ${escapeHtml(text)}</strong>${timeSpan}`;
+            } else if (type === 'rejected') {
+                msgDiv.className = 'message rejected';
+                msgDiv.innerHTML = `<strong>❌ ${escapeHtml(text)}</strong>${timeSpan}`;
+            } else if (sender === globalSenderName || (isRecruiter && sender === "Рекрутер")) {
                 msgDiv.className = 'message friend';
                 msgDiv.innerHTML = `<strong>Ви:</strong> ${escapeHtml(text)}${timeSpan}`;
-            } else if (sender === "Система") {
-                msgDiv.className = 'message intercom';
-                msgDiv.style.background = 'rgba(234, 179, 8, 0.08)';
-                msgDiv.style.color = '#eab308';
-                msgDiv.style.borderLeft = '3px solid #eab308';
-                msgDiv.innerHTML = `<strong>${escapeHtml(text)}</strong>${timeSpan}`;
             } else {
                 msgDiv.className = 'message intercom';
                 msgDiv.innerHTML = `<strong>${escapeHtml(sender)}:</strong> ${escapeHtml(text)}${timeSpan}`;
@@ -630,14 +665,14 @@
             if (e.key === 'Enter') sendMessage();
         }
 
-        /* Direct Instant Clear without Browser Confirm Alert */
         function directClearChat() {
+            if (!currentRoomId) return;
             playBeep(300, 0.1);
-            messagesRef.remove();
+            database.ref('rooms/' + currentRoomId).remove();
             DOM.chatMessages.innerHTML = '';
         }
 
-        /* Open Candidates List Stage for REK */
+        /* Candidates Management for Recruiter */
         function openCandidatesList() {
             playBeep(750);
             DOM.chatStage.classList.add('hidden');
@@ -648,11 +683,11 @@
                 
                 setTimeout(() => {
                     DOM.candidatesStage.classList.remove('entrance');
+                    DOM.candidatesStage.classList.remove('hidden');
                 }, 20);
             }, 350);
 
-            // Load candidates list from Firebase
-            candidatesRef.once('value', (snapshot) => {
+            candidatesRef.on('value', (snapshot) => {
                 DOM.candidatesListContainer.innerHTML = '';
                 if (!snapshot.exists()) {
                     DOM.candidatesListContainer.innerHTML = '<p style="text-align: center; color: var(--text-subtle); margin-top: 2rem;">Список кандидатів порожній.</p>';
@@ -663,36 +698,71 @@
                     const c = child.val();
                     const card = document.createElement('div');
                     card.className = 'candidate-card';
+                    
+                    let statusHtml = '';
+                    if (c.status === 'approved') {
+                        statusHtml = '<span class="status-badge approved">Прийнято</span>';
+                    } else if (c.status === 'rejected') {
+                        statusHtml = '<span class="status-badge rejected">Відхилено</span>';
+                    }
+
                     card.innerHTML = `
-                        <h4>${escapeHtml(c.name || 'Анонім')} <span>${c.timestamp || ''}</span></h4>
-                        <p><strong>Контакт:</strong> ${escapeHtml(c.contact || '-')}</p>
-                        <p><strong>Підрозділ:</strong> ${escapeHtml(c.squad || '-')}</p>
+                        <div class="candidate-info">
+                            <h4>${escapeHtml(c.name || 'Анонім')} ${statusHtml} <span>${c.timestamp || ''}</span></h4>
+                            <p><strong>Контакт:</strong> ${escapeHtml(c.contact || '-')}</p>
+                            <p><strong>Підрозділ:</strong> ${escapeHtml(c.squad || '-')}</p>
+                        </div>
+                        <div class="candidate-actions">
+                            <button class="btn-action-open" onclick="openChatRoom('${c.id}', 'Чат: ${escapeHtml(c.name)}')">💬 Чат</button>
+                            <button class="btn-approve" title="Прийняти кандидата" onclick="setCandidateStatus('${c.id}', '${escapeHtml(c.name)}', 'approved')">✔</button>
+                            <button class="btn-reject" title="Відхилити кандидата" onclick="setCandidateStatus('${c.id}', '${escapeHtml(c.name)}', 'rejected')">✖</button>
+                        </div>
                     `;
                     DOM.candidatesListContainer.prepend(card);
                 });
             });
         }
 
+        function setCandidateStatus(roomId, candidateName, status) {
+            playBeep(status === 'approved' ? 900 : 300);
+            
+            candidatesRef.child(roomId).update({ status: status });
+
+            const statusText = status === 'approved' 
+                ? `Рекрутер розглянув вашу заявку: ВАС ПРИЙНЯТО ДО СКЛАДУ! Очікуйте на подальші інструкції.`
+                : `Рекрутер розглянув вашу заявку: На жаль, вашу кандидатуру ВІДХИЛЕНО.`;
+
+            database.ref('rooms/' + roomId).push({
+                sender: "Штаб Рекрутингу",
+                text: statusText,
+                type: status
+            });
+        }
+
         function backToChatFromCandidates() {
             playBeep(400);
-            DOM.candidatesStage.classList.add('entrance');
-            
-            setTimeout(() => {
-                DOM.candidatesStage.style.display = 'none';
-                DOM.chatStage.style.display = 'block';
-                
+            if (currentRoomId) {
+                DOM.candidatesStage.classList.add('entrance');
                 setTimeout(() => {
-                    DOM.chatStage.classList.remove('hidden');
-                }, 20);
-            }, 350);
+                    DOM.candidatesStage.style.display = 'none';
+                    DOM.chatStage.style.display = 'block';
+                    setTimeout(() => {
+                        DOM.chatStage.classList.remove('hidden');
+                    }, 20);
+                }, 350);
+            } else {
+                goBackToForm();
+            }
         }
 
         function goBackToForm() {
             playBeep(400);
             DOM.chatStage.classList.add('entrance'); 
+            DOM.candidatesStage.classList.add('entrance');
 
             setTimeout(() => {
                 DOM.chatStage.style.display = 'none';
+                DOM.candidatesStage.style.display = 'none';
                 DOM.formStage.style.display = 'block';
                 
                 setTimeout(() => {
@@ -700,25 +770,29 @@
                 }, 20);
             }, 350);
 
-            messagesRef.off();
+            if (currentRoomId) {
+                database.ref('rooms/' + currentRoomId).off();
+            }
         }
 
         function sendQuickQuestion(type) {
-            if (!globalSenderName || globalSenderName === "Гість" || !BOT_RESPONSES[type]) return;
+            if (!currentRoomId || !BOT_RESPONSES[type]) return;
             
             playBeep(700);
-            messagesRef.push({
+            database.ref('rooms/' + currentRoomId).push({
                 sender: globalSenderName,
-                text: QUESTIONS_TEXT[type]
+                text: QUESTIONS_TEXT[type],
+                type: 'normal'
             });
 
             showTypingIndicator();
 
             setTimeout(() => {
                 removeTypingIndicator();
-                messagesRef.push({
+                database.ref('rooms/' + currentRoomId).push({
                     sender: "Черговий інструктор",
-                    text: BOT_RESPONSES[type]
+                    text: BOT_RESPONSES[type],
+                    type: 'normal'
                 });
             }, 1200);
         }
