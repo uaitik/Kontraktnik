@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Рекрутинг до Інтернаціональних бригад ЗСУ">
-    <title>Strike — Рекрутинг</title> 
+    <title>Strike — Рекрутинговий Центр</title> 
     <link class="site-icon" rel="icon" type="image/png" href="strike.jpg">
 
     <style>
@@ -32,7 +32,7 @@
         body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
         body.modal-open { overflow: hidden; }
 
-        button { font-family: inherit; user-select: none; -webkit-tap-highlight-color: transparent; }
+        button, select { font-family: inherit; user-select: none; -webkit-tap-highlight-color: transparent; }
 
         /* Navbar */
         .navbar { 
@@ -42,13 +42,13 @@
             padding: 1rem 3rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
         }
         .logo { font-size: 1.1rem; font-weight: bold; color: var(--text-muted); text-decoration: none; letter-spacing: 1px; text-transform: uppercase; }
-        .nav-links { display: flex; list-style: none; gap: 2.5rem; }
+        .nav-links { display: flex; list-style: none; gap: 2rem; }
         .nav-links a { color: var(--text-subtle); text-decoration: none; font-weight: 500; transition: color var(--transition-speed) ease; }
         .nav-links a:hover { color: #f8fafc; }
         
         /* Hero Section & Tactical Overlay */
         .video-container { position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 6rem 2rem 4rem 2rem; overflow: hidden; }
-        .bg-video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); object-fit: cover; z-index: 1; opacity: 0.4; }
+        .bg-video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); object-fit: cover; z-index: 1; opacity: 0.35; }
         .video-overlay { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             background: linear-gradient(180deg, rgba(10, 15, 26, 0.6) 0%, rgba(10, 15, 26, 0.95) 100%),
@@ -64,10 +64,10 @@
         }
         
         .main-content { position: relative; z-index: 3; text-align: center; max-width: 1400px; width: 100%; }
-        h1 { font-size: 3.8rem; margin-bottom: 2rem; color: var(--text-heading); text-shadow: 0 0 30px rgba(0, 0, 0, 0.9); font-weight: 800; letter-spacing: 1px; }
+        h1 { font-size: 3.8rem; margin-bottom: 1.5rem; color: var(--text-heading); text-shadow: 0 0 30px rgba(0, 0, 0, 0.9); font-weight: 800; letter-spacing: 1px; }
 
         .btn-main-trigger { 
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(56, 189, 248, 0.05)); 
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(56, 189, 248, 0.05)); 
             color: var(--accent); border: 1px solid var(--accent-border); 
             padding: 1.2rem 3rem; font-size: 1.2rem; font-weight: 700; letter-spacing: 1.5px; 
             text-transform: uppercase; border-radius: 10px; cursor: pointer; transition: all var(--transition-speed); 
@@ -98,8 +98,37 @@
         .footer-note span { animation: blink 1.5s infinite; color: var(--status-alert); }
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
+        /* Interactive Pay Calculator Section */
+        .calculator-section { background: var(--bg-deep); padding: 5rem 2rem; border-top: 1px solid rgba(255, 255, 255, 0.03); display: flex; justify-content: center; }
+        .calc-container { max-width: 1000px; width: 100%; background: var(--bg-card); border: 1px solid var(--accent-border); border-radius: 16px; padding: 2.5rem; backdrop-filter: blur(10px); }
+        .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
+        @media (max-width: 768px) { .calc-grid { grid-template-columns: 1fr; } }
+        
+        .calc-input-group label { display: block; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .calc-select { width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 1rem; }
+        .calc-result-box { background: rgba(10, 15, 26, 0.8); border: 1px solid var(--accent); border-radius: 12px; padding: 1.5rem; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .calc-amount { font-size: 2.8rem; font-weight: 800; color: var(--status-online); text-shadow: 0 0 15px rgba(34, 197, 94, 0.3); margin: 0.5rem 0; }
+
+        /* Recruitment Steps Section */
+        .steps-section { padding: 5rem 2rem; max-width: 1300px; margin: 0 auto; text-align: center; }
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+        .step-card { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 2rem; text-align: left; position: relative; overflow: hidden; }
+        .step-num { font-size: 3.5rem; font-weight: 900; color: rgba(56, 189, 248, 0.15); position: absolute; top: 10px; right: 15px; }
+        .step-card h4 { color: var(--text-heading); font-size: 1.2rem; margin-bottom: 0.75rem; font-weight: 700; }
+        .step-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
+
+        /* FAQ Accordion Section */
+        .faq-section { background: var(--bg-deep); padding: 5rem 2rem; border-top: 1px solid rgba(255, 255, 255, 0.03); display: flex; justify-content: center; }
+        .faq-container { max-width: 900px; width: 100%; }
+        .faq-item { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 10px; margin-bottom: 1rem; overflow: hidden; }
+        .faq-header { padding: 1.2rem 1.5rem; color: var(--text-heading); font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
+        .faq-header:hover { background: rgba(56, 189, 248, 0.05); }
+        .faq-body { padding: 0 1.5rem 1.2rem 1.5rem; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; display: none; }
+        .faq-item.active .faq-body { display: block; }
+        .faq-item.active .faq-header { color: var(--accent); }
+
         /* Info Section & Footer */
-        .info-section { position: relative; padding: 6rem 2rem; background: var(--bg-deep); display: flex; justify-content: center; border-top: 1px solid rgba(255, 255, 255, 0.02); }
+        .info-section { position: relative; padding: 5rem 2rem; background: var(--bg-dark); display: flex; justify-content: center; border-top: 1px solid rgba(255, 255, 255, 0.02); }
         .info-container { max-width: 1200px; width: 100%; text-align: left; }
         .info-container h2 { font-size: 2.2rem; color: var(--text-heading); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
         .info-container p { color: var(--text-muted); font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem; }
@@ -126,11 +155,9 @@
         .custom-option:hover { background: var(--accent-light); color: var(--accent); }
         .custom-option.selected { background: rgba(56, 189, 248, 0.15); color: var(--accent); font-weight: 600; }
 
-        /* Modal Overlay & Expanded Window */
+        /* Modal Overlay & Window */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.85); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; padding: 1rem; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        
-        /* Expanded modal container to 720px for better workspace */
         .modal-window { width: 100%; max-width: 720px; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 16px; padding: 2.2rem; box-shadow: 0 25px 60px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
 
         .fade-stage { opacity: 1; transform: translateY(0); transition: opacity 0.35s ease, transform 0.35s ease; }
@@ -159,7 +186,7 @@
         }
         .close-modal:hover { color: #f8fafc; background: rgba(239, 68, 68, 0.2); border-color: var(--status-alert); transform: rotate(90deg); }
 
-        /* Expanded Chat UI (Height set to 440px) */
+        /* Chat UI */
         .chat-container { width: 100%; height: 440px; display: flex; flex-direction: column; background: var(--bg-dark); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; overflow: hidden; margin-top: 0.5rem; }
         .chat-header { background: #1e293b; padding: 0.85rem 1.2rem; font-size: 0.9rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
         .chat-header .status-dot { width: 8px; height: 8px; background: var(--status-online); border-radius: 50%; box-shadow: 0 0 6px var(--status-online); display: inline-block; }
@@ -193,6 +220,8 @@
         .chat-messages { flex: 1; padding: 1.2rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.9rem; background: var(--bg-deep); }
         .message { max-width: 80%; padding: 0.7rem 1rem; border-radius: 8px; font-size: 0.92rem; line-height: 1.45; word-break: break-word; position: relative; }
         .message .msg-time { display: block; font-size: 0.65rem; color: var(--text-subtle); margin-top: 4px; text-align: right; }
+        .message .msg-status { font-size: 0.7rem; margin-left: 4px; color: var(--accent); }
+        
         .message.intercom { background: rgba(56, 189, 248, 0.06); color: var(--accent); align-self: flex-start; border-left: 3px solid var(--accent); }
         .message.friend { background: #1e293b; color: #f8fafc; align-self: flex-end; border-right: 3px solid var(--text-subtle); }
         .message.approved { background: rgba(34, 197, 94, 0.1); color: #4ade80; align-self: center; border: 1px solid rgba(34, 197, 94, 0.3); width: 95%; text-align: center; }
@@ -224,7 +253,7 @@
         .btn-send { background: linear-gradient(135deg, #1e293b, #0f172a); color: var(--accent); border: none; border-left: 1px solid rgba(255,255,255,0.05); padding: 0 1.6rem; cursor: pointer; font-weight: bold; transition: all 0.2s; font-size: 0.9rem; }
         .btn-send:hover { background: var(--accent); color: var(--bg-dark); }
 
-        /* Expanded Candidates List Stage */
+        /* Candidates List Stage */
         .candidates-list { height: 380px; overflow-y: auto; background: var(--bg-dark); border-radius: 8px; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.05); margin-top: 10px; }
         .candidate-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.15); border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; text-align: left; display: flex; justify-content: space-between; align-items: center; }
         .candidate-info h4 { color: #f8fafc; font-size: 1rem; margin-bottom: 4px; display: flex; gap: 10px; align-items: center; }
@@ -251,11 +280,12 @@
 <body>
 
     <nav class="navbar">
-        <a href="#" class="logo">Долучись до Інтернаціональних бригад ЗСУ</a>
+        <a href="#" class="logo">Strike — Рекрутинг ЗСУ</a>
         <ul class="nav-links">
             <li><a href="#">Головна</a></li>
-            <li><a href="#about">Про нас</a></li>
-            <li><a href="#more">Більше</a></li>
+            <li><a href="#calc">Калькулятор</a></li>
+            <li><a href="#steps">Етапи</a></li>
+            <li><a href="#faq">FAQ</a></li>
             <li><a href="#contacts">Контакт</a></li>
         </ul>
     </nav>
@@ -268,9 +298,9 @@
         <div class="tactical-grid"></div>
 
         <main class="main-content">
-            <h1>Готовий Підписати Контракт</h1>
+            <h1>Твій шлях до професійного підрозділу</h1>
             
-            <button class="btn-main-trigger" onclick="toggleModal(true)">Вривайся до нас →</button>
+            <button class="btn-main-trigger" onclick="toggleModal(true)">Подати заявку зараз →</button>
             
             <div class="cards-grid">
                 <div class="team-card">
@@ -309,14 +339,87 @@
         </main>
     </div>
 
-    <section class="info-section" id="about">
-        <div class="info-container">
-            <h2>Про наші підрозділи</h2>
-            <p>Інтернаціональні бригади об'єднують досвідчених бійців та добровольців з усього світу, які стали на захист свободи. Ми забезпечуємо найвищий рівень підготовки, сучасне озброєння та повну інтеграцію у структуру Збройних Сил України.</p>
+    <!-- CALCULATOR SECTION -->
+    <section class="calculator-section" id="calc">
+        <div class="calc-container">
+            <h2 style="color: var(--text-heading); font-size: 2rem; text-transform: uppercase; text-align: center;">Калькулятор грошового забезпечення</h2>
+            <p style="color: var(--text-muted); text-align: center; margin-top: 0.5rem;">Розрахуй свій щомісячний дохід залежно від обраної спеціальності та зони виконання завдань.</p>
             
-            <div id="more" style="padding-top: 2rem;">
-                <h2>Більше інформації про умови контракту</h2>
-                <p>Офіційне оформлення через Міністерство оборони України. Всім рекрутам надається повне речове та медичне забезпечення, а також інтенсивний курс підготовки (БЗВП) під керівництвом інструкторів із реальним бойовим досвідом.</p>
+            <div class="calc-grid">
+                <div>
+                    <div class="calc-input-group" style="margin-bottom: 1.2rem;">
+                        <label>Обирай спеціалізацію:</label>
+                        <select id="roleSelect" class="calc-select" onchange="calculatePay()">
+                            <option value="20000">Стрілець / Піхота</option>
+                            <option value="25000">Оператор БПЛА (FPV)</option>
+                            <option value="23000">Бойовий Медик</option>
+                            <option value="28000">Артилерист / Механік</option>
+                        </select>
+                    </div>
+                    <div class="calc-input-group">
+                        <label>Зона виконання завдань:</label>
+                        <select id="zoneSelect" class="calc-select" onchange="calculatePay()">
+                            <option value="0">Тил / Навчальний центр (+0 грн)</option>
+                            <option value="30000">Завдання в зоні бойових дій (+30 000 грн)</option>
+                            <option value="100000">Передній край / ЛБЗ (+100 000 грн)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="calc-result-box">
+                    <span style="color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase;">Орієнтовний дохід на місяць:</span>
+                    <div class="calc-amount" id="totalPay">20,000 грн</div>
+                    <span style="color: var(--text-subtle); font-size: 0.8rem;">+ Повний пакет соц. забезпечення та медичного страхування</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RECRUITMENT STEPS -->
+    <section class="steps-section" id="steps">
+        <h2 style="color: var(--text-heading); font-size: 2.2rem; text-transform: uppercase;">Етапи Долучення До Лав</h2>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">Від подачі онлайн-заявки до першого виходу на бойове злагодження</p>
+
+        <div class="steps-grid">
+            <div class="step-card">
+                <span class="step-num">01</span>
+                <h4>Подача Заявки</h4>
+                <p>Заповнюйте анкету у модальному вікні та переходьте до прямого зв'язку з рекрутером.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-num">02</span>
+                <h4>Співбесіда & МЕК</h4>
+                <p>Проходження онлайн-інтерв'ю та збір первинного пакета медичних документів.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-num">03</span>
+                <h4>Курс БЗВП (30-40 днів)</h4>
+                <p>Інтенсивна вишколова програма з вогневої, тактичної та медичної підготовки.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-num">04</span>
+                <h4>Підписання Контракту</h4>
+                <p>Офіційне зарахування до обраної бригади ЗСУ та отримання спорядження.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section class="faq-section" id="faq">
+        <div class="faq-container">
+            <h2 style="color: var(--text-heading); font-size: 2rem; text-transform: uppercase; text-align: center; margin-bottom: 2rem;">Часті запитання (FAQ)</h2>
+            
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-header">1. Чи можу я підписати контракт, якщо я іноземний громадянин? <span>+</span></div>
+                <div class="faq-body">Так, Інтернаціональні бригади офіційно приймають іноземних громадян та осіб без громадянства відповідно до чинного законодавства України.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-header">2. Які вимоги до фізичної підготовки та віку? <span>+</span></div>
+                <div class="faq-body">Віковий поріг — від 18 до 60 років. Вимагається відсутність важких хронічних захворювань та задовільний базовий рівень фізичної витривалості.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-header">3. Скільки триває контракт і чи є відпустка? <span>+</span></div>
+                <div class="faq-body">Контракт укладається терміном від 1 року або до закінчення воєнного стану. Надається щорічна оплачувана відпустка та додаткові дні за сімейними обставинами.</div>
             </div>
         </div>
     </section>
@@ -336,8 +439,8 @@
                 </ul>
             </div>
             <div class="footer-block">
-                <h4>Безпека даних</h4>
-                <p style="color: #475569; font-size: 0.85rem;">Усі повідомлення та анкети проходять через захищені протоколи шифрування кінцевих точок баз даних. Ваша приватність повністю захищена.</p>
+                <h4>Шифрування</h4>
+                <p style="color: #475569; font-size: 0.85rem;">Усі повідомлення проходять через захищені протоколи кінцевого шифрування баз даних. Ваша приватність повністю захищена.</p>
             </div>
         </div>
     </footer>
@@ -400,6 +503,7 @@
                         <button onclick="sendQuickQuestion('docs')">📋 Документи?</button>
                         <button onclick="sendQuickQuestion('training')">🪖 Навчання?</button>
                         <button onclick="sendQuickQuestion('gear')">📦 Забезпечення?</button>
+                        <button onclick="sendQuickQuestion('pay')">💰 Виплати?</button>
                         <button id="cryptoBtn" onclick="checkCryptoLink()">🔐 Лінія: Захищена</button>
                     </div>
 
@@ -484,16 +588,32 @@
         };
 
         const BOT_RESPONSES = {
-            docs: "📋 Довідка Чергової частини: Для підписання контракту необхідні: Паспорт/ID-картка, податковий код (ІПН), військовий квиток або приписне (за наявності), а також документи про освіту. Для іноземних добровольців — чистий закордонний паспорт та підтвердження легального перебування.",
-            training: "🪖 Навчальний Центр: Базовий курс військової підготовки (БЗВП) триває від 30 до 40 діб залежно від обраної спеціалізації. Навчання включає вогневу, тактичну медицину (TCCC), топографію та злагодження під керівництвом інструкторів з бойовим досвідом.",
-            gear: "📦 Логістичне забезпечення: Підрозділ повністю забезпечує бійця сучасною формою (за сезоном), бронежилетом 4+ класу захисту, балістичним шоломом, тактичним розвантаженням, аптечкою стандарту НАТО та закріпленою індивідуальною зброєю."
+            docs: "📋 Довідка Чергової частини: Для підписання контракту необхідні: Паспорт/ID-картка, податковий код (ІПН), військовий квиток або приписне (за наявності). Для іноземців — закордонний паспорт.",
+            training: "🪖 Навчальний Центр: Базовий курс військової підготовки (БЗВП) триває від 30 до 40 діб. Включає вогневу, тактичну медицину (TCCC) та роботу з дронами.",
+            gear: "📦 Логістичне забезпечення: Надається повне речове майно, шолом, бронежилет 4+ класу, НАТО-аптечка та закріплена зброя.",
+            pay: "💰 Грошове забезпечення: Базова ставка від 20 000 грн + надбавки від 30 000 до 100 000 грн за виконання бойових завдань на передньому краї."
         };
 
         const QUESTIONS_TEXT = {
             docs: 'Які документи необхідні для оформлення контракту?',
             training: 'Скільки триває базовий курс підготовки (БЗВП)?',
-            gear: 'Яке речове забезпечення надає підрозділ?'
+            gear: 'Яке речове забезпечення надає підрозділ?',
+            pay: 'Яка заробітна плата та надбавки передбачені?'
         };
+
+        // Calculator Logic
+        function calculatePay() {
+            const roleVal = parseInt(document.getElementById('roleSelect').value) || 0;
+            const zoneVal = parseInt(document.getElementById('zoneSelect').value) || 0;
+            const total = roleVal + zoneVal;
+            document.getElementById('totalPay').innerText = total.toLocaleString('uk-UA') + ' грн';
+        }
+
+        // Accordion FAQ Logic
+        function toggleFaq(element) {
+            playBeep(700, 0.03);
+            element.classList.toggle('active');
+        }
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -602,13 +722,6 @@
             });
         }
 
-        if (DOM.quickTagsArea) {
-            DOM.quickTagsArea.addEventListener('wheel', (evt) => {
-                evt.preventDefault();
-                DOM.quickTagsArea.scrollLeft += evt.deltaY;
-            });
-        }
-
         function sendMessage() {
             const messageText = DOM.chatInput.value.trim();
             if (!messageText || !currentRoomId) return;
@@ -631,7 +744,7 @@
         function displayMessage(sender, text, type = 'normal') {
             playBeep(500, 0.03);
             const msgDiv = document.createElement('div');
-            const timeSpan = `<span class="msg-time">${getCurrentTime()}</span>`;
+            const timeSpan = `<span class="msg-time">${getCurrentTime()} <span class="msg-status">✓✓</span></span>`;
             
             if (type === 'approved') {
                 msgDiv.className = 'message approved';
@@ -686,7 +799,7 @@
                 
                 if (!snapshot.exists()) {
                     DOM.candidatesCount.innerText = "0";
-                    DOM.candidatesListContainer.innerHTML = '<p style="text-align: center; color: var(--text-subtle); margin-top: 3rem;">Усі заявки опрацьовані. Кандидатів немає.</p>';
+                    DOM.candidatesListContainer.innerHTML = '<p style="text-align: center; color: var(--text-subtle); margin-top: 3rem;">Усі заявки опраційовані. Кандидатів немає.</p>';
                     return;
                 }
 
@@ -723,14 +836,12 @@
                 ? `Рекрутер розглянув вашу заявку: ВАС ПРИЙНЯТО ДО СКЛАДУ! Очікуйте на подальші інструкції у цьому чаті.`
                 : `Рекрутер розглянув вашу заявку: На жаль, вашу кандидатуру ВІДХИЛЕНО.`;
 
-            // 1. Відправляємо рішення в особистий чат кандидата
             database.ref('rooms/' + roomId).push({
                 sender: "Штаб Рекрутингу",
                 text: statusText,
                 type: decision
             });
 
-            // 2. Видаляємо кандидата зі списку активних
             candidatesRef.child(roomId).remove();
         }
 
