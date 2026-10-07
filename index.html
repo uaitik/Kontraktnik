@@ -98,7 +98,7 @@
         .footer-note span { animation: blink 1.5s infinite; color: var(--status-alert); }
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        /* Interactive Pay Calculator Section */
+        /* Pay Calculator Section */
         .calculator-section { background: var(--bg-deep); padding: 5rem 2rem; border-top: 1px solid rgba(255, 255, 255, 0.03); display: flex; justify-content: center; }
         .calc-container { max-width: 1000px; width: 100%; background: var(--bg-card); border: 1px solid var(--accent-border); border-radius: 16px; padding: 2.5rem; backdrop-filter: blur(10px); }
         .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
@@ -117,7 +117,7 @@
         .step-card h4 { color: var(--text-heading); font-size: 1.2rem; margin-bottom: 0.75rem; font-weight: 700; }
         .step-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
 
-        /* FAQ Accordion Section */
+        /* FAQ Section */
         .faq-section { background: var(--bg-deep); padding: 5rem 2rem; border-top: 1px solid rgba(255, 255, 255, 0.03); display: flex; justify-content: center; }
         .faq-container { max-width: 900px; width: 100%; }
         .faq-item { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 10px; margin-bottom: 1rem; overflow: hidden; }
@@ -127,12 +127,7 @@
         .faq-item.active .faq-body { display: block; }
         .faq-item.active .faq-header { color: var(--accent); }
 
-        /* Info Section & Footer */
-        .info-section { position: relative; padding: 5rem 2rem; background: var(--bg-dark); display: flex; justify-content: center; border-top: 1px solid rgba(255, 255, 255, 0.02); }
-        .info-container { max-width: 1200px; width: 100%; text-align: left; }
-        .info-container h2 { font-size: 2.2rem; color: var(--text-heading); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
-        .info-container p { color: var(--text-muted); font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem; }
-
+        /* Footer */
         .tactical-footer { background: var(--bg-footer); padding: 4rem 3rem; border-top: 1px solid rgba(56, 189, 248, 0.1); display: flex; justify-content: center; }
         .footer-content { max-width: 1400px; width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
         .footer-block { flex: 1; min-width: 280px; }
@@ -143,13 +138,27 @@
         .footer-links a { color: var(--accent); text-decoration: none; font-size: 0.95rem; transition: color 0.2s; }
         .footer-links a:hover { color: var(--accent-hover); }
 
-        /* Custom Select */
+        /* Custom Select with Scrollbar Fix */
         .custom-select-wrapper { position: relative; width: 100%; }
         .custom-select-trigger { width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f8fafc; font-size: 1rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
         .custom-select-trigger:after { content: ''; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid var(--text-muted); transition: transform 0.3s ease; }
         .custom-select-wrapper.open .custom-select-trigger { border-color: var(--accent); box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
         .custom-select-wrapper.open .custom-select-trigger:after { transform: rotate(180deg); }
-        .custom-options { position: absolute; top: calc(100% + 5px); left: 0; width: 100%; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-10px); transition: all 0.2s ease; z-index: 99; }
+        
+        .custom-options { 
+            position: absolute; top: calc(100% + 5px); left: 0; width: 100%; 
+            background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; visibility: hidden; pointer-events: none; 
+            transform: translateY(-10px); transition: all 0.2s ease; z-index: 99;
+            max-height: 180px; overflow-y: auto; /* Встановлено фіксовану висоту з ползунком */
+        }
+        
+        /* Скролбар для випадаючого списку */
+        .custom-options::-webkit-scrollbar { width: 6px; }
+        .custom-options::-webkit-scrollbar-track { background: rgba(10, 15, 26, 0.5); border-radius: 4px; }
+        .custom-options::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+        .custom-options { scrollbar-width: thin; scrollbar-color: var(--accent) rgba(10, 15, 26, 0.5); }
+
         .custom-select-wrapper.open .custom-options { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
         .custom-option { padding: 0.85rem 1rem; color: var(--text-main); cursor: pointer; transition: all 0.2s; font-size: 0.95rem; }
         .custom-option:hover { background: var(--accent-light); color: var(--accent); }
@@ -200,21 +209,10 @@
         .btn-back-chat:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
 
         .recruiter-actions { display: none; gap: 8px; align-items: center; }
-        
-        .btn-candidates {
-            background: rgba(56, 189, 248, 0.1); color: var(--accent);
-            border: 1px solid rgba(56, 189, 248, 0.3); padding: 6px 12px;
-            border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold;
-            transition: all 0.2s;
-        }
+        .btn-candidates { background: rgba(56, 189, 248, 0.1); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold; transition: all 0.2s; }
         .btn-candidates:hover { background: rgba(56, 189, 248, 0.25); border-color: var(--accent); }
 
-        .btn-clear-chat {
-            background: rgba(239, 68, 68, 0.15); color: var(--status-alert); 
-            border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px 12px; 
-            border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold;
-            transition: all 0.2s;
-        }
+        .btn-clear-chat { background: rgba(239, 68, 68, 0.15); color: var(--status-alert); border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold; transition: all 0.2s; }
         .btn-clear-chat:hover { background: var(--status-alert); color: #fff; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
 
         .chat-messages { flex: 1; padding: 1.2rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.9rem; background: var(--bg-deep); }
@@ -233,17 +231,8 @@
         .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
         @keyframes typing { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
 
-        .quick-tags-area { 
-            display: flex; gap: 8px; padding: 10px 12px; background: var(--bg-deep); 
-            border-top: 1px solid rgba(255,255,255,0.03); overflow-x: auto; 
-            white-space: nowrap; align-items: center;
-            scrollbar-width: thin; scrollbar-color: rgba(56, 189, 248, 0.2) transparent;
-        }
-        .quick-tags-area button {
-            flex-shrink: 0; background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(56, 189, 248, 0.02)); 
-            color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.2); padding: 6px 14px; border-radius: 6px; 
-            font-size: 0.8rem; cursor: pointer; transition: all 0.2s; font-weight: 600;
-        }
+        .quick-tags-area { display: flex; gap: 8px; padding: 10px 12px; background: var(--bg-deep); border-top: 1px solid rgba(255,255,255,0.03); overflow-x: auto; white-space: nowrap; align-items: center; scrollbar-width: thin; scrollbar-color: rgba(56, 189, 248, 0.2) transparent; }
+        .quick-tags-area button { flex-shrink: 0; background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(56, 189, 248, 0.02)); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.2); padding: 6px 14px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; font-weight: 600; }
         .quick-tags-area button:hover { background: rgba(56, 189, 248, 0.18); border-color: var(--accent); color: #f8fafc; }
         .quick-tags-area #cryptoBtn { margin-left: auto; background: rgba(34, 197, 94, 0.08); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.2); }
 
@@ -264,10 +253,8 @@
         .candidate-actions { display: flex; gap: 8px; align-items: center; }
         .btn-action-open { background: rgba(56, 189, 248, 0.15); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: bold; transition: all 0.2s; }
         .btn-action-open:hover { background: var(--accent); color: var(--bg-dark); }
-
         .btn-approve { background: rgba(34, 197, 94, 0.15); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.4); width: 34px; height: 34px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
         .btn-approve:hover { background: var(--status-online); color: #fff; box-shadow: 0 0 10px rgba(34, 197, 94, 0.4); }
-
         .btn-reject { background: rgba(239, 68, 68, 0.15); color: var(--status-alert); border: 1px solid rgba(239, 68, 68, 0.4); width: 34px; height: 34px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
         .btn-reject:hover { background: var(--status-alert); color: #fff; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
 
@@ -463,15 +450,34 @@
                         <input type="text" id="userContact" required placeholder="@username або номер">
                     </div>
                     
+                    <!-- Бажаний підрозділ зі скролбаром -->
                     <div class="form-group">
                         <label>Бажаний підрозділ</label>
                         <div class="custom-select-wrapper" id="squadSelectWrapper">
                             <input type="hidden" id="userSquad" value="1-й батальйон Вовкодав">
-                            <div class="custom-select-trigger" onclick="toggleCustomSelect()">1-й батальйон "Вовкодав"</div>
+                            <div class="custom-select-trigger" onclick="toggleCustomSelect('squadSelectWrapper')">1-й батальйон "Вовкодав"</div>
                             <div class="custom-options">
-                                <div class="custom-option selected" onclick="selectOption(this, '1-й батальйон Вовкодав')">1-й батальйон "Вовкодав"</div>
-                                <div class="custom-option" onclick="selectOption(this, 'Російський добровольчий корпус')">Російський добровольчий корпус</div>
-                                <div class="custom-option" onclick="selectOption(this, 'Норманська бригада')">Норманська бригада</div>
+                                <div class="custom-option selected" onclick="selectOption(this, 'squadSelectWrapper', 'userSquad', '1-й батальйон Вовкодав')">1-й батальйон "Вовкодав"</div>
+                                <div class="custom-option" onclick="selectOption(this, 'squadSelectWrapper', 'userSquad', 'Російський добровольчий корпус')">Російський добровольчий корпус</div>
+                                <div class="custom-option" onclick="selectOption(this, 'squadSelectWrapper', 'userSquad', 'Норманська бригада')">Норманська бригада</div>
+                                <div class="custom-option" onclick="selectOption(this, 'squadSelectWrapper', 'userSquad', 'Легіон Свобода Росії')">Легіон "Свобода Росії"</div>
+                                <div class="custom-option" onclick="selectOption(this, 'squadSelectWrapper', 'userSquad', 'Грузинський Національний Легіон')">Грузинський Національний Легіон</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Додатковий вибір напрямку/спеціальності -->
+                    <div class="form-group">
+                        <label>Військова спеціалізація</label>
+                        <div class="custom-select-wrapper" id="specSelectWrapper">
+                            <input type="hidden" id="userSpec" value="Піхота / Штурмовик">
+                            <div class="custom-select-trigger" onclick="toggleCustomSelect('specSelectWrapper')">Піхота / Штурмовик</div>
+                            <div class="custom-options">
+                                <div class="custom-option selected" onclick="selectOption(this, 'specSelectWrapper', 'userSpec', 'Піхота / Штурмовик')">Піхота / Штурмовик</div>
+                                <div class="custom-option" onclick="selectOption(this, 'specSelectWrapper', 'userSpec', 'Оператор БПЛА / РЕБ')">Оператор БПЛА / РЕБ</div>
+                                <div class="custom-option" onclick="selectOption(this, 'specSelectWrapper', 'userSpec', 'Тактичний Медик')">Тактичний Медик</div>
+                                <div class="custom-option" onclick="selectOption(this, 'specSelectWrapper', 'userSpec', 'Артилерія / Мінометник')">Артилерія / Мінометник</div>
+                                <div class="custom-option" onclick="selectOption(this, 'specSelectWrapper', 'userSpec', 'Водій / Механік-водій')">Водій / Механік-водій</div>
                             </div>
                         </div>
                     </div>
@@ -552,7 +558,6 @@
         let globalSenderName = "Гість";
         let isCheckingCrypto = false;
 
-        // Audio Effects Synthesizer
         const playBeep = (freq = 600, duration = 0.05) => {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -580,7 +585,7 @@
             userName: document.getElementById('userName'),
             userContact: document.getElementById('userContact'),
             userSquad: document.getElementById('userSquad'),
-            squadWrapper: document.getElementById('squadSelectWrapper'),
+            userSpec: document.getElementById('userSpec'),
             recruiterActions: document.getElementById('recruiterActions'),
             chatHeaderTitle: document.getElementById('chatHeaderTitle'),
             cryptoBtn: document.getElementById('cryptoBtn'),
@@ -601,7 +606,6 @@
             pay: 'Яка заробітна плата та надбавки передбачені?'
         };
 
-        // Calculator Logic
         function calculatePay() {
             const roleVal = parseInt(document.getElementById('roleSelect').value) || 0;
             const zoneVal = parseInt(document.getElementById('zoneSelect').value) || 0;
@@ -609,7 +613,6 @@
             document.getElementById('totalPay').innerText = total.toLocaleString('uk-UA') + ' грн';
         }
 
-        // Accordion FAQ Logic
         function toggleFaq(element) {
             playBeep(700, 0.03);
             element.classList.toggle('active');
@@ -632,24 +635,30 @@
             }
         }
 
-        function toggleCustomSelect() {
+        // Універсальний toggle для декількох випадаючих списків
+        function toggleCustomSelect(wrapperId) {
             playBeep(700);
-            DOM.squadWrapper.classList.toggle('open');
+            const wrapper = document.getElementById(wrapperId);
+            document.querySelectorAll('.custom-select-wrapper').forEach(w => {
+                if (w !== wrapper) w.classList.remove('open');
+            });
+            wrapper.classList.toggle('open');
         }
 
-        function selectOption(element, value) {
+        function selectOption(element, wrapperId, inputId, value) {
             playBeep(900);
-            document.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
+            const wrapper = document.getElementById(wrapperId);
+            wrapper.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
             element.classList.add('selected');
             
-            DOM.squadWrapper.querySelector('.custom-select-trigger').innerText = element.innerText;
-            DOM.userSquad.value = value;
-            DOM.squadWrapper.classList.remove('open');
+            wrapper.querySelector('.custom-select-trigger').innerText = element.innerText;
+            document.getElementById(inputId).value = value;
+            wrapper.classList.remove('open');
         }
 
         window.addEventListener('click', (e) => {
-            if (DOM.squadWrapper && !DOM.squadWrapper.contains(e.target)) {
-                DOM.squadWrapper.classList.remove('open');
+            if (!e.target.closest('.custom-select-wrapper')) {
+                document.querySelectorAll('.custom-select-wrapper').forEach(w => w.classList.remove('open'));
             }
         });
 
@@ -660,6 +669,7 @@
             const nameInput = DOM.userName.value.trim();
             const contactInput = DOM.userContact.value.trim();
             const squadInput = DOM.userSquad.value;
+            const specInput = DOM.userSpec.value;
 
             globalSenderName = nameInput;
             isRecruiter = (nameInput.toUpperCase() === 'REK' && contactInput.toUpperCase() === 'REK');
@@ -683,6 +693,7 @@
                             name: nameInput,
                             contact: contactInput,
                             squad: squadInput,
+                            spec: specInput,
                             timestamp: new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })
                         });
                     }
@@ -779,7 +790,6 @@
             DOM.chatMessages.innerHTML = '';
         }
 
-        /* Candidates Management */
         function openCandidatesList() {
             playBeep(750);
             DOM.chatStage.classList.add('hidden');
@@ -815,6 +825,7 @@
                             <h4>${escapeHtml(c.name || 'Анонім')} <span>${c.timestamp || ''}</span></h4>
                             <p><strong>Контакт:</strong> ${escapeHtml(c.contact || '-')}</p>
                             <p><strong>Підрозділ:</strong> ${escapeHtml(c.squad || '-')}</p>
+                            <p><strong>Спеціальність:</strong> ${escapeHtml(c.spec || 'Піхота')}</p>
                         </div>
                         <div class="candidate-actions">
                             <button class="btn-action-open" onclick="openChatRoom('${c.id}', 'Чат: ${escapeHtml(c.name)}')">💬 Чат</button>
