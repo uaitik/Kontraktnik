@@ -46,7 +46,7 @@
         .nav-links a { color: var(--text-subtle); text-decoration: none; font-weight: 500; transition: color var(--transition-speed) ease; }
         .nav-links a:hover { color: #f8fafc; }
         
-        /* Hero Section */
+        /* Hero Section & Tactical Overlay */
         .video-container { position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 6rem 2rem 4rem 2rem; overflow: hidden; }
         .bg-video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); object-fit: cover; z-index: 1; opacity: 0.35; }
         .video-overlay { 
@@ -75,27 +75,91 @@
         }
         .btn-main-trigger:hover { background: var(--accent); color: var(--bg-dark); box-shadow: 0 0 25px var(--accent-glow); transform: translateY(-2px); }
 
+        /* Expanded Cards Grid */
         .cards-grid { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         .team-card { 
             flex: 1; min-width: 320px; max-width: 420px; background: var(--bg-card); backdrop-filter: blur(10px); 
             border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 2.2rem; 
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
             text-align: left; display: flex; flex-direction: column; justify-content: space-between;
+            opacity: 0; transform: translateY(30px);
         }
+        .team-card.visible { opacity: 1; transform: translateY(0); }
+        .team-card:hover { transform: translateY(-5px); background: rgba(20, 30, 54, 0.95); border-color: var(--accent); box-shadow: 0 15px 35px rgba(56, 189, 248, 0.15); }
         
-        .photo-container { background: rgba(10, 15, 26, 0.5); border-radius: 12px; height: 180px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.03); margin-bottom: 1.5rem; }
-        .photo-container img { max-width: 85%; max-height: 85%; object-fit: contain; }
+        .photo-container { background: rgba(10, 15, 26, 0.5); border-radius: 12px; height: 180px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.03); transition: transform var(--transition-speed) ease; margin-bottom: 1.5rem; }
+        .team-card:hover .photo-container { transform: scale(1.03); }
+        .photo-container img { max-width: 85%; max-height: 85%; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5)); }
         
         .team-card h3 { color: var(--text-heading); font-size: 1.4rem; font-weight: 700; margin-bottom: 0.75rem; }
         .team-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; }
         
-        .footer-note { display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--accent); font-weight: 600; text-transform: uppercase; }
+        .footer-note { display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--accent); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+        .footer-note span { animation: blink 1.5s infinite; color: var(--status-alert); }
+        @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        /* Modal Overlay & Window - FULL SCREEN GAME MODE */
+        /* Pay Calculator Section */
+        .calculator-section { background: var(--bg-deep); padding: 5rem 2rem; border-top: 1px solid rgba(255, 255, 255, 0.03); display: flex; justify-content: center; }
+        .calc-container { max-width: 1000px; width: 100%; background: var(--bg-card); border: 1px solid var(--accent-border); border-radius: 16px; padding: 2.5rem; backdrop-filter: blur(10px); }
+        .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
+        @media (max-width: 768px) { .calc-grid { grid-template-columns: 1fr; } }
+        
+        .calc-input-group label { display: block; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .calc-select { width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 1rem; }
+        .calc-result-box { background: rgba(10, 15, 26, 0.8); border: 1px solid var(--accent); border-radius: 12px; padding: 1.5rem; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .calc-amount { font-size: 2.8rem; font-weight: 800; color: var(--status-online); text-shadow: 0 0 15px rgba(34, 197, 94, 0.3); margin: 0.5rem 0; }
+
+        /* Recruitment Steps Section */
+        .steps-section { padding: 5rem 2rem; max-width: 1300px; margin: 0 auto; text-align: center; }
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+        .step-card { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 2rem; text-align: left; position: relative; overflow: hidden; }
+        .step-num { font-size: 3.5rem; font-weight: 900; color: rgba(56, 189, 248, 0.15); position: absolute; top: 10px; right: 15px; }
+        .step-card h4 { color: var(--text-heading); font-size: 1.2rem; margin-bottom: 0.75rem; font-weight: 700; }
+        .step-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
+
+        /* FAQ Section */
+        .faq-section { background: var(--bg-deep); padding: 5rem 2rem; border-top: 1px solid rgba(255, 255, 255, 0.03); display: flex; justify-content: center; }
+        .faq-container { max-width: 900px; width: 100%; }
+        .faq-item { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 10px; margin-bottom: 1rem; overflow: hidden; }
+        .faq-header { padding: 1.2rem 1.5rem; color: var(--text-heading); font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
+        .faq-header:hover { background: rgba(56, 189, 248, 0.05); }
+        .faq-body { padding: 0 1.5rem 1.2rem 1.5rem; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; display: none; }
+        .faq-item.active .faq-body { display: block; }
+        .faq-item.active .faq-header { color: var(--accent); }
+
+        /* Footer */
+        .tactical-footer { background: var(--bg-footer); padding: 4rem 3rem; border-top: 1px solid rgba(56, 189, 248, 0.1); display: flex; justify-content: center; }
+        .footer-content { max-width: 1400px; width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
+        .footer-block { flex: 1; min-width: 280px; }
+        .footer-block h4 { color: var(--text-heading); font-size: 1.1rem; margin-bottom: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
+        .footer-block p { color: var(--text-subtle); font-size: 0.95rem; line-height: 1.6; }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 0.6rem; }
+        .footer-links a { color: var(--accent); text-decoration: none; font-size: 0.95rem; transition: color 0.2s; }
+        .footer-links a:hover { color: var(--accent-hover); }
+
+        /* Modal Overlay & Window */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.92); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; padding: 1rem; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         
         .modal-window { width: 100%; max-width: 860px; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 16px; padding: 2.2rem; box-shadow: 0 25px 60px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
+
+        .fade-stage { opacity: 1; transform: translateY(0); transition: opacity 0.35s ease, transform 0.35s ease; }
+        .fade-stage.hidden { opacity: 0; transform: translateY(-15px); pointer-events: none; position: absolute; width: calc(100% - 4.4rem); }
+
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group input { width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f8fafc; font-size: 1rem; transition: border-color 0.2s; }
+        .form-group input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
+        
+        .btn-submit { 
+            width: 100%; padding: 1rem; 
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover)); 
+            color: var(--bg-dark); border: none; border-radius: 8px; 
+            font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; 
+            cursor: pointer; transition: all 0.2s; margin-top: 0.5rem; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+        }
+        .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4); }
 
         /* Fullscreen Game Override */
         .modal-overlay.game-fullscreen .modal-window {
@@ -114,6 +178,55 @@
             transition: all 0.2s; z-index: 120; 
         }
         .close-modal:hover { color: #f8fafc; background: rgba(239, 68, 68, 0.8); border-color: var(--status-alert); transform: rotate(90deg); }
+
+        /* Chat UI */
+        .chat-container { width: 100%; height: 440px; display: flex; flex-direction: column; background: var(--bg-dark); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; overflow: hidden; margin-top: 0.5rem; }
+        .chat-header { background: #1e293b; padding: 0.85rem 1.2rem; font-size: 0.9rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        .chat-header .status-dot { width: 8px; height: 8px; background: var(--status-online); border-radius: 50%; box-shadow: 0 0 6px var(--status-online); display: inline-block; }
+        
+        .btn-back-chat {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); 
+            color: var(--text-muted); width: 30px; height: 30px; border-radius: 6px;
+            cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; 
+            transition: all 0.2s;
+        }
+        .btn-back-chat:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+
+        .recruiter-actions { display: none; gap: 8px; align-items: center; }
+        .btn-candidates { background: rgba(56, 189, 248, 0.1); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        .btn-candidates:hover { background: rgba(56, 189, 248, 0.25); border-color: var(--accent); }
+
+        .btn-clear-chat { background: rgba(239, 68, 68, 0.15); color: var(--status-alert); border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        .btn-clear-chat:hover { background: rgba(239, 68, 68, 1); color: #fff; }
+
+        .chat-messages { flex: 1; padding: 1.2rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.9rem; background: var(--bg-deep); }
+        .message { max-width: 80%; padding: 0.7rem 1rem; border-radius: 8px; font-size: 0.92rem; line-height: 1.45; word-break: break-word; position: relative; }
+        .message .msg-time { display: block; font-size: 0.65rem; color: var(--text-subtle); margin-top: 4px; text-align: right; }
+        .message.intercom { background: rgba(56, 189, 248, 0.06); color: var(--accent); align-self: flex-start; border-left: 3px solid var(--accent); }
+        .message.friend { background: #1e293b; color: #f8fafc; align-self: flex-end; border-right: 3px solid var(--text-subtle); }
+        .message.approved { background: rgba(34, 197, 94, 0.1); color: #4ade80; align-self: center; border: 1px solid rgba(34, 197, 94, 0.3); width: 95%; text-align: center; }
+        .message.rejected { background: rgba(239, 68, 68, 0.1); color: #f87171; align-self: center; border: 1px solid rgba(239, 68, 68, 0.3); width: 95%; text-align: center; }
+
+        .quick-tags-area { display: flex; gap: 8px; padding: 10px 12px; background: var(--bg-deep); border-top: 1px solid rgba(255,255,255,0.03); overflow-x: auto; white-space: nowrap; align-items: center; }
+        .quick-tags-area button { flex-shrink: 0; background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(56, 189, 248, 0.02)); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.2); padding: 6px 14px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; font-weight: 600; }
+        .quick-tags-area button:hover { background: rgba(56, 189, 248, 0.18); border-color: var(--accent); color: #f8fafc; }
+        .quick-tags-area #cryptoBtn { margin-left: auto; background: rgba(34, 197, 94, 0.08); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.2); }
+
+        .chat-input-area { display: flex; border-top: 1px solid rgba(255, 255, 255, 0.05); background: var(--bg-dark); }
+        .chat-input-area input { flex: 1; padding: 0.9rem 1.2rem; background: transparent; border: none; color: #f8fafc; font-size: 0.95rem; }
+        .chat-input-area input:focus { outline: none; }
+        .btn-send { background: linear-gradient(135deg, #1e293b, #0f172a); color: var(--accent); border: none; border-left: 1px solid rgba(255,255,255,0.05); padding: 0 1.6rem; cursor: pointer; font-weight: bold; transition: all 0.2s; font-size: 0.9rem; }
+        .btn-send:hover { background: var(--accent); color: var(--bg-dark); }
+
+        .candidates-list { height: 380px; overflow-y: auto; background: var(--bg-dark); border-radius: 8px; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.05); margin-top: 10px; }
+        .candidate-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.15); border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; text-align: left; display: flex; justify-content: space-between; align-items: center; }
+        .candidate-info h4 { color: #f8fafc; font-size: 1rem; margin-bottom: 4px; display: flex; gap: 10px; align-items: center; }
+        .candidate-info h4 span { font-size: 0.75rem; color: var(--text-subtle); font-weight: normal; }
+        .candidate-info p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; }
+        .candidate-actions { display: flex; gap: 8px; align-items: center; }
+        .btn-action-open { background: rgba(56, 189, 248, 0.15); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: bold; }
+        .btn-approve { background: rgba(34, 197, 94, 0.15); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.4); width: 34px; height: 34px; border-radius: 6px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; }
+        .btn-reject { background: rgba(239, 68, 68, 0.15); color: var(--status-alert); border: 1px solid rgba(239, 68, 68, 0.4); width: 34px; height: 34px; border-radius: 6px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; }
 
         /* Operation Selection Cards */
         .op-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1.5rem; }
@@ -184,6 +297,10 @@
         <a href="#" class="logo">Strike — Рекрутинговий Центр</a>
         <ul class="nav-links">
             <li><a href="#">Головна</a></li>
+            <li><a href="#calc">Калькулятор</a></li>
+            <li><a href="#steps">Етапи</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#contacts">Контакт</a></li>
         </ul>
     </nav>
 
@@ -194,8 +311,10 @@
 
         <main class="main-content">
             <h1>Твій шлях до професійного підрозділу</h1>
+            <button class="btn-main-trigger" onclick="toggleModal(true)">Подати заявку зараз →</button>
+            
             <div class="cards-grid">
-                <div class="team-card">
+                <div class="team-card visible">
                     <div class="photo-container"><img src="vovkodav.png" alt="1-й батальйон Вовкодав"></div>
                     <h3>1-й батальйон "Вовкодав"</h3>
                     <p>Інтернаціональний підрозділ, що виконує складні бойові завдання безпосередньо на передньому краї.</p>
@@ -205,11 +324,75 @@
         </main>
     </div>
 
+    <!-- CALCULATOR SECTION -->
+    <section class="calculator-section" id="calc">
+        <div class="calc-container">
+            <h2 style="color: var(--text-heading); font-size: 2rem; text-transform: uppercase; text-align: center;">Калькулятор грошового забезпечення</h2>
+            <div class="calc-grid">
+                <div>
+                    <div class="calc-input-group" style="margin-bottom: 1.2rem;">
+                        <label>Обирай спеціалізацію:</label>
+                        <select id="roleSelect" class="calc-select" onchange="calculatePay()">
+                            <option value="20000">Стрілець / Піхота</option>
+                            <option value="25000">Оператор БПЛА (FPV)</option>
+                            <option value="23000">Бойовий Медик</option>
+                            <option value="28000">Артилерист / Механік</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="calc-result-box">
+                    <span style="color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase;">Орієнтовний дохід на місяць:</span>
+                    <div class="calc-amount" id="totalPay">50,000 грн</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RECRUITMENT STEPS -->
+    <section class="steps-section" id="steps">
+        <h2 style="color: var(--text-heading); font-size: 2.2rem; text-transform: uppercase; text-align: center;">Етапи Долучення До Лав</h2>
+        <div class="steps-grid">
+            <div class="step-card"><span class="step-num">01</span><h4>Подача Заявки</h4><p>Заповнюйте анкету у модальному вікні та переходьте до зв'язку.</p></div>
+            <div class="step-card"><span class="step-num">02</span><h4>Співбесіда & МЕК</h4><p>Проходження онлайн-інтерв'ю та збір первинного пакета документів.</p></div>
+            <div class="step-card"><span class="step-num">03</span><h4>Курс БЗВП</h4><p>Інтенсивна вишколова програма з тактики та медицини.</p></div>
+            <div class="step-card"><span class="step-num">04</span><h4>Контракт</h4><p>Офіційне зарахування до обраної бригади ЗСУ.</p></div>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section class="faq-section" id="faq">
+        <div class="faq-container">
+            <h2 style="color: var(--text-heading); font-size: 2.2rem; text-transform: uppercase; text-align: center; margin-bottom: 2.5rem;">Часті запитання (FAQ)</h2>
+            <div class="faq-item">
+                <div class="faq-header" onclick="toggleFaq(this)">Хто може долучитися до бригади? <span>+</span></div>
+                <div class="faq-body">Громадяни України та іноземці, які відповідають вимогам стану здоров'я та мотивації до захисту країни.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-header" onclick="toggleFaq(this)">Чи потрібен бойовий досвід? <span>+</span></div>
+                <div class="faq-body">Ні, кожен новобранець проходить повний курс базової загальновійськової підготовки (БЗВП) з найкращими інструкторами.</div>
+            </div>
+        </div>
+    </section>
+
     <!-- DOLNY PANEL GRY -->
     <div style="background: var(--bg-deep); padding: 2rem; border-top: 1px solid var(--accent-border); text-align: center; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
-        <button class="btn-main-trigger" style="margin-bottom: 0; padding: 0.8rem 1.8rem; font-size: 0.95rem;" onclick="openGameModal()">🎮 Graj: 3D FPS (Prawdziwe Sterowanie Shooter)</button>
+        <button class="btn-main-trigger" style="margin-bottom: 0; padding: 0.8rem 1.8rem; font-size: 0.95rem;" onclick="openGameModal()">🎮 Graj: 3D FPS (Sterowanie Shooter + Medycyna)</button>
         <button class="btn-main-trigger" style="margin-bottom: 0; padding: 0.8rem 1.8rem; font-size: 0.95rem; border-color: rgba(34, 197, 94, 0.4); color: var(--status-online);" onclick="openLeaderboardModal()">🏆 Tabela Rekordów</button>
     </div>
+
+    <!-- FOOTER -->
+    <footer class="tactical-footer" id="contacts">
+        <div class="footer-content">
+            <div class="footer-block">
+                <h4>Strike Center</h4>
+                <p>Офіційний центр рекрутингу інтернаціональних підрозділів. Захищаємо майбутнє разом.</p>
+            </div>
+            <div class="footer-block">
+                <h4>Контакти</h4>
+                <p>Email: recruitment@strike.ua<br>Години роботи: 09:00 — 20:00</p>
+            </div>
+        </div>
+    </footer>
 
     <!-- MODAL GRY (FULLSCREEN 3D FPS MODE) -->
     <div class="modal-overlay" id="gameModal">
@@ -218,7 +401,7 @@
             
             <div id="opSelectScreen" style="padding: 2rem;">
                 <h2 style="color: #f1f5f9; margin-bottom: 0.5rem; text-align: center;">🎯 Wybierz Rodzaj Operacji 3D FPS</h2>
-                <p style="color: var(--text-muted); font-size: 0.9rem; text-align: center;">Ulepszony mechanizm celowania! Kliknij w grające okno, aby zablokować myszkę.</p>
+                <p style="color: var(--text-muted); font-size: 0.9rem; text-align: center;">Kliknij w okno gry, aby aktywować celownik i płynny obrót myszką!</p>
 
                 <div class="op-card-grid">
                     <div class="op-card" onclick="startFPSGame('assault')">
@@ -236,7 +419,7 @@
 
             <div id="canvasScreen" style="display: none;">
                 <div class="fps-container" id="threeJsContainer">
-                    <div class="pointer-hint" id="pointerHint">🎯 Kliknij w ekran, aby przejąć kontrolę nad celownikiem!</div>
+                    <div class="pointer-hint" id="pointerHint">🎯 Kliknij w ekran, aby zablokować celownik i grać!</div>
                 </div>
 
                 <div class="tarkov-ui" id="tarkovMedicalUi">
@@ -316,6 +499,59 @@
         </div>
     </div>
 
+    <!-- MODAL APPLICATION & CHAT -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-window">
+            <button class="close-modal" onclick="toggleModal(false)">×</button>
+            
+            <div id="formStage" class="fade-stage">
+                <h2 style="margin-bottom: 1.5rem; color: #f1f5f9; text-align: center;">Подати заявку</h2>
+                <form onsubmit="handleSubmit(event)">
+                    <div class="form-group"><label>Позивний</label><input type="text" id="userName" required placeholder="Нікнейм"></div>
+                    <div class="form-group"><label>Контакт</label><input type="text" id="userContact" required placeholder="@username"></div>
+                    <button type="submit" class="btn-submit">Надіслати</button>
+                </form>
+            </div>
+
+            <div id="chatStage" class="fade-stage hidden">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="status-dot"></span>
+                            <span id="chatTitle">Secure Intercom</span>
+                        </div>
+                        <div class="recruiter-actions" id="recruiterActionsContainer">
+                            <button class="btn-candidates" onclick="openCandidatesList()">Кандидати (<span id="candCount">0</span>)</button>
+                            <button class="btn-clear-chat" onclick="clearChat()">Очистити</button>
+                        </div>
+                        <button class="btn-back-chat" id="backToFormBtn" onclick="switchToForm()" title="Назад до анкетування">←</button>
+                    </div>
+                    
+                    <div class="chat-messages" id="chatMessages"></div>
+
+                    <div class="quick-tags-area" id="quickTagsArea">
+                        <button onclick="sendQuickTag('Готов до виїзду')">⚡ Готов до виїзду</button>
+                        <button onclick="sendQuickTag('Яка процедура?')">❓ Яка процедура?</button>
+                        <button id="cryptoBtn" onclick="unlockRecruiterMode()">🔐 Адмін</button>
+                    </div>
+
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInput" placeholder="Введіть повідомлення..." onkeypress="handleChatKey(event)">
+                        <button class="btn-send" onclick="sendChatMessage()">Надіслати</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="candidatesStage" class="fade-stage hidden">
+                <div class="chat-header" style="margin-bottom: 10px;">
+                    <span>📋 Список Кандидатів</span>
+                    <button class="btn-back-chat" onclick="closeCandidatesList()">✕</button>
+                </div>
+                <div class="candidates-list" id="candidatesListContainer"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyCeWM1wdHdN6bIXFXTqHXO7WgJNJK53nwk",
@@ -330,6 +566,11 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const scoresRef = database.ref('leaderboard');
+        const applicationsRef = database.ref('applications');
+
+        let currentUserKey = localStorage.getItem('strike_user_key') || null;
+        let currentUserName = localStorage.getItem('strike_user_name') || '';
+        let isRecruiter = localStorage.getItem('strike_is_recruiter') === 'true';
 
         const playBeep = (freq = 600, duration = 0.05) => {
             try {
@@ -342,15 +583,208 @@
             } catch(e) {}
         };
 
+        function calculatePay() {
+            let val = parseInt(document.getElementById('roleSelect').value) || 20000;
+            document.getElementById('totalPay').innerText = (val + 30000).toLocaleString('uk-UA') + ' грн';
+        }
+
+        function toggleFaq(el) {
+            el.parentElement.classList.toggle('active');
+        }
+
+        function toggleModal(show) {
+            const modal = document.getElementById('modalOverlay');
+            modal.classList.toggle('active', show);
+            if (show) {
+                if (currentUserKey) {
+                    document.getElementById('formStage').classList.add('hidden');
+                    document.getElementById('chatStage').classList.remove('hidden');
+                    initChat(currentUserKey);
+                } else {
+                    document.getElementById('formStage').classList.remove('hidden');
+                    document.getElementById('chatStage').classList.add('hidden');
+                }
+            }
+        }
+
+        function handleSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('userName').value.trim();
+            const contact = document.getElementById('userContact').value.trim();
+            if (!name || !contact) return;
+
+            currentUserName = name;
+            localStorage.setItem('strike_user_name', name);
+
+            const newAppRef = applicationsRef.push();
+            currentUserKey = newAppRef.key;
+            localStorage.setItem('strike_user_key', currentUserKey);
+
+            newAppRef.set({
+                name: name,
+                contact: contact,
+                status: 'pending',
+                timestamp: Date.now()
+            });
+
+            document.getElementById('formStage').classList.add('hidden');
+            document.getElementById('chatStage').classList.remove('hidden');
+            initChat(currentUserKey);
+        }
+
+        let activeChatRef = null;
+        function initChat(userKey) {
+            if (activeChatRef) activeChatRef.off();
+            const msgContainer = document.getElementById('chatMessages');
+            msgContainer.innerHTML = '';
+
+            const chatPath = isRecruiter && selectedCandidateKey ? `chats/${selectedCandidateKey}` : `chats/${userKey}`;
+            activeChatRef = database.ref(chatPath);
+
+            if (isRecruiter) {
+                document.getElementById('recruiterActionsContainer').style.display = 'flex';
+                document.getElementById('backToFormBtn').style.display = 'none';
+                document.getElementById('cryptoBtn').style.display = 'none';
+            } else {
+                document.getElementById('recruiterActionsContainer').style.display = 'none';
+                document.getElementById('backToFormBtn').style.display = 'flex';
+            }
+
+            activeChatRef.on('value', snapshot => {
+                msgContainer.innerHTML = '';
+                if (!snapshot.exists()) {
+                    msgContainer.innerHTML = `<div class="message intercom">Вітаємо у рекрутинговому центрі Strike! Чим можемо допомогти? <span class="msg-time">щойно</span></div>`;
+                    return;
+                }
+                snapshot.forEach(child => {
+                    const msg = child.val();
+                    const div = document.createElement('div');
+                    div.className = `message ${msg.sender === 'recruiter' ? 'intercom' : (msg.type || 'friend')}`;
+                    div.innerHTML = `${escapeHtml(msg.text)} <span class="msg-time">${new Date(msg.timestamp || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>`;
+                    msgContainer.appendChild(div);
+                });
+                msgContainer.scrollTop = msgContainer.scrollHeight;
+            });
+        }
+
+        let selectedCandidateKey = null;
+        function openCandidatesList() {
+            document.getElementById('chatStage').classList.add('hidden');
+            document.getElementById('candidatesStage').classList.remove('hidden');
+            const container = document.getElementById('candidatesListContainer');
+            container.innerHTML = 'Завантаження...';
+
+            applicationsRef.on('value', snap => {
+                container.innerHTML = '';
+                if (!snap.exists()) {
+                    container.innerHTML = '<p style="text-align:center; color:var(--text-subtle);">Немає кандидатів.</p>';
+                    return;
+                }
+                let count = 0;
+                snap.forEach(child => {
+                    count++;
+                    const c = child.val();
+                    const key = child.key;
+                    const div = document.createElement('div');
+                    div.className = 'candidate-card';
+                    div.innerHTML = `
+                        <div class="candidate-info">
+                            <h4>${escapeHtml(c.name)} <span>(${escapeHtml(c.contact)})</span></h4>
+                            <p>Статус: <b>${c.status}</b></p>
+                        </div>
+                        <div class="candidate-actions">
+                            <button class="btn-action-open" onclick="selectCandidate('${key}', '${escapeHtml(c.name)}')">Чат</button>
+                            <button class="btn-approve" onclick="updateStatus('${key}', 'approved')">✓</button>
+                            <button class="btn-reject" onclick="updateStatus('${key}', 'rejected')">✕</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+                document.getElementById('candCount').innerText = count;
+            });
+        }
+
+        function closeCandidatesList() {
+            document.getElementById('candidatesStage').classList.add('hidden');
+            document.getElementById('chatStage').classList.remove('hidden');
+        }
+
+        function selectCandidate(key, name) {
+            selectedCandidateKey = key;
+            document.getElementById('chatTitle').innerText = `Чат з: ${name}`;
+            closeCandidatesList();
+            initChat(key);
+        }
+
+        function updateStatus(key, status) {
+            database.ref(`applications/${key}`).update({ status: status });
+            database.ref(`chats/${key}`).push({
+                text: status === 'approved' ? '✅ Вашу заявку схвалено! Очікуйте інструкцій.' : '❌ Заявку відхилено.',
+                sender: 'recruiter',
+                type: status === 'approved' ? 'approved' : 'rejected',
+                timestamp: Date.now()
+            });
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const targetKey = isRecruiter && selectedCandidateKey ? selectedCandidateKey : currentUserKey;
+            if (!targetKey) return;
+
+            database.ref(`chats/${targetKey}`).push({
+                text: text,
+                sender: isRecruiter ? 'recruiter' : 'user',
+                type: isRecruiter ? 'intercom' : 'friend',
+                timestamp: Date.now()
+            });
+            input.value = '';
+        }
+
+        function sendQuickTag(text) {
+            document.getElementById('chatInput').value = text;
+            sendChatMessage();
+        }
+
+        function handleChatKey(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        }
+
+        function unlockRecruiterMode() {
+            const pass = prompt("Введіть ключ адміністратора:");
+            if (pass === "strike2026") {
+                isRecruiter = true;
+                localStorage.setItem('strike_is_recruiter', 'true');
+                alert("Режим рекрутера активовано!");
+                initChat(currentUserKey);
+            } else {
+                alert("Невірний ключ.");
+            }
+        }
+
+        function clearChat() {
+            const targetKey = isRecruiter && selectedCandidateKey ? selectedCandidateKey : currentUserKey;
+            if (targetKey && confirm("Очистити історію чату?")) {
+                database.ref(`chats/${targetKey}`).remove();
+            }
+        }
+
+        function switchToForm() {
+            localStorage.removeItem('strike_user_key');
+            currentUserKey = null;
+            document.getElementById('chatStage').classList.add('hidden');
+            document.getElementById('formStage').classList.remove('hidden');
+        }
+
         // =========================================================================
-        // --- PRO-FPS SHOOTER ENGINE (STABILNA KAMERA + PITCH/YAW + HEADSHOTS) ---
+        // --- PRO-FPS SHOOTER ENGINE (3D FPS + HEADSHOTS + TARKOV MEDS) ---
         // =========================================================================
         let scene, cameraFPS, rendererFPS, isFPSRunning = false, animFPSId = null, aiIntervalFPS = null;
         let ammoFPS = 30, scoreFPS = 0;
-        
-        // Kąty rotacji kamery (Pitch = góra/dół, Yaw = lewo/prawo)
         let playerYaw = 0, playerPitch = 0;
-        const mouseSensitivity = 0.0012; // Zrównoważona, płynna czułość myszy jak w grach FPS
+        const mouseSensitivity = 0.0012;
 
         let keysFPS = {}, touchFPSDir = { x: 0, y: 0 };
         let bulletsFPS = [], enemiesFPS = [], obstaclesFPS = [], enemyBulletsFPS = [];
@@ -406,7 +840,7 @@
             container.innerHTML = `
                 <div class="pointer-hint" id="pointerHint">🎯 Kliknij w ekran, aby zablokować celownik!</div>
                 <div class="hit-flash" id="hitFlash"></div>
-                <div class="radio-ticker">📡 [FPS RADIO]: Prawdziwe sterowanie shooterowe aktywne! WASD - Ruch | Mysz - Celowanie | M - Medycyna</div>
+                <div class="radio-ticker">📡 [FPS RADIO]: 3D FPS aktywny! WASD - Ruch | Mysz - Celowanie | M - Medycyna</div>
                 <div class="fps-crosshair"></div>
                 <div class="fps-hud">
                     <div class="hud-card">Ammo: <span id="uiAmmo">30/30</span></div>
@@ -455,14 +889,12 @@
             bulletsFPS = []; enemyBulletsFPS = []; enemiesFPS = []; obstaclesFPS = [];
             scoreFPS = 0; ammoFPS = 30; playerYaw = 0; playerPitch = 0; updateFPSUI();
 
-            // Budynki 3D
             for (let i = 0; i < 10; i++) {
                 let bx = (Math.random() - 0.5) * 120, bz = (Math.random() - 0.5) * 120;
                 if (Math.hypot(bx, bz) < 15) continue;
                 createFPSHouse(bx, bz, 10, 6, 10);
             }
 
-            // Przeciwnicy 3D
             for (let i = 0; i < 14; i++) {
                 let enemy = createEnemy3D();
                 enemy.position.set((Math.random() - 0.5) * 140, 0, (Math.random() - 0.5) * 140);
@@ -504,7 +936,6 @@
         function createEnemy3D() {
             const group = new THREE.Group();
             
-            // Ciało / Korpus (Torso)
             const body = new THREE.Mesh(
                 new THREE.BoxGeometry(0.8, 1.4, 0.6), 
                 new THREE.MeshStandardMaterial({ color: 0xdc2626 })
@@ -513,7 +944,6 @@
             body.userData = { type: 'body' };
             group.add(body);
 
-            // Głowa (Head) - Osobny collider do Headshotów!
             const head = new THREE.Mesh(
                 new THREE.SphereGeometry(0.35, 10, 10), 
                 new THREE.MeshStandardMaterial({ color: 0x7f1d1d })
@@ -530,13 +960,9 @@
         function initMouseLook() {
             window.addEventListener('mousemove', (e) => {
                 if (!isFPSRunning) return;
-                
-                // Reaguj tylko, gdy kursor jest zablokowany (Pointer Lock)
                 if (document.pointerLockElement) {
                     playerYaw -= e.movementX * mouseSensitivity;
                     playerPitch -= e.movementY * mouseSensitivity;
-
-                    // Ograniczenie wychylenia góra/dół (nie pozwala obrócić kamery "do góry nogami")
                     const limit = Math.PI / 2.05;
                     playerPitch = Math.max(-limit, Math.min(limit, playerPitch));
                 }
@@ -590,7 +1016,6 @@
             );
             bullet.position.copy(cameraFPS.position);
 
-            // Wyliczanie wektora strzału na podstawie rotacji kamery (Pitch i Yaw)
             let dir = new THREE.Vector3(0, 0, -1);
             let euler = new THREE.Euler(playerPitch, playerYaw, 0, 'YXZ');
             dir.applyEuler(euler);
@@ -680,7 +1105,6 @@
         }
 
         function updateFPSLogic() {
-            // Ruch gracza (WASD)
             let moveX = (keysFPS['d'] || keysFPS['в'] ? 1 : 0) - (keysFPS['a'] || keysFPS['ф'] ? 1 : 0) + touchFPSDir.x;
             let moveZ = (keysFPS['s'] || keysFPS['і'] ? 1 : 0) - (keysFPS['w'] || keysFPS['ц'] ? 1 : 0) + touchFPSDir.y;
 
@@ -701,12 +1125,10 @@
                 cameraFPS.position.z = nextZ;
             }
 
-            // Aplikowanie perfekcyjnego obrotu kamery (Główna poprawna kolejność YXZ dla strzelanek FPS)
             cameraFPS.rotation.set(0, 0, 0);
             cameraFPS.rotation.y = playerYaw;
             cameraFPS.rotation.x = playerPitch;
 
-            // Pociski gracza + Detekcja Trafień (Headshot vs Torso)
             for (let i = bulletsFPS.length - 1; i >= 0; i--) {
                 let b = bulletsFPS[i];
                 b.mesh.position.addScaledVector(b.dir, 1.4);
@@ -724,13 +1146,13 @@
                         let hitRadius = isHead ? 0.45 : 0.75;
 
                         if (b.mesh.position.distanceTo(worldPos) < hitRadius) {
-                            let damage = isHead ? 50 : 25; // 50 HP za trafienie w głowę, 25 w korpus!
+                            let damage = isHead ? 50 : 25;
                             enemyGroup.userData.hp -= damage;
 
                             if (enemyGroup.userData.hp <= 0) {
                                 scene.remove(enemyGroup);
                                 enemiesFPS.splice(j, 1);
-                                scoreFPS += (isHead ? 100 : 50); // 100 punktów za Headshot
+                                scoreFPS += (isHead ? 100 : 50);
                                 updateFPSUI();
                             }
 
@@ -748,7 +1170,6 @@
                 }
             }
 
-            // Pociski wrogów
             for (let i = enemyBulletsFPS.length - 1; i >= 0; i--) {
                 let eb = enemyBulletsFPS[i];
                 eb.mesh.position.addScaledVector(eb.dir, 0.7);
