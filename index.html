@@ -75,7 +75,7 @@
         }
         .btn-main-trigger:hover { background: var(--accent); color: var(--bg-dark); box-shadow: 0 0 25px var(--accent-glow); transform: translateY(-2px); }
 
-        /* Expanded Cards Grid - 3 Karty Podrozdiłów */
+        /* Expanded Cards Grid (3 karty) */
         .cards-grid { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         .team-card { 
             flex: 1; min-width: 320px; max-width: 420px; background: var(--bg-card); backdrop-filter: blur(10px); 
@@ -131,6 +131,10 @@
         .footer-block { flex: 1; min-width: 280px; }
         .footer-block h4 { color: var(--text-heading); font-size: 1.1rem; margin-bottom: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
         .footer-block p { color: var(--text-subtle); font-size: 0.95rem; line-height: 1.6; }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 0.6rem; }
+        .footer-links a { color: var(--accent); text-decoration: none; font-size: 0.95rem; transition: color 0.2s; }
+        .footer-links a:hover { color: var(--accent-hover); }
 
         /* Modal Overlay & Window */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.88); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; padding: 1rem; }
@@ -173,7 +177,7 @@
             border: none !important;
         }
 
-        /* Chat UI */
+        /* Chat UI - Pełne style z Twojego kodu */
         .chat-container { width: 100%; height: 440px; display: flex; flex-direction: column; background: var(--bg-dark); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; overflow: hidden; margin-top: 0.5rem; }
         .chat-header { background: #1e293b; padding: 0.85rem 1.2rem; font-size: 0.9rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
         .chat-header .status-dot { width: 8px; height: 8px; background: var(--status-online); border-radius: 50%; box-shadow: 0 0 6px var(--status-online); display: inline-block; }
@@ -188,33 +192,55 @@
 
         .recruiter-actions { display: none; gap: 8px; align-items: center; }
         .btn-candidates { background: rgba(56, 189, 248, 0.1); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        .btn-candidates:hover { background: rgba(56, 189, 248, 0.25); border-color: var(--accent); }
+
         .btn-clear-chat { background: rgba(239, 68, 68, 0.15); color: var(--status-alert); border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        .btn-clear-chat:hover { background: var(--status-alert); color: #fff; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
 
         .chat-messages { flex: 1; padding: 1.2rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.9rem; background: var(--bg-deep); }
         .message { max-width: 80%; padding: 0.7rem 1rem; border-radius: 8px; font-size: 0.92rem; line-height: 1.45; word-break: break-word; position: relative; }
         .message .msg-time { display: block; font-size: 0.65rem; color: var(--text-subtle); margin-top: 4px; text-align: right; }
+        .message .msg-status { font-size: 0.7rem; margin-left: 4px; color: var(--accent); }
+        
         .message.intercom { background: rgba(56, 189, 248, 0.06); color: var(--accent); align-self: flex-start; border-left: 3px solid var(--accent); }
         .message.friend { background: #1e293b; color: #f8fafc; align-self: flex-end; border-right: 3px solid var(--text-subtle); }
         .message.approved { background: rgba(34, 197, 94, 0.1); color: #4ade80; align-self: center; border: 1px solid rgba(34, 197, 94, 0.3); width: 95%; text-align: center; }
         .message.rejected { background: rgba(239, 68, 68, 0.1); color: #f87171; align-self: center; border: 1px solid rgba(239, 68, 68, 0.3); width: 95%; text-align: center; }
+        
+        .typing-indicator { display: flex; gap: 4px; padding: 0.5rem 0.8rem; background: rgba(56, 189, 248, 0.06); border-radius: 8px; width: fit-content; border-left: 3px solid var(--accent); }
+        .typing-indicator span { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: typing 1s infinite ease-in-out; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
 
-        .quick-tags-area { display: flex; gap: 8px; padding: 10px 12px; background: var(--bg-deep); border-top: 1px solid rgba(255,255,255,0.03); overflow-x: auto; white-space: nowrap; align-items: center; }
+        .quick-tags-area { display: flex; gap: 8px; padding: 10px 12px; background: var(--bg-deep); border-top: 1px solid rgba(255,255,255,0.03); overflow-x: auto; white-space: nowrap; align-items: center; scrollbar-width: thin; scrollbar-color: rgba(56, 189, 248, 0.2) transparent; }
         .quick-tags-area button { flex-shrink: 0; background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(56, 189, 248, 0.02)); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.2); padding: 6px 14px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; font-weight: 600; }
+        .quick-tags-area button:hover { background: rgba(56, 189, 248, 0.18); border-color: var(--accent); color: #f8fafc; }
         .quick-tags-area #cryptoBtn { margin-left: auto; background: rgba(34, 197, 94, 0.08); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.2); }
 
         .chat-input-area { display: flex; border-top: 1px solid rgba(255, 255, 255, 0.05); background: var(--bg-dark); }
         .chat-input-area input { flex: 1; padding: 0.9rem 1.2rem; background: transparent; border: none; color: #f8fafc; font-size: 0.95rem; }
         .chat-input-area input:focus { outline: none; }
-        .btn-send { background: linear-gradient(135deg, #1e293b, #0f172a); color: var(--accent); border: none; border-left: 1px solid rgba(255,255,255,0.05); padding: 0 1.6rem; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
+        .btn-send { background: linear-gradient(135deg, #1e293b, #0f172a); color: var(--accent); border: none; border-left: 1px solid rgba(255,255,255,0.05); padding: 0 1.6rem; cursor: pointer; font-weight: bold; transition: all 0.2s; font-size: 0.9rem; }
+        .btn-send:hover { background: var(--accent); color: var(--bg-dark); }
 
-        /* Candidates List */
+        /* Candidates List Stage */
         .candidates-list { height: 380px; overflow-y: auto; background: var(--bg-dark); border-radius: 8px; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.05); margin-top: 10px; }
         .candidate-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.15); border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; text-align: left; display: flex; justify-content: space-between; align-items: center; }
         .candidate-info h4 { color: #f8fafc; font-size: 1rem; margin-bottom: 4px; display: flex; gap: 10px; align-items: center; }
         .candidate-info h4 span { font-size: 0.75rem; color: var(--text-subtle); font-weight: normal; }
         .candidate-info p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; }
+        .candidate-info strong { color: var(--accent); }
+        
         .candidate-actions { display: flex; gap: 8px; align-items: center; }
-        .btn-action-open { background: rgba(56, 189, 248, 0.15); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: bold; }
+        .btn-action-open { background: rgba(56, 189, 248, 0.15); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: bold; transition: all 0.2s; }
+        .btn-action-open:hover { background: var(--accent); color: var(--bg-dark); }
+        .btn-approve { background: rgba(34, 197, 94, 0.15); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.4); width: 34px; height: 34px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-approve:hover { background: var(--status-online); color: #fff; box-shadow: 0 0 10px rgba(34, 197, 94, 0.4); }
+        .btn-reject { background: rgba(239, 68, 68, 0.15); color: var(--status-alert); border: 1px solid rgba(239, 68, 68, 0.4); width: 34px; height: 34px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-reject:hover { background: var(--status-alert); color: #fff; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
+
+        .candidate-count-badge { background: rgba(56, 189, 248, 0.15); color: var(--accent); padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; border: 1px solid rgba(56, 189, 248, 0.3); margin-left: 8px; }
 
         /* Operation Selection Cards */
         .op-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1.5rem; }
@@ -295,7 +321,7 @@
             <button class="btn-main-trigger" onclick="toggleModal(true)">Подати заявку зараз →</button>
             
             <div class="cards-grid">
-                <!-- Karta 1 -->
+                <!-- Karta 1: Vovkodav -->
                 <div class="team-card">
                     <div class="photo-container"><img src="vovkodav.png" alt="1-й батальйон Вовкодав" loading="lazy"></div>
                     <div>
@@ -305,7 +331,7 @@
                     <span class="footer-note"><span>●</span> СТАТУС: НА ЛБЗ</span>
                 </div>
 
-                <!-- Karta 2 -->
+                <!-- Karta 2: RVC -->
                 <div class="team-card">
                     <div class="photo-container"><img src="RVC.png" alt="РДК" loading="lazy"></div>
                     <div>
@@ -315,7 +341,7 @@
                     <span class="footer-note"><span>●</span> СТАТУС: НА ЛБЗ</span>
                 </div>
 
-                <!-- Karta 3 -->
+                <!-- Karta 3: Norman -->
                 <div class="team-card">
                     <div class="photo-container"><img src="Norman.png" alt="Норманська бригада" loading="lazy"></div>
                     <div>
@@ -332,6 +358,8 @@
     <section class="calculator-section" id="calc">
         <div class="calc-container">
             <h2 style="color: var(--text-heading); font-size: 2rem; text-transform: uppercase; text-align: center;">Калькулятор грошового забезпечення</h2>
+            <p style="color: var(--text-muted); text-align: center; margin-top: 0.5rem;">Розрахуй свій щомісячний дохід залежно від обраної спеціальності та зони виконання завдань.</p>
+            
             <div class="calc-grid">
                 <div>
                     <div class="calc-input-group" style="margin-bottom: 1.2rem;">
@@ -352,9 +380,11 @@
                         </select>
                     </div>
                 </div>
+
                 <div class="calc-result-box">
                     <span style="color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase;">Орієнтовний дохід на місяць:</span>
                     <div class="calc-amount" id="totalPay">20,000 грн</div>
+                    <span style="color: var(--text-subtle); font-size: 0.8rem;">+ Повний пакет соц. забезпечення та медичного страхування</span>
                 </div>
             </div>
         </div>
@@ -363,11 +393,29 @@
     <!-- RECRUITMENT STEPS -->
     <section class="steps-section" id="steps">
         <h2 style="color: var(--text-heading); font-size: 2.2rem; text-transform: uppercase; text-align: center;">Етапи Долучення До Лав</h2>
+        <p style="color: var(--text-muted); text-align: center; margin-top: 0.5rem;">Від подачі онлайн-заявки до першого виходу на бойове злагодження</p>
+
         <div class="steps-grid">
-            <div class="step-card"><span class="step-num">01</span><h4>Подача Заявки</h4><p>Заповнюйте анкету у модальному вікні та переходьте до зв'язку.</p></div>
-            <div class="step-card"><span class="step-num">02</span><h4>Співбесіда & МЕК</h4><p>Проходження онлайн-інтерв'ю та збір первинного пакета документів.</p></div>
-            <div class="step-card"><span class="step-num">03</span><h4>Курс БЗВП</h4><p>Інтенсивна вишколова програма з тактики та медицини.</p></div>
-            <div class="step-card"><span class="step-num">04</span><h4>Контракт</h4><p>Офіційне зарахування до обраної бригади ЗСУ.</p></div>
+            <div class="step-card">
+                <span class="step-num">01</span>
+                <h4>Подача Заявки</h4>
+                <p>Заповнюйте анкету у модальному вікні та переходьте до прямого зв'язку з рекрутером.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-num">02</span>
+                <h4>Співбесіда & МЕК</h4>
+                <p>Проходження онлайн-інтерв'ю та збір первинного пакета медичних документів.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-num">03</span>
+                <h4>Курс БЗВП (30-40 днів)</h4>
+                <p>Інтенсивна вишколова програма з вогневої, тактичної та медичної підготовки.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-num">04</span>
+                <h4>Підписання Контракту</h4>
+                <p>Офіційне зарахування до обраної бригади ЗСУ та отримання спорядження.</p>
+            </div>
         </div>
     </section>
 
@@ -377,7 +425,7 @@
             <h2 style="color: var(--text-heading); font-size: 2rem; text-transform: uppercase; text-align: center; margin-bottom: 2rem;">Часті запитання (FAQ)</h2>
             <div class="faq-item" onclick="toggleFaq(this)">
                 <div class="faq-header">Хто може долучитися до бригади? <span>+</span></div>
-                <div class="faq-body">Громадяни України та іноземці, які відповідають вимогам стану здоров'я.</div>
+                <div class="faq-body">Громадяни України та іноземці, які відповідають вимогам стану здоров'я та пройшли співбесіду.</div>
             </div>
         </div>
     </section>
@@ -388,6 +436,7 @@
         <button class="btn-main-trigger" style="margin-bottom: 0; padding: 0.8rem 1.8rem; font-size: 0.95rem; border-color: rgba(34, 197, 94, 0.4); color: var(--status-online);" onclick="openLeaderboardModal()">🏆 Tabela Rekordów</button>
     </div>
 
+    <!-- FOOTER -->
     <footer class="tactical-footer" id="contacts">
         <div class="footer-content">
             <div class="footer-block">
