@@ -75,7 +75,7 @@
         }
         .btn-main-trigger:hover { background: var(--accent); color: var(--bg-dark); box-shadow: 0 0 25px var(--accent-glow); transform: translateY(-2px); }
 
-        /* Expanded Cards Grid (3 karty) */
+        /* Expanded Cards Grid (3 Karty Podrozdziałów) */
         .cards-grid { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         .team-card { 
             flex: 1; min-width: 320px; max-width: 420px; background: var(--bg-card); backdrop-filter: blur(10px); 
@@ -136,6 +136,31 @@
         .footer-links a { color: var(--accent); text-decoration: none; font-size: 0.95rem; transition: color 0.2s; }
         .footer-links a:hover { color: var(--accent-hover); }
 
+        /* Custom Select */
+        .custom-select-wrapper { position: relative; width: 100%; }
+        .custom-select-trigger { width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f8fafc; font-size: 1rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
+        .custom-select-trigger:after { content: ''; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid var(--text-muted); transition: transform 0.3s ease; }
+        .custom-select-wrapper.open .custom-select-trigger { border-color: var(--accent); box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
+        .custom-select-wrapper.open .custom-select-trigger:after { transform: rotate(180deg); }
+        
+        .custom-options { 
+            position: absolute; top: calc(100% + 5px); left: 0; width: 100%; 
+            background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; visibility: hidden; pointer-events: none; 
+            transform: translateY(-10px); transition: all 0.2s ease; z-index: 99;
+            max-height: 180px; overflow-y: auto; 
+        }
+        
+        .custom-options::-webkit-scrollbar { width: 6px; }
+        .custom-options::-webkit-scrollbar-track { background: rgba(10, 15, 26, 0.5); border-radius: 4px; }
+        .custom-options::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+        .custom-options { scrollbar-width: thin; scrollbar-color: var(--accent) rgba(10, 15, 26, 0.5); }
+
+        .custom-select-wrapper.open .custom-options { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
+        .custom-option { padding: 0.85rem 1rem; color: var(--text-main); cursor: pointer; transition: all 0.2s; font-size: 0.95rem; }
+        .custom-option:hover { background: var(--accent-light); color: var(--accent); }
+        .custom-option.selected { background: rgba(56, 189, 248, 0.15); color: var(--accent); font-weight: 600; }
+
         /* Modal Overlay & Window */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.88); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; padding: 1rem; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
@@ -177,7 +202,7 @@
             border: none !important;
         }
 
-        /* Chat UI - Pełne style z Twojego kodu */
+        /* Chat UI Styles */
         .chat-container { width: 100%; height: 440px; display: flex; flex-direction: column; background: var(--bg-dark); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; overflow: hidden; margin-top: 0.5rem; }
         .chat-header { background: #1e293b; padding: 0.85rem 1.2rem; font-size: 0.9rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
         .chat-header .status-dot { width: 8px; height: 8px; background: var(--status-online); border-radius: 50%; box-shadow: 0 0 6px var(--status-online); display: inline-block; }
@@ -200,18 +225,11 @@
         .chat-messages { flex: 1; padding: 1.2rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.9rem; background: var(--bg-deep); }
         .message { max-width: 80%; padding: 0.7rem 1rem; border-radius: 8px; font-size: 0.92rem; line-height: 1.45; word-break: break-word; position: relative; }
         .message .msg-time { display: block; font-size: 0.65rem; color: var(--text-subtle); margin-top: 4px; text-align: right; }
-        .message .msg-status { font-size: 0.7rem; margin-left: 4px; color: var(--accent); }
         
         .message.intercom { background: rgba(56, 189, 248, 0.06); color: var(--accent); align-self: flex-start; border-left: 3px solid var(--accent); }
         .message.friend { background: #1e293b; color: #f8fafc; align-self: flex-end; border-right: 3px solid var(--text-subtle); }
         .message.approved { background: rgba(34, 197, 94, 0.1); color: #4ade80; align-self: center; border: 1px solid rgba(34, 197, 94, 0.3); width: 95%; text-align: center; }
         .message.rejected { background: rgba(239, 68, 68, 0.1); color: #f87171; align-self: center; border: 1px solid rgba(239, 68, 68, 0.3); width: 95%; text-align: center; }
-        
-        .typing-indicator { display: flex; gap: 4px; padding: 0.5rem 0.8rem; background: rgba(56, 189, 248, 0.06); border-radius: 8px; width: fit-content; border-left: 3px solid var(--accent); }
-        .typing-indicator span { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: typing 1s infinite ease-in-out; }
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes typing { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
 
         .quick-tags-area { display: flex; gap: 8px; padding: 10px 12px; background: var(--bg-deep); border-top: 1px solid rgba(255,255,255,0.03); overflow-x: auto; white-space: nowrap; align-items: center; scrollbar-width: thin; scrollbar-color: rgba(56, 189, 248, 0.2) transparent; }
         .quick-tags-area button { flex-shrink: 0; background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(56, 189, 248, 0.02)); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.2); padding: 6px 14px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; font-weight: 600; }
@@ -321,7 +339,7 @@
             <button class="btn-main-trigger" onclick="toggleModal(true)">Подати заявку зараз →</button>
             
             <div class="cards-grid">
-                <!-- Karta 1: Vovkodav -->
+                <!-- Karta 1 -->
                 <div class="team-card">
                     <div class="photo-container"><img src="vovkodav.png" alt="1-й батальйон Вовкодав" loading="lazy"></div>
                     <div>
@@ -331,17 +349,17 @@
                     <span class="footer-note"><span>●</span> СТАТУС: НА ЛБЗ</span>
                 </div>
 
-                <!-- Karta 2: RVC -->
+                <!-- Karta 2 -->
                 <div class="team-card">
                     <div class="photo-container"><img src="RVC.png" alt="РДК" loading="lazy"></div>
                     <div>
                         <h3>Російський добровольчий корпус</h3>
-                        <p>Добровольче формування, що веде запеклі бої та проводить спецоперації на лінії зіткнення.</p>
+                        <p>Добровольче формування, що веде запеклі бої та проводити спецоперації на лінії зіткнення.</p>
                     </div>
                     <span class="footer-note"><span>●</span> СТАТУС: НА ЛБЗ</span>
                 </div>
 
-                <!-- Karta 3: Norman -->
+                <!-- Karta 3 -->
                 <div class="team-card">
                     <div class="photo-container"><img src="Norman.png" alt="Норманська бригада" loading="lazy"></div>
                     <div>
@@ -559,12 +577,27 @@
             <div id="formStage" class="fade-stage">
                 <h2 style="margin-bottom: 1.5rem; color: #f1f5f9; text-align: center;">Подати заявку</h2>
                 <form onsubmit="handleSubmit(event)">
-                    <div class="form-group"><label>Позивний</label><input type="text" id="userName" required placeholder="Нікнейм"></div>
-                    <div class="form-group"><label>Контакт</label><input type="text" id="userContact" required placeholder="@username"></div>
-                    <button type="submit" class="btn-submit">Надіслати</button>
+                    <div class="form-group"><label>Позивний або Ім'я</label><input type="text" id="userName" required placeholder="Введіть ваш нікнейм"></div>
+                    <div class="form-group"><label>Контакт у Telegram / Signal</label><input type="text" id="userContact" required placeholder="@username або номер"></div>
+                    
+                    <div class="form-group">
+                        <label>Бажаний підрозділ</label>
+                        <div class="custom-select-wrapper" id="squadSelectWrapper">
+                            <input type="hidden" id="userSquad" value="1-й батальйон Вовкодав">
+                            <div class="custom-select-trigger" onclick="toggleCustomSelect()">1-й батальйон "Вовкодав"</div>
+                            <div class="custom-options">
+                                <div class="custom-option selected" onclick="selectOption(this, '1-й батальйон Вовкодав')">1-й батальйон "Вовкодав"</div>
+                                <div class="custom-option" onclick="selectOption(this, 'Російський добровольчий корпус')">Російський добровольчий корпус</div>
+                                <div class="custom-option" onclick="selectOption(this, 'Норманська бригада')">Норманська бригада</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Надіслати заявку</button>
                 </form>
             </div>
 
+            <!-- CHAT STAGE -->
             <div id="chatStage" class="fade-stage entrance" style="display: none;">
                 <h2 style="font-size: 1.5rem; margin-bottom: 1rem; color: #f1f5f9; text-align: center;">Захищений Канал Зв'язку</h2>
                 <div class="chat-container">
@@ -575,14 +608,15 @@
                             <span id="chatHeaderTitle">Персональний чат</span>
                         </div>
                         <div class="recruiter-actions" id="recruiterActions">
-                            <button class="btn-candidates" onclick="openCandidatesList()">👥 Кандидати</button>
+                            <button class="btn-candidates" onclick="openCandidatesList()">👥 Кандидати <span class="candidate-count-badge" id="candidateBadge">0</span></button>
                             <button class="btn-clear-chat" onclick="directClearChat()">Очистити</button>
                         </div>
                     </div>
                     <div class="chat-messages" id="chatMessages"></div>
-                    <div class="quick-tags-area">
+                    <div class="quick-tags-area" id="quickTagsArea">
                         <button onclick="sendQuickQuestion('docs')">📋 Документи?</button>
                         <button onclick="sendQuickQuestion('training')">🪖 Навчання?</button>
+                        <button onclick="sendQuickQuestion('gear')">📦 Забезпечення?</button>
                         <button id="cryptoBtn" onclick="checkCryptoLink()">🔐 Лінія: Захищена</button>
                     </div>
                     <div class="chat-input-area">
@@ -592,6 +626,7 @@
                 </div>
             </div>
 
+            <!-- CANDIDATES LIST STAGE (PANEL REKRUTERA) -->
             <div id="candidatesStage" class="fade-stage entrance" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                     <h2 style="font-size: 1.4rem; color: #f1f5f9;">База Кандидатів</h2>
@@ -603,6 +638,7 @@
     </div>
 
     <script>
+        // FIREBASE INITIALIZATION
         const firebaseConfig = {
             apiKey: "AIzaSyCeWM1wdHdN6bIXFXTqHXO7WgJNJK53nwk",
             authDomain: "storinka-d7bd6.firebaseapp.com",
@@ -621,6 +657,19 @@
         let currentRoomId = null;
         let isRecruiter = false;
         let globalSenderName = "Гість";
+        let activeRoomListener = null;
+
+        const BOT_RESPONSES = {
+            docs: "📋 Довідка Чергової частини: Для підписання контракту необхідні: Паспорт/ID-картка, податковий код (ІПН), військовий квиток (за наявності). Для іноземців — закордонний паспорт.",
+            training: "🪖 Навчальний Центр: Базовий курс військової підготовки (БЗВП) триває від 30 до 40 діб. Включає вогневу, тактичну медицину (TCCC) та топографію.",
+            gear: "📦 Логістичне забезпечення: Підрозділ повністю забезпечує формою, бронежилетом 4+ класу, шоломом, тактичною аптечкою НАТО та індивідуальною зброєю."
+        };
+
+        const QUESTIONS_TEXT = {
+            docs: 'Які документи необхідні для оформлення контракту?',
+            training: 'Скільки триває базовий курс підготовки (БЗВП)?',
+            gear: 'Яке речове забезпечення надає підрозділ?'
+        };
 
         const playBeep = (freq = 600, duration = 0.05) => {
             try {
@@ -640,13 +689,37 @@
         }
 
         function toggleFaq(el) { el.classList.toggle('active'); }
-        function toggleModal(show) { document.getElementById('modalOverlay').classList.toggle('active', show); document.body.classList.toggle('modal-open', show); }
+        function toggleModal(show) { 
+            document.getElementById('modalOverlay').classList.toggle('active', show); 
+            document.body.classList.toggle('modal-open', show); 
+        }
 
+        function toggleCustomSelect() {
+            document.getElementById('squadSelectWrapper').classList.toggle('open');
+        }
+
+        function selectOption(element, value) {
+            document.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            document.querySelector('#squadSelectWrapper .custom-select-trigger').innerText = element.innerText;
+            document.getElementById('userSquad').value = value;
+            document.getElementById('squadSelectWrapper').classList.remove('open');
+        }
+
+        window.addEventListener('click', (e) => {
+            const wrapper = document.getElementById('squadSelectWrapper');
+            if (wrapper && !wrapper.contains(e.target)) wrapper.classList.remove('open');
+        });
+
+        /* --- PODŁĄCZANIE DO CZATÓW ORAZ LOGIKA REKRUTERA --- */
         function handleSubmit(e) {
             e.preventDefault();
             const name = document.getElementById('userName').value.trim();
             const contact = document.getElementById('userContact').value.trim();
+            const squad = document.getElementById('userSquad').value;
+
             globalSenderName = name;
+            // LOGOWANIE REKRUTERA: JEŚLI POZYWNYJ = REK ORAZ KONTAKT = REK
             isRecruiter = (name.toUpperCase() === 'REK' && contact.toUpperCase() === 'REK');
 
             document.getElementById('formStage').classList.add('hidden');
@@ -656,22 +729,41 @@
                     document.getElementById('recruiterActions').style.display = 'flex';
                     openCandidatesList();
                 } else {
+                    document.getElementById('recruiterActions').style.display = 'none';
                     let roomId = 'room_' + Date.now();
-                    candidatesRef.child(roomId).set({ id: roomId, name, contact, timestamp: new Date().toLocaleTimeString() });
-                    openChatRoom(roomId, `Чат: ${name}`);
+                    candidatesRef.child(roomId).set({ 
+                        id: roomId, 
+                        name: name, 
+                        contact: contact, 
+                        squad: squad, 
+                        status: 'pending',
+                        timestamp: new Date().toLocaleTimeString() 
+                    });
+                    
+                    openChatRoom(roomId, `Чат: ${name} (${squad})`);
+                    
+                    // Wiadomość powitalna
+                    database.ref('rooms/' + roomId).push({
+                        sender: "Штаб Рекрутингу",
+                        text: `Вітаємо, ${name}! Ваша заявка прийнята. Очікуйте на відповідь рекрутера.`,
+                        type: 'intercom'
+                    });
                 }
             }, 350);
         }
 
         function openChatRoom(roomId, title) {
+            if (activeRoomListener) activeRoomListener.off();
             currentRoomId = roomId;
+
             document.getElementById('chatHeaderTitle').innerText = title;
             document.getElementById('chatMessages').innerHTML = '';
             document.getElementById('candidatesStage').style.display = 'none';
             document.getElementById('chatStage').style.display = 'block';
             setTimeout(() => document.getElementById('chatStage').classList.remove('entrance', 'hidden'), 20);
 
-            database.ref('rooms/' + roomId).on('child_added', snap => {
+            activeRoomListener = database.ref('rooms/' + roomId);
+            activeRoomListener.on('child_added', snap => {
                 const data = snap.val();
                 if (data) displayMessage(data.sender, data.text, data.type);
             });
@@ -680,20 +772,41 @@
         function sendMessage() {
             const txt = document.getElementById('chatInput').value.trim();
             if (!txt || !currentRoomId) return;
-            database.ref('rooms/' + currentRoomId).push({ sender: isRecruiter ? "Рекрутер" : globalSenderName, text: txt, type: 'normal' });
+            database.ref('rooms/' + currentRoomId).push({ 
+                sender: isRecruiter ? "Рекрутер" : globalSenderName, 
+                text: txt, 
+                type: 'normal' 
+            });
             document.getElementById('chatInput').value = '';
         }
 
         function sendQuickQuestion(type) {
-            let txt = type === 'docs' ? "Які документи потрібні для оформлення?" : "Як проходить курс БЗВП?";
-            if (!currentRoomId) return;
-            database.ref('rooms/' + currentRoomId).push({ sender: globalSenderName, text: txt, type: 'normal' });
+            if (!currentRoomId || !QUESTIONS_TEXT[type]) return;
+            database.ref('rooms/' + currentRoomId).push({ sender: globalSenderName, text: QUESTIONS_TEXT[type], type: 'normal' });
+
+            setTimeout(() => {
+                database.ref('rooms/' + currentRoomId).push({
+                    sender: "Черговий інструктор",
+                    text: BOT_RESPONSES[type],
+                    type: 'intercom'
+                });
+            }, 800);
         }
 
         function displayMessage(sender, text, type = 'normal') {
             const div = document.createElement('div');
-            div.className = `message ${type === 'approved' ? 'approved' : (sender === globalSenderName ? 'friend' : 'intercom')}`;
-            div.innerHTML = `<strong>${escapeHtml(sender)}:</strong> ${escapeHtml(text)}<span class="msg-time">${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>`;
+            
+            if (type === 'approved') {
+                div.className = 'message approved';
+                div.innerHTML = `<strong>✅ ${escapeHtml(sender)}:</strong> ${escapeHtml(text)}`;
+            } else if (type === 'rejected') {
+                div.className = 'message rejected';
+                div.innerHTML = `<strong>❌ ${escapeHtml(sender)}:</strong> ${escapeHtml(text)}`;
+            } else {
+                div.className = `message ${sender === globalSenderName || (isRecruiter && sender === 'Рекрутер') ? 'friend' : 'intercom'}`;
+                div.innerHTML = `<strong>${escapeHtml(sender)}:</strong> ${escapeHtml(text)}<span class="msg-time">${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>`;
+            }
+
             document.getElementById('chatMessages').appendChild(div);
             document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
         }
@@ -701,21 +814,65 @@
         function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
         function escapeHtml(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
+        /* LISTA KANDYDATÓW & PRZEJMOWANIE WAKANSJI I ODMAWIANIE (ADMIN PANEL) */
         function openCandidatesList() {
             document.getElementById('chatStage').style.display = 'none';
             document.getElementById('candidatesStage').style.display = 'block';
+
             candidatesRef.on('value', snap => {
                 const container = document.getElementById('candidatesListContainer');
+                const badge = document.getElementById('candidateBadge');
                 container.innerHTML = '';
-                if (!snap.exists()) { container.innerHTML = '<p style="text-align:center; color:var(--text-subtle);">Brak kandydatów.</p>'; return; }
+                
+                if (!snap.exists()) { 
+                    container.innerHTML = '<p style="text-align:center; color:var(--text-subtle); padding: 2rem;">Brak nowych kandydatów.</p>'; 
+                    if (badge) badge.innerText = '0';
+                    return; 
+                }
+
+                let count = 0;
                 snap.forEach(child => {
+                    count++;
                     const c = child.val();
+                    const statusText = c.status === 'approved' ? ' (✅ Прийнято)' : (c.status === 'rejected' ? ' (❌ Відхилено)' : '');
+                    
                     const div = document.createElement('div');
                     div.className = 'candidate-card';
-                    div.innerHTML = `<div class="candidate-info"><h4>${escapeHtml(c.name)}</h4><p>Kontakt: ${escapeHtml(c.contact)}</p></div><div class="candidate-actions"><button class="btn-action-open" onclick="openChatRoom('${c.id}', 'Чат: ${escapeHtml(c.name)}')">💬</button></div>`;
+                    div.innerHTML = `
+                        <div class="candidate-info">
+                            <h4>${escapeHtml(c.name || 'Незвіданий')} <span>${c.timestamp || ''}</span></h4>
+                            <p><strong>Підрозділ:</strong> ${escapeHtml(c.squad || '—')} ${statusText}</p>
+                            <p><strong>Контакт:</strong> ${escapeHtml(c.contact || '—')}</p>
+                        </div>
+                        <div class="candidate-actions">
+                            <button class="btn-action-open" onclick="openChatRoom('${c.id}', 'Чат: ${escapeHtml(c.name)}')">💬 В чат</button>
+                            <button class="btn-approve" onclick="updateCandidateStatus('${c.id}', 'approved')" title="Прийняти">✓</button>
+                            <button class="btn-reject" onclick="updateCandidateStatus('${c.id}', 'rejected')" title="Відхилити">✕</button>
+                        </div>
+                    `;
                     container.appendChild(div);
                 });
+
+                if (badge) badge.innerText = count;
             });
+        }
+
+        function updateCandidateStatus(roomId, status) {
+            candidatesRef.child(roomId).update({ status: status });
+            
+            if (status === 'approved') {
+                database.ref('rooms/' + roomId).push({
+                    sender: "Штаб Рекрутингу",
+                    text: "Вашу заявку схвалено! Інструктор зв'яжеться з вами найближчим часом.",
+                    type: 'approved'
+                });
+            } else if (status === 'rejected') {
+                database.ref('rooms/' + roomId).push({
+                    sender: "Штаб Рекрутингу",
+                    text: "На жаль, вашу заявку наразі відхилено.",
+                    type: 'rejected'
+                });
+            }
         }
 
         function backToChatFromCandidates() {
@@ -726,13 +883,27 @@
         function goBackToForm() {
             document.getElementById('chatStage').style.display = 'none';
             document.getElementById('formStage').style.display = 'block';
+            document.getElementById('formStage').classList.remove('hidden');
         }
 
-        function directClearChat() { if (currentRoomId) database.ref('rooms/' + currentRoomId).remove(); }
-        function checkCryptoLink() { alert("Połączenie zabezpieczone protokołem end-to-end."); }
+        function directClearChat() { 
+            if (currentRoomId && confirm("Очистити поточний чат?")) {
+                database.ref('rooms/' + currentRoomId).remove(); 
+                document.getElementById('chatMessages').innerHTML = '';
+            }
+        }
+
+        function checkCryptoLink() { 
+            const btn = document.getElementById('cryptoBtn');
+            btn.innerText = "⏳ Сканування...";
+            setTimeout(() => {
+                btn.innerText = "⚡ Шихр: OK";
+                setTimeout(() => { btn.innerText = "🔐 Лінія: Захищена"; }, 2000);
+            }, 1000);
+        }
 
         // =========================================================================
-        // --- 3D FPS SHOOTER ENGINE (UKRYTA MYSZKA + PITCH/YAW + HEADSHOTS) ---
+        // --- 3D FPS SHOOTER ENGINE (MYSZKA + HEADSHOTS + TARKOV HEALTH) ---
         // =========================================================================
         let scene, cameraFPS, rendererFPS, isFPSRunning = false, animFPSId = null, aiIntervalFPS = null;
         let ammoFPS = 30, scoreFPS = 0, playerYaw = 0, playerPitch = 0;
