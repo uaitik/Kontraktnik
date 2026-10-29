@@ -354,7 +354,7 @@
                     <div class="photo-container"><img src="RVC.png" alt="РДК" loading="lazy"></div>
                     <div>
                         <h3>Російський добровольчий корпус</h3>
-                        <p>Добровольче формування, що веде запеклі бої та проводити спецоперації на лінії зіткнення.</p>
+                        <p>Добровольче формування, що веде запеклі бої та проводить спецоперації на лінії зіткнення.</p>
                     </div>
                     <span class="footer-note"><span>●</span> СТАТУС: НА ЛБЗ</span>
                 </div>
@@ -666,9 +666,9 @@
         };
 
         const QUESTIONS_TEXT = {
-            docs: 'Які документи необхідні для оформлення контракту?',
-            training: 'Скільки триває базовий курс підготовки (БЗВП)?',
-            gear: 'Яке речове забезпечення надає підрозділ?'
+            docs: '📋 Які документи необхідні для оформлення контракту?',
+            training: '🪖 Скільки триває базовий курс підготовки (БЗВП)?',
+            gear: '📦 Яке речове забезпечення надає підрозділ?'
         };
 
         const playBeep = (freq = 600, duration = 0.05) => {
@@ -711,7 +711,7 @@
             if (wrapper && !wrapper.contains(e.target)) wrapper.classList.remove('open');
         });
 
-        /* --- PODŁĄCZANIE DO CZATÓW ORAZ LOGIKA REKRUTERA --- */
+        /* --- LOGOWANIE ADMINA (REK / REK) ORAZ TWORZENIE POKOJÓW --- */
         function handleSubmit(e) {
             e.preventDefault();
             const name = document.getElementById('userName').value.trim();
@@ -719,7 +719,6 @@
             const squad = document.getElementById('userSquad').value;
 
             globalSenderName = name;
-            // LOGOWANIE REKRUTERA: JEŚLI POZYWNYJ = REK ORAZ KONTAKT = REK
             isRecruiter = (name.toUpperCase() === 'REK' && contact.toUpperCase() === 'REK');
 
             document.getElementById('formStage').classList.add('hidden');
@@ -742,7 +741,6 @@
                     
                     openChatRoom(roomId, `Чат: ${name} (${squad})`);
                     
-                    // Wiadomość powitalna
                     database.ref('rooms/' + roomId).push({
                         sender: "Штаб Рекрутингу",
                         text: `Вітаємо, ${name}! Ваша заявка прийнята. Очікуйте на відповідь рекрутера.`,
@@ -814,7 +812,7 @@
         function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
         function escapeHtml(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
-        /* LISTA KANDYDATÓW & PRZEJMOWANIE WAKANSJI I ODMAWIANIE (ADMIN PANEL) */
+        /* PANEL ADMINA: LISTA KANDYDATÓW, WAKANSJE, ZATWIERDZANIE I ODRZUCANIE */
         function openCandidatesList() {
             document.getElementById('chatStage').style.display = 'none';
             document.getElementById('candidatesStage').style.display = 'block';
@@ -881,6 +879,7 @@
         }
 
         function goBackToForm() {
+            if (activeRoomListener) activeRoomListener.off();
             document.getElementById('chatStage').style.display = 'none';
             document.getElementById('formStage').style.display = 'block';
             document.getElementById('formStage').classList.remove('hidden');
