@@ -34,7 +34,7 @@
 
         button, select { font-family: inherit; user-select: none; -webkit-tap-highlight-color: transparent; }
 
-        /* Navbar */
+        /* Навігація */
         .navbar { 
             position: fixed; top: 0; left: 0; width: 100%; z-index: 100; 
             display: flex; justify-content: space-between; align-items: center; 
@@ -46,7 +46,7 @@
         .nav-links a { color: var(--text-subtle); text-decoration: none; font-weight: 500; transition: color var(--transition-speed) ease; }
         .nav-links a:hover { color: #f8fafc; }
         
-        /* Hero Section & Tactical Overlay */
+        /* Головна секція (Hero) */
         .video-container { position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 6rem 2rem 4rem 2rem; overflow: hidden; }
         .bg-video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); object-fit: cover; z-index: 1; opacity: 0.35; }
         .video-overlay { 
@@ -75,7 +75,7 @@
         }
         .btn-main-trigger:hover { background: var(--accent); color: var(--bg-dark); box-shadow: 0 0 25px var(--accent-glow); transform: translateY(-2px); }
 
-        /* Expanded Cards Grid (3 Karty Podrozdziałów) */
+        /* Картки підрозділів */
         .cards-grid { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; width: 100%; }
         .team-card { 
             flex: 1; min-width: 320px; max-width: 420px; background: var(--bg-card); backdrop-filter: blur(10px); 
@@ -96,7 +96,7 @@
         .footer-note span { animation: blink 1.5s infinite; color: var(--status-alert); }
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        /* Pay Calculator Section */
+        /* Калькулятор виплат */
         .calculator-section { background: var(--bg-deep); padding: 5rem 2rem; border-top: 1px solid rgba(255, 255, 255, 0.03); display: flex; justify-content: center; }
         .calc-container { max-width: 1000px; width: 100%; background: var(--bg-card); border: 1px solid var(--accent-border); border-radius: 16px; padding: 2.5rem; backdrop-filter: blur(10px); }
         .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
@@ -107,7 +107,7 @@
         .calc-result-box { background: rgba(10, 15, 26, 0.8); border: 1px solid var(--accent); border-radius: 12px; padding: 1.5rem; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .calc-amount { font-size: 2.8rem; font-weight: 800; color: var(--status-online); text-shadow: 0 0 15px rgba(34, 197, 94, 0.3); margin: 0.5rem 0; }
 
-        /* Recruitment Steps Section */
+        /* Етапи рекрутингу */
         .steps-section { padding: 5rem 2rem; max-width: 1300px; margin: 0 auto; text-align: center; }
         .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
         .step-card { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 2rem; text-align: left; position: relative; overflow: hidden; }
@@ -115,7 +115,7 @@
         .step-card h4 { color: var(--text-heading); font-size: 1.2rem; margin-bottom: 0.75rem; font-weight: 700; }
         .step-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
 
-        /* FAQ Section */
+        /* FAQ */
         .faq-section { background: var(--bg-deep); padding: 5rem 2rem; border-top: 1px solid rgba(255, 255, 255, 0.03); display: flex; justify-content: center; }
         .faq-container { max-width: 900px; width: 100%; }
         .faq-item { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 10px; margin-bottom: 1rem; overflow: hidden; }
@@ -125,18 +125,14 @@
         .faq-item.active .faq-body { display: block; }
         .faq-item.active .faq-header { color: var(--accent); }
 
-        /* Footer */
+        /* Футер */
         .tactical-footer { background: var(--bg-footer); padding: 4rem 3rem; border-top: 1px solid rgba(56, 189, 248, 0.1); display: flex; justify-content: center; }
         .footer-content { max-width: 1400px; width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
         .footer-block { flex: 1; min-width: 280px; }
         .footer-block h4 { color: var(--text-heading); font-size: 1.1rem; margin-bottom: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
         .footer-block p { color: var(--text-subtle); font-size: 0.95rem; line-height: 1.6; }
-        .footer-links { list-style: none; }
-        .footer-links li { margin-bottom: 0.6rem; }
-        .footer-links a { color: var(--accent); text-decoration: none; font-size: 0.95rem; transition: color 0.2s; }
-        .footer-links a:hover { color: var(--accent-hover); }
 
-        /* Custom Select */
+        /* Кастомний селект */
         .custom-select-wrapper { position: relative; width: 100%; }
         .custom-select-trigger { width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f8fafc; font-size: 1rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
         .custom-select-trigger:after { content: ''; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid var(--text-muted); transition: transform 0.3s ease; }
@@ -150,18 +146,16 @@
             transform: translateY(-10px); transition: all 0.2s ease; z-index: 99;
             max-height: 180px; overflow-y: auto; 
         }
-        
         .custom-options::-webkit-scrollbar { width: 6px; }
         .custom-options::-webkit-scrollbar-track { background: rgba(10, 15, 26, 0.5); border-radius: 4px; }
         .custom-options::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
-        .custom-options { scrollbar-width: thin; scrollbar-color: var(--accent) rgba(10, 15, 26, 0.5); }
 
         .custom-select-wrapper.open .custom-options { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
         .custom-option { padding: 0.85rem 1rem; color: var(--text-main); cursor: pointer; transition: all 0.2s; font-size: 0.95rem; }
         .custom-option:hover { background: var(--accent-light); color: var(--accent); }
         .custom-option.selected { background: rgba(56, 189, 248, 0.15); color: var(--accent); font-weight: 600; }
 
-        /* Modal Overlay & Window */
+        /* Модальні вікна */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.88); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; padding: 1rem; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal-window { width: 100%; max-width: 860px; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 16px; padding: 2.2rem; box-shadow: 0 25px 60px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
@@ -192,17 +186,13 @@
         }
         .close-modal:hover { color: #f8fafc; background: rgba(239, 68, 68, 0.2); border-color: var(--status-alert); transform: rotate(90deg); }
 
-        /* Fullscreen Game Override */
+        /* Повноекранний режим гри */
         .modal-overlay.game-fullscreen .modal-window {
-            max-width: 100vw !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            border-radius: 0 !important;
-            padding: 0 !important;
-            border: none !important;
+            max-width: 100vw !important; width: 100vw !important; height: 100vh !important;
+            border-radius: 0 !important; padding: 0 !important; border: none !important;
         }
 
-        /* Chat UI Styles */
+        /* Інтерфейс чату */
         .chat-container { width: 100%; height: 440px; display: flex; flex-direction: column; background: var(--bg-dark); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; overflow: hidden; margin-top: 0.5rem; }
         .chat-header { background: #1e293b; padding: 0.85rem 1.2rem; font-size: 0.9rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
         .chat-header .status-dot { width: 8px; height: 8px; background: var(--status-online); border-radius: 50%; box-shadow: 0 0 6px var(--status-online); display: inline-block; }
@@ -210,8 +200,7 @@
         .btn-back-chat {
             background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); 
             color: var(--text-muted); width: 30px; height: 30px; border-radius: 6px;
-            cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; 
-            transition: all 0.2s;
+            cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s;
         }
         .btn-back-chat:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
 
@@ -242,7 +231,7 @@
         .btn-send { background: linear-gradient(135deg, #1e293b, #0f172a); color: var(--accent); border: none; border-left: 1px solid rgba(255,255,255,0.05); padding: 0 1.6rem; cursor: pointer; font-weight: bold; transition: all 0.2s; font-size: 0.9rem; }
         .btn-send:hover { background: var(--accent); color: var(--bg-dark); }
 
-        /* Candidates List Stage */
+        /* Список кандидатів (Адмін-панель) */
         .candidates-list { height: 380px; overflow-y: auto; background: var(--bg-dark); border-radius: 8px; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.05); margin-top: 10px; }
         .candidate-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.15); border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; text-align: left; display: flex; justify-content: space-between; align-items: center; }
         .candidate-info h4 { color: #f8fafc; font-size: 1rem; margin-bottom: 4px; display: flex; gap: 10px; align-items: center; }
@@ -260,7 +249,7 @@
 
         .candidate-count-badge { background: rgba(56, 189, 248, 0.15); color: var(--accent); padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; border: 1px solid rgba(56, 189, 248, 0.3); margin-left: 8px; }
 
-        /* Operation Selection Cards */
+        /* Вибір типу гри */
         .op-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1.5rem; }
         @media (max-width: 600px) { .op-card-grid { grid-template-columns: 1fr; } }
         .op-card { background: rgba(10, 15, 26, 0.8); border: 1px solid var(--accent-border); border-radius: 12px; padding: 1.5rem 1rem; text-align: center; cursor: pointer; transition: all 0.3s; }
@@ -269,7 +258,7 @@
         .op-title { color: #f1f5f9; font-weight: bold; font-size: 1.1rem; margin-bottom: 0.5rem; }
         .op-desc { color: var(--text-muted); font-size: 0.8rem; line-height: 1.4; }
 
-        /* 3D FPS Fullscreen Styles */
+        /* 3D FPS стилі */
         .fps-container { width: 100vw; height: 100vh; position: relative; background: #000; overflow: hidden; }
         .fps-crosshair { position: absolute; top: 50%; left: 50%; width: 10px; height: 10px; border: 2px solid rgba(56, 189, 248, 0.9); border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 10; }
         .fps-crosshair::after { content: ''; position: absolute; top: 50%; left: 50%; width: 2px; height: 2px; background: #fff; transform: translate(-50%, -50%); }
@@ -282,20 +271,11 @@
         .pointer-hint { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 12; background: rgba(15, 23, 42, 0.92); border: 2px solid var(--accent); color: #fff; padding: 20px 30px; border-radius: 12px; font-weight: bold; font-size: 1.1rem; text-align: center; pointer-events: none; box-shadow: 0 0 30px rgba(0,0,0,0.8); }
         .hit-flash { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(239, 68, 68, 0.3); pointer-events: none; z-index: 9; opacity: 0; transition: opacity 0.15s ease-out; }
 
-        /* TARKOV HEALTH UI STYLES */
+        /* Інтерфейс здоров'я у стилі Tarkov */
         .tarkov-ui {
-            display: none;
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 480px;
-            background: rgba(12, 16, 24, 0.96);
-            border: 2px solid #334155;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 0 40px rgba(0,0,0,0.95);
-            z-index: 100;
-            color: #e2e8f0;
+            display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 480px; background: rgba(12, 16, 24, 0.96); border: 2px solid #334155; border-radius: 12px;
+            padding: 20px; box-shadow: 0 0 40px rgba(0,0,0,0.95); z-index: 100; color: #e2e8f0;
         }
         .tarkov-header { display: flex; justify-content: space-between; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px; color: var(--accent); }
         .tarkov-body { display: flex; gap: 20px; align-items: center; }
@@ -339,7 +319,6 @@
             <button class="btn-main-trigger" onclick="toggleModal(true)">Подати заявку зараз →</button>
             
             <div class="cards-grid">
-                <!-- Karta 1 -->
                 <div class="team-card">
                     <div class="photo-container"><img src="vovkodav.png" alt="1-й батальйон Вовкодав" loading="lazy"></div>
                     <div>
@@ -349,7 +328,6 @@
                     <span class="footer-note"><span>●</span> СТАТУС: НА ЛБЗ</span>
                 </div>
 
-                <!-- Karta 2 -->
                 <div class="team-card">
                     <div class="photo-container"><img src="RVC.png" alt="РДК" loading="lazy"></div>
                     <div>
@@ -359,7 +337,6 @@
                     <span class="footer-note"><span>●</span> СТАТУС: НА ЛБЗ</span>
                 </div>
 
-                <!-- Karta 3 -->
                 <div class="team-card">
                     <div class="photo-container"><img src="Norman.png" alt="Норманська бригада" loading="lazy"></div>
                     <div>
@@ -372,7 +349,7 @@
         </main>
     </div>
 
-    <!-- CALCULATOR SECTION -->
+    <!-- Калькулятор виплат -->
     <section class="calculator-section" id="calc">
         <div class="calc-container">
             <h2 style="color: var(--text-heading); font-size: 2rem; text-transform: uppercase; text-align: center;">Калькулятор грошового забезпечення</h2>
@@ -408,7 +385,7 @@
         </div>
     </section>
 
-    <!-- RECRUITMENT STEPS -->
+    <!-- Етапи рекрутингу -->
     <section class="steps-section" id="steps">
         <h2 style="color: var(--text-heading); font-size: 2.2rem; text-transform: uppercase; text-align: center;">Етапи Долучення До Лав</h2>
         <p style="color: var(--text-muted); text-align: center; margin-top: 0.5rem;">Від подачі онлайн-заявки до першого виходу на бойове злагодження</p>
@@ -437,7 +414,7 @@
         </div>
     </section>
 
-    <!-- FAQ SECTION -->
+    <!-- FAQ -->
     <section class="faq-section" id="faq">
         <div class="faq-container">
             <h2 style="color: var(--text-heading); font-size: 2rem; text-transform: uppercase; text-align: center; margin-bottom: 2rem;">Часті запитання (FAQ)</h2>
@@ -448,53 +425,53 @@
         </div>
     </section>
 
-    <!-- DOLNY PANEL GRY & LEADERBOARD -->
+    <!-- Кнопки гри та рекорди -->
     <div style="background: var(--bg-deep); padding: 2rem; border-top: 1px solid var(--accent-border); text-align: center; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
-        <button class="btn-main-trigger" style="margin-bottom: 0; padding: 0.8rem 1.8rem; font-size: 0.95rem;" onclick="openGameModal()">🎮 Graj: 3D FPS Shooter (Headshots + Tarkov Meds)</button>
-        <button class="btn-main-trigger" style="margin-bottom: 0; padding: 0.8rem 1.8rem; font-size: 0.95rem; border-color: rgba(34, 197, 94, 0.4); color: var(--status-online);" onclick="openLeaderboardModal()">🏆 Tabela Rekordów</button>
+        <button class="btn-main-trigger" style="margin-bottom: 0; padding: 0.8rem 1.8rem; font-size: 0.95rem;" onclick="openGameModal()">🎮 Грати: 3D FPS Шутер (Штурм + Tarkov Мед)</button>
+        <button class="btn-main-trigger" style="margin-bottom: 0; padding: 0.8rem 1.8rem; font-size: 0.95rem; border-color: rgba(34, 197, 94, 0.4); color: var(--status-online);" onclick="openLeaderboardModal()">🏆 Таблиця Рекордів</button>
     </div>
 
-    <!-- FOOTER -->
+    <!-- Футер -->
     <footer class="tactical-footer" id="contacts">
         <div class="footer-content">
             <div class="footer-block">
                 <h4>Штаб рекрутингу</h4>
-                <p>Лінія зв'язку працює цілодобово. Подавай заявку через захищене модальне вікно.</p>
+                <p>Лінія зв'язку працює цілодобово. Подавай заявку через захищене модальне вікно для отримання інструкцій.</p>
             </div>
         </div>
     </footer>
 
-    <!-- MODAL GRY (FULLSCREEN 3D FPS) -->
+    <!-- Модальне вікно гри (3D FPS) -->
     <div class="modal-overlay" id="gameModal">
         <div class="modal-window" style="position: relative;">
             <button class="close-modal" onclick="closeGameModal()">×</button>
             
             <div id="opSelectScreen" style="padding: 2rem;">
-                <h2 style="color: #f1f5f9; margin-bottom: 0.5rem; text-align: center;">🎯 Wybierz Rodzaj Operacji 3D FPS</h2>
-                <p style="color: var(--text-muted); font-size: 0.9rem; text-align: center;">Kliknij w okno gry, aby zablokować kursor i celować myszką!</p>
+                <h2 style="color: #f1f5f9; margin-bottom: 0.5rem; text-align: center;">🎯 Виберіть тип бойової операції 3D FPS</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem; text-align: center;">Клацніть у вікно гри, щоб заблокувати курсор та керувати поглядом!</p>
 
                 <div class="op-card-grid">
                     <div class="op-card" onclick="startFPSGame('assault')">
                         <div class="op-icon">🪖</div>
                         <div class="op-title">Штурм Позицій 3D</div>
-                        <div class="op-desc">Strzelaj w głowy (50 damage, +100 pkt) lub w korpus (25 damage).</div>
+                        <div class="op-desc">Стріляйте в голову (50 шкоди, +100 очок) або в корпус (25 шкоди).</div>
                     </div>
                     <div class="op-card" onclick="startFPSGame('defense')">
                         <div class="op-icon">🛡️</div>
                         <div class="op-title">Оборона Сектора 3D</div>
-                        <div class="op-desc">Utrzymaj pozycję i lecz obrażenia klawiszem 'M'.</div>
+                        <div class="op-desc">Утримуйте позицію та лікуйте поранення клавішею 'M'.</div>
                     </div>
                 </div>
             </div>
 
             <div id="canvasScreen" style="display: none;">
                 <div class="fps-container" id="threeJsContainer">
-                    <div class="pointer-hint" id="pointerHint">🎯 Kliknij w ekran, aby włączyć celownik 3D!</div>
+                    <div class="pointer-hint" id="pointerHint">🎯 Клацніть на екрані, щоб увімкнути тактичний приціл!</div>
                 </div>
 
                 <div class="tarkov-ui" id="tarkovMedicalUi">
                     <div class="tarkov-header">
-                        <span>🏥 STAN ZDROWIA (TCCC DIAGNOSTICS)</span>
+                        <span>🏥 СТАН ЗДОРОВ'Я (TCCC ДІАГНОСТИКА)</span>
                         <span style="cursor: pointer;" onclick="toggleTarkovUi(false)">✕</span>
                     </div>
                     <div class="tarkov-body">
@@ -511,65 +488,65 @@
                         </div>
                         <div class="limb-list">
                             <div class="limb-box" id="box-head" onclick="selectLimb('head')">
-                                <div class="limb-info"><span>GŁOWA (HEAD)</span><span id="hp-head">35/35</span></div>
+                                <div class="limb-info"><span>ГОЛОВА (HEAD)</span><span id="hp-head">35/35</span></div>
                                 <div class="limb-bar-bg"><div class="limb-bar-fill" id="bar-head"></div></div>
                             </div>
                             <div class="limb-box" id="box-thorax" onclick="selectLimb('thorax')">
-                                <div class="limb-info"><span>KLATKA (THORAX)</span><span id="hp-thorax">85/85</span></div>
+                                <div class="limb-info"><span>ГРУДИ (THORAX)</span><span id="hp-thorax">85/85</span></div>
                                 <div class="limb-bar-bg"><div class="limb-bar-fill" id="bar-thorax"></div></div>
                             </div>
                             <div class="limb-box" id="box-stomach" onclick="selectLimb('stomach')">
-                                <div class="limb-info"><span>BRZUCH (STOMACH)</span><span id="hp-stomach">70/70</span></div>
+                                <div class="limb-info"><span>ЖИВІТ (STOMACH)</span><span id="hp-stomach">70/70</span></div>
                                 <div class="limb-bar-bg"><div class="limb-bar-fill" id="bar-stomach"></div></div>
                             </div>
                             <div class="limb-box" id="box-rarm" onclick="selectLimb('rarm')">
-                                <div class="limb-info"><span>PRAWA RĘKA</span><span id="hp-rarm">60/60</span></div>
+                                <div class="limb-info"><span>ПРАВА РУКА</span><span id="hp-rarm">60/60</span></div>
                                 <div class="limb-bar-bg"><div class="limb-bar-fill" id="bar-rarm"></div></div>
                             </div>
                             <div class="limb-box" id="box-larm" onclick="selectLimb('larm')">
-                                <div class="limb-info"><span>LEWA RĘKA</span><span id="hp-larm">60/60</span></div>
+                                <div class="limb-info"><span>ЛІВА РУКА</span><span id="hp-larm">60/60</span></div>
                                 <div class="limb-bar-bg"><div class="limb-bar-fill" id="bar-larm"></div></div>
                             </div>
                             <div class="limb-box" id="box-rleg" onclick="selectLimb('rleg')">
-                                <div class="limb-info"><span>PRAWA NOGA</span><span id="hp-rleg">65/65</span></div>
+                                <div class="limb-info"><span>ПРАВА НОГА</span><span id="hp-rleg">65/65</span></div>
                                 <div class="limb-bar-bg"><div class="limb-bar-fill" id="bar-rleg"></div></div>
                             </div>
                             <div class="limb-box" id="box-lleg" onclick="selectLimb('lleg')">
-                                <div class="limb-info"><span>LEWA NOGA</span><span id="hp-lleg">65/65</span></div>
+                                <div class="limb-info"><span>ЛІВА НОГА</span><span id="hp-lleg">65/65</span></div>
                                 <div class="limb-bar-bg"><div class="limb-bar-fill" id="bar-lleg"></div></div>
                             </div>
                         </div>
                     </div>
                     <div class="med-actions">
-                        <button class="btn-med" onclick="useMedItem('tourniquet')">🩸 Turniket (Staza)</button>
-                        <button class="btn-med" onclick="useMedItem('bandage')">🩹 Opatrunek Medyczny</button>
+                        <button class="btn-med" onclick="useMedItem('tourniquet')">🩸 Турнікет (Стаза)</button>
+                        <button class="btn-med" onclick="useMedItem('bandage')">🩹 Ізраїльський бандаж</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL TABELI REKORDÓW -->
+    <!-- Модальне вікно таблиці рекордів -->
     <div class="modal-overlay" id="leaderboardModal">
         <div class="modal-window" style="max-width: 500px;">
             <button class="close-modal" onclick="closeLeaderboardModal()">×</button>
-            <h2 style="color: #f1f5f9; margin-bottom: 1rem; text-align: center;">🏆 Tabela Rekordów</h2>
+            <h2 style="color: #f1f5f9; margin-bottom: 1rem; text-align: center;">🏆 Таблиця Рекордів</h2>
             <div style="max-height: 320px; overflow-y: auto; background: var(--bg-dark); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); padding: 0.8rem;">
                 <table style="width: 100%; color: var(--text-main); border-collapse: collapse; text-align: left;">
                     <thead>
                         <tr style="border-bottom: 1px solid var(--accent-border); color: var(--accent); font-size: 0.85rem;">
-                            <th style="padding: 6px;">#</th><th style="padding: 6px;">Gracz</th><th style="padding: 6px; text-align: right;">Wynik</th>
+                            <th style="padding: 6px;">#</th><th style="padding: 6px;">Боєць</th><th style="padding: 6px; text-align: right;">Бали</th>
                         </tr>
                     </thead>
                     <tbody id="leaderboardBody">
-                        <tr><td colspan="3" style="text-align:center; padding: 1rem; color: var(--text-subtle);">Ładowanie...</td></tr>
+                        <tr><td colspan="3" style="text-align:center; padding: 1rem; color: var(--text-subtle);">Завантаження...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- MODAL APPLICATION & CHAT -->
+    <!-- Головне модальне вікно анкети та чату -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-window">
             <button class="close-modal" onclick="toggleModal(false)">×</button>
@@ -577,8 +554,8 @@
             <div id="formStage" class="fade-stage">
                 <h2 style="margin-bottom: 1.5rem; color: #f1f5f9; text-align: center;">Подати заявку</h2>
                 <form onsubmit="handleSubmit(event)">
-                    <div class="form-group"><label>Позивний або Ім'я</label><input type="text" id="userName" required placeholder="Введіть ваш нікнейм"></div>
-                    <div class="form-group"><label>Контакт у Telegram / Signal</label><input type="text" id="userContact" required placeholder="@username або номер"></div>
+                    <div class="form-group"><label>Позивний або Ім'я (введіть REK для адміна)</label><input type="text" id="userName" required placeholder="Ваш нікнейм"></div>
+                    <div class="form-group"><label>Контакт у Telegram / Signal (введіть REK для адміна)</label><input type="text" id="userContact" required placeholder="@username або номер"></div>
                     
                     <div class="form-group">
                         <label>Бажаний підрозділ</label>
@@ -597,7 +574,7 @@
                 </form>
             </div>
 
-            <!-- CHAT STAGE -->
+            <!-- Етап чату -->
             <div id="chatStage" class="fade-stage entrance" style="display: none;">
                 <h2 style="font-size: 1.5rem; margin-bottom: 1rem; color: #f1f5f9; text-align: center;">Захищений Канал Зв'язку</h2>
                 <div class="chat-container">
@@ -621,15 +598,15 @@
                     </div>
                     <div class="chat-input-area">
                         <input type="text" id="chatInput" placeholder="Напишіть повідомлення..." onkeypress="handleKeyPress(event)">
-                        <button class="btn-send" onclick="sendMessage()">Друк</button>
+                        <button class="btn-send" onclick="sendMessage()">Надіслати</button>
                     </div>
                 </div>
             </div>
 
-            <!-- CANDIDATES LIST STAGE (PANEL REKRUTERA) -->
+            <!-- Адмін-панель (список кандидатів) -->
             <div id="candidatesStage" class="fade-stage entrance" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h2 style="font-size: 1.4rem; color: #f1f5f9;">База Кандидатів</h2>
+                    <h2 style="font-size: 1.4rem; color: #f1f5f9;">База Кандидатів (Адмін-Панель)</h2>
                     <button class="btn-back-chat" onclick="backToChatFromCandidates()">← В чат</button>
                 </div>
                 <div class="candidates-list" id="candidatesListContainer"></div>
@@ -638,7 +615,7 @@
     </div>
 
     <script>
-        // FIREBASE INITIALIZATION
+        // Ініціалізація Firebase[cite: 1]
         const firebaseConfig = {
             apiKey: "AIzaSyCeWM1wdHdN6bIXFXTqHXO7WgJNJK53nwk",
             authDomain: "storinka-d7bd6.firebaseapp.com",
@@ -711,7 +688,7 @@
             if (wrapper && !wrapper.contains(e.target)) wrapper.classList.remove('open');
         });
 
-        /* --- LOGOWANIE ADMINA (REK / REK) ORAZ TWORZENIE POKOJÓW --- */
+        /* --- Авторизація адміністратора / Вхід (REK / REK) --- */
         function handleSubmit(e) {
             e.preventDefault();
             const name = document.getElementById('userName').value.trim();
@@ -812,7 +789,7 @@
         function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
         function escapeHtml(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
-        /* PANEL ADMINA: LISTA KANDYDATÓW, WAKANSJE, ZATWIERDZANIE I ODRZUCANIE */
+        /* Панель адміністратора (Список кандидатів) */
         function openCandidatesList() {
             document.getElementById('chatStage').style.display = 'none';
             document.getElementById('candidatesStage').style.display = 'block';
@@ -823,7 +800,7 @@
                 container.innerHTML = '';
                 
                 if (!snap.exists()) { 
-                    container.innerHTML = '<p style="text-align:center; color:var(--text-subtle); padding: 2rem;">Brak nowych kandydatów.</p>'; 
+                    container.innerHTML = '<p style="text-align:center; color:var(--text-subtle); padding: 2rem;">Немає нових кандидатів.</p>'; 
                     if (badge) badge.innerText = '0';
                     return; 
                 }
@@ -838,7 +815,7 @@
                     div.className = 'candidate-card';
                     div.innerHTML = `
                         <div class="candidate-info">
-                            <h4>${escapeHtml(c.name || 'Незвіданий')} <span>${c.timestamp || ''}</span></h4>
+                            <h4>${escapeHtml(c.name || 'Кандидат')} <span>${c.timestamp || ''}</span></h4>
                             <p><strong>Підрозділ:</strong> ${escapeHtml(c.squad || '—')} ${statusText}</p>
                             <p><strong>Контакт:</strong> ${escapeHtml(c.contact || '—')}</p>
                         </div>
@@ -861,7 +838,7 @@
             if (status === 'approved') {
                 database.ref('rooms/' + roomId).push({
                     sender: "Штаб Рекрутингу",
-                    text: "Вашу заявку схвалено! Інструктор зв'яжеться з вами найближчим часом.",
+                    text: "Вашу заявку схвалено! Інструктор зв'яжеться з вами найближчим часом для оформлення.",
                     type: 'approved'
                 });
             } else if (status === 'rejected') {
@@ -896,17 +873,17 @@
             const btn = document.getElementById('cryptoBtn');
             btn.innerText = "⏳ Сканування...";
             setTimeout(() => {
-                btn.innerText = "⚡ Шихр: OK";
+                btn.innerText = "⚡ Шифр: OK";
                 setTimeout(() => { btn.innerText = "🔐 Лінія: Захищена"; }, 2000);
             }, 1000);
         }
 
         // =========================================================================
-        // --- 3D FPS SHOOTER ENGINE (MYSZKA + HEADSHOTS + TARKOV HEALTH) ---
+        // --- 3D FPS ШУТЕР (Виправлено: вертикальний кут заблоковано від 360) ---
         // =========================================================================
         let scene, cameraFPS, rendererFPS, isFPSRunning = false, animFPSId = null, aiIntervalFPS = null;
         let ammoFPS = 30, scoreFPS = 0, playerYaw = 0, playerPitch = 0;
-        const mouseSensitivity = 0.0012;
+        const mouseSensitivity = 0.0018;
 
         let keysFPS = {};
         let bulletsFPS = [], enemiesFPS = [], obstaclesFPS = [], enemyBulletsFPS = [];
@@ -959,14 +936,14 @@
         function initFPSScene() {
             const container = document.getElementById('threeJsContainer');
             container.innerHTML = `
-                <div class="pointer-hint" id="pointerHint">🎯 Kliknij w ekran, aby zablokować kursor i grać!</div>
+                <div class="pointer-hint" id="pointerHint">🎯 Клацніть в екрані, щоб заблокувати мишу та почати бій!</div>
                 <div class="hit-flash" id="hitFlash"></div>
-                <div class="radio-ticker">📡 [FPS RADIO]: 3D FPS aktywny! WASD - Ruch | Mysz - Celowanie | M - Medycyna</div>
+                <div class="radio-ticker">📡 [FPS РАДІО]: WASD — рух | Миша — приціл (обмежений) | M — Медицина</div>
                 <div class="fps-crosshair"></div>
                 <div class="fps-hud">
-                    <div class="hud-card">Ammo: <span id="uiAmmo">30/30</span></div>
-                    <div class="hud-card">Score: <span id="uiScore">0</span></div>
-                    <div class="hud-card" onclick="toggleTarkovUi()" style="cursor:pointer; border-color:var(--status-online);">🏥 Medycyna (M)</div>
+                    <div class="hud-card">Набої: <span id="uiAmmo">30/30</span></div>
+                    <div class="hud-card">Бали: <span id="uiScore">0</span></div>
+                    <div class="hud-card" onclick="toggleTarkovUi()" style="cursor:pointer; border-color:var(--status-online);">🏥 Мед (M)</div>
                 </div>
             `;
 
@@ -1070,13 +1047,16 @@
             return group;
         }
 
+        /* Керування мишею з жорстким обмеженням вертикального нахилу */
         function initMouseLook() {
             window.addEventListener('mousemove', (e) => {
                 if (!isFPSRunning) return;
                 if (document.pointerLockElement) {
                     playerYaw -= e.movementX * mouseSensitivity;
                     playerPitch -= e.movementY * mouseSensitivity;
-                    const limit = Math.PI / 2.05;
+                    
+                    // Обмежуємо кут огляду по вертикалі (не дає робити 360-градусні перевороти навколо осі)
+                    const limit = Math.PI / 2.2;
                     playerPitch = Math.max(-limit, Math.min(limit, playerPitch));
                 }
             });
@@ -1145,7 +1125,7 @@
             updateTarkovUi();
 
             if (bodyParts.head.current <= 0 || bodyParts.thorax.current <= 0) {
-                alert("Вас було смертельно поранено! Операцію завершено.");
+                alert("Вас поранено несумісно з життям! Операцію завершено.");
                 closeGameModal();
             }
         }
@@ -1193,10 +1173,11 @@
         }
 
         function updateFPSLogic() {
+            // Переміщення суворо на горизонтальній площині землі
             let moveX = (keysFPS['d'] || keysFPS['в'] ? 1 : 0) - (keysFPS['a'] || keysFPS['ф'] ? 1 : 0);
             let moveZ = (keysFPS['s'] || keysFPS['і'] ? 1 : 0) - (keysFPS['w'] || keysFPS['ц'] ? 1 : 0);
 
-            let speed = 0.15;
+            let speed = 0.14;
             let forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), playerYaw);
             let side = new THREE.Vector3(1, 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), playerYaw);
 
@@ -1213,6 +1194,8 @@
                 cameraFPS.position.z = nextZ;
             }
 
+            // Фіксуємо рівень очей на землі (висота 1.6)
+            cameraFPS.position.y = 1.6;
             cameraFPS.rotation.set(0, 0, 0);
             cameraFPS.rotation.y = playerYaw;
             cameraFPS.rotation.x = playerPitch;
