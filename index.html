@@ -41,22 +41,24 @@
             padding: 1.1rem 2.5rem; border-bottom: 1px solid rgba(56, 189, 248, 0.15); 
         }
         .logo { font-size: 1.15rem; font-weight: 800; color: var(--text-heading); text-decoration: none; letter-spacing: 1.5px; text-transform: uppercase; text-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
-        .nav-links { display: flex; list-style: none; gap: 2.2rem; }
+        .nav-links { display: flex; list-style: none; gap: 2.2rem; align-items: center; }
         .nav-links a { color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: color var(--transition-speed) ease; }
         .nav-links a:hover { color: var(--accent); }
+        .nav-game-link { color: var(--accent) !important; border: 1px solid var(--accent-border); padding: 5px 12px; border-radius: 6px; background: rgba(56, 189, 248, 0.08); }
+        .nav-game-link:hover { background: var(--accent) !important; color: var(--bg-dark) !important; }
 
         /* Мобільна панель */
         .mobile-bottom-bar {
             display: none; position: fixed; bottom: 0; left: 0; width: 100%; height: 65px;
             background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px);
             border-top: 1px solid var(--accent-border); z-index: 150;
-            justify-content: space-around; align-items: center; padding: 0 10px;
+            justify-content: space-around; align-items: center; padding: 0 5px;
         }
         .mobile-btn {
-            background: transparent; border: none; color: var(--text-muted); font-size: 0.85rem; font-weight: 600;
-            display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; transition: color 0.2s;
+            background: transparent; border: none; color: var(--text-muted); font-size: 0.8rem; font-weight: 600;
+            display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; transition: color 0.2s; text-decoration: none;
         }
-        .mobile-btn span { font-size: 1.2rem; }
+        .mobile-btn span { font-size: 1.15rem; }
         .mobile-btn.active, .mobile-btn:hover { color: var(--accent); }
         @media (max-width: 768px) {
             .mobile-bottom-bar { display: flex; }
@@ -176,7 +178,6 @@
         .candidate-info p { color: var(--text-muted); font-size: 0.88rem; }
         .candidate-actions { display: flex; gap: 8px; }
 
-        /* 3 Кнопки рекрутера з покращеними стилями та іконками */
         .btn-approve { background: rgba(34, 197, 94, 0.18); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.45); padding: 8px 12px; border-radius: 7px; font-size: 1rem; cursor: pointer; font-weight: bold; transition: all 0.2s; }
         .btn-approve:hover { background: #22c55e; color: #fff; box-shadow: 0 0 12px rgba(34, 197, 94, 0.4); }
         
@@ -196,7 +197,7 @@
         ::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.3); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-        /* Покращений Чат UI */
+        /* Чат UI */
         .chat-container { width: 100%; height: 420px; display: flex; flex-direction: column; background: var(--bg-dark); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 12px; overflow: hidden; margin-top: 0.5rem; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); }
         .chat-header { background: #1e293b; padding: 0.9rem 1.2rem; font-size: 0.95rem; font-weight: 700; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: space-between; }
         .chat-header .status-dot { width: 9px; height: 9px; background: var(--status-online); border-radius: 50%; box-shadow: 0 0 8px var(--status-online); display: inline-block; }
@@ -231,15 +232,18 @@
             <li><a href="#calc">Калькулятор</a></li>
             <li><a href="#steps">Етапи</a></li>
             <li><a href="#faq">FAQ</a></li>
+            <li><a href="map/index.html" class="nav-game-link">🎮 Тактична гра</a></li>
             <li><a href="#contacts">Контакт</a></li>
         </ul>
     </nav>
 
+    <!-- Мобільна нижня панель із посиланням на гру -->
     <div class="mobile-bottom-bar">
-        <button class="mobile-btn active" onclick="window.scrollTo({top: 0, behavior: 'smooth'})"><span>🏠</span> Головна</button>
-        <button class="mobile-btn" onclick="toggleModal(true)"><span>📝</span> Заявка</button>
-        <button class="mobile-btn" onclick="document.getElementById('calc').scrollIntoView({behavior: 'smooth'})"><span>🧮</span> Дохід</button>
-        <button class="mobile-btn" onclick="document.getElementById('faq').scrollIntoView({behavior: 'smooth'})"><span>❓</span> FAQ</button>
+        <button class="mobile-btn active" onclick="window.scrollTo({top: 0, behavior: 'smooth'})"><span>🏠</span>Головна</button>
+        <button class="mobile-btn" onclick="toggleModal(true)"><span>📝</span>Заявка</button>
+        <button class="mobile-btn" onclick="document.getElementById('calc').scrollIntoView({behavior: 'smooth'})"><span>🧮</span>Дохід</button>
+        <a href="map/index.html" class="mobile-btn"><span>🎮</span>Гра</a>
+        <button class="mobile-btn" onclick="document.getElementById('faq').scrollIntoView({behavior: 'smooth'})"><span>❓</span>FAQ</button>
     </div>
 
     <div class="video-container">
@@ -461,7 +465,7 @@
             authDomain: "storinka-d7bd6.firebaseapp.com",
             databaseURL: "https://storinka-d7bd6-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "storinka-d7bd6",
-            storageBucket: "storinka-d7bd6.firebasestorage.app",
+            storageBucket: "storinka-d7bd6.appspot.com",
             messagingSenderId: "317173750408",
             appId: "1:317173750408:web:62d09563fc750e20589d3d",
             measurementId: "G-5HX3ES92NE"
