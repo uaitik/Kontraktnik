@@ -3,61 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carlan Division — Тактична Гра</title>
+    <title>Carlan Division — Оперативна Мапа Фронту</title>
     <style>
         :root {
-            --bg-dark: #0a0f1a;
-            --bg-card: rgba(15, 23, 42, 0.88);
-            --accent: #38bdf8;
+            --bg-map: #060913;
+            --panel-bg: rgba(10, 15, 26, 0.92);
+            --accent-blue: #38bdf8;
+            --accent-red: #ef4444;
+            --accent-border: rgba(56, 189, 248, 0.3);
             --text-main: #cbd5e1;
             --text-heading: #f8fafc;
-            --accent-border: rgba(56, 189, 248, 0.35);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        
-        .game-wrapper { max-width: 800px; width: 100%; background: var(--bg-card); border: 1px solid var(--accent-border); border-radius: 16px; padding: 2rem; box-shadow: 0 20px 50px rgba(0,0,0,0.6); text-align: center; backdrop-filter: blur(12px); }
-        
-        h1 { color: var(--text-heading); font-size: 1.8rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px; }
-        p { color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background-color: var(--bg-map); color: var(--text-main); }
 
-        /* Ігрове поле (тут буде твій геймплей) */
-        #gameCanvas { background: #070b14; border: 2px solid var(--accent); border-radius: 10px; width: 100%; height: 400px; display: block; margin-bottom: 1.5rem; box-shadow: inset 0 0 20px rgba(56, 189, 248, 0.2); }
+        /* Верхня панель в стилі HoI4 */
+        .hoi-topbar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 55px;
+            background: var(--panel-bg); backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(56, 189, 248, 0.2);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 15px; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+        }
 
-        .btn-back { display: inline-block; background: rgba(56, 189, 248, 0.1); color: var(--accent); border: 1px solid var(--accent-border); padding: 0.8rem 1.8rem; border-radius: 8px; font-weight: 700; text-decoration: none; text-transform: uppercase; letter-spacing: 0.8px; transition: all 0.2s; }
-        .btn-back:hover { background: var(--accent); color: var(--bg-dark); box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+        .hoi-group { display: flex; align-items: center; gap: 20px; }
+        .hoi-stat { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 700; color: var(--text-heading); background: rgba(255,255,255,0.04); padding: 5px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); }
+        .hoi-stat span { color: var(--accent-blue); }
+
+        .hoi-title { font-size: 1rem; font-weight: 800; color: var(--text-heading); text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+
+        /* Кнопка повернення праворуч */
+        .hoi-back-btn {
+            background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);
+            padding: 6px 14px; border-radius: 6px; font-weight: 800; text-decoration: none; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 6px; transition: all 0.2s;
+        }
+        .hoi-back-btn:hover { background: var(--accent-red); color: #fff; box-shadow: 0 0 12px rgba(239, 68, 68, 0.5); }
+
+        /* Основне поле мапи */
+        #mapCanvas { width: 100vw; height: 100vh; display: block; cursor: grab; }
+        #mapCanvas:active { cursor: grabbing; }
+
+        /* Нижній міні-контролер / легенда */
+        .hoi-bottom-bar {
+            position: fixed; bottom: 15px; left: 15px; background: var(--panel-bg);
+            border: 1px solid var(--accent-border); border-radius: 8px; padding: 10px 15px;
+            backdrop-filter: blur(10px); z-index: 90; font-size: 0.82rem; display: flex; gap: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+        .legend-item { display: flex; align-items: center; gap: 6px; color: var(--text-muted); }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
     </style>
 </head>
 <body>
 
-    <div class="game-wrapper">
-        <h1>Carlan Division: Tactical Zone</h1>
-        <p>Сектор мапи активовано. Готуйся до виконання завдання.</p>
-        
-        <!-- Поле для гри (Canvas або інтерактивна зона) -->
-        <canvas id="gameCanvas"></canvas>
+    <!-- Верхня панель управления (HoI4 style) -->
+    <header class="hoi-topbar">
+        <div class="hoi-group">
+            <div class="hoi-title">🛡️ Carlan Division: Frontline</div>
+            <div class="hoi-stat">Сектор: <span>Донбас / Схід</span></div>
+            <div class="hoi-stat">Статус ЛБZ: <span style="color: var(--accent-red);">АКТИВНИЙ БІЙ</span></div>
+        </div>
 
-        <a href="../index.html" class="btn-back">← Повернутися на головну базу</a>
+        <div class="hoi-group">
+            <div class="hoi-stat">Час: <span id="gameTime">04:20</span></div>
+            <!-- Кнопка повернення на головну у самому правому кутку -->
+            <a href="../index.html" class="hoi-back-btn">Головна ➔</a>
+        </div>
+    </header>
+
+    <!-- Інтерактивна мапа -->
+    <canvas id="mapCanvas"></canvas>
+
+    <!-- Легенда мапи -->
+    <div class="hoi-bottom-bar">
+        <div class="legend-item"><div class="legend-dot" style="background: #22c55e;"></div> Контроль сил</div>
+        <div class="legend-item"><div class="legend-dot" style="background: #ef4444;"></div> Лінія фронту (ЛБЗ)</div>
+        <div class="legend-item"><div class="legend-dot" style="background: #38bdf8;"></div> База штабу</div>
     </div>
 
     <script>
-        const canvas = document.getElementById('gameCanvas');
+        const canvas =getElementByIdSafe('mapCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Підлаштовуємо розміри кавуваса під реальний екран
-        canvas.width = canvas.clientWidth;
-        canvas.height = canvas.clientHeight;
+        function getElementByIdSafe(id) { return document.getElementById(id); }
 
-        // Простий тестовий малюнок на фоні гри (можна замінити своєю логікою)
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#38bdf8';
-            ctx.font = '20px Segoe UI';
-            ctx.textAlign = 'center';
-            ctx.fillText("Тут буде твоя гра чи інтерактивна мапа!", canvas.width / 2, canvas.height / 2);
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            drawMap();
         }
-        draw();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Змінні для керування перетягуванням мапи (панорамування)
+        let scale = 1;
+        let panX = 0;
+        let panY = 0;
+        let isDragging = false;
+        let startX, startY;
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - panX;
+            startY = e.clientY - panY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            panX = e.clientX - startX;
+            panY = e.clientY - startY;
+            drawMap();
+        });
+
+        window.addEventListener('mouseup', () => { isDragging = false; });
+
+        // Зумінг коліщатком миші
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const zoomIntensity = 0.1;
+            if (e.deltaY < 0) {
+                scale *= (1 + zoomIntensity);
+            } else {
+                scale /= (1 + zoomIntensity);
+            }
+            scale = Math.max(0.5, Math.min(scale, 4)); // обмеження зуму
+            drawMap();
+        });
+
+        // Малювання імітації мапи DeepState / HoI4
+        function drawMap() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+            ctx.translate(panX, panY);
+            ctx.scale(scale, scale);
+
+            // Текстура сітки фону (координатна сітка як у стратегіях)
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.05)';
+            ctx.lineWidth = 1;
+            const gridSize = 60;
+            for (let x = -2000; x < 4000; x += gridSize) {
+                ctx.beginPath(); ctx.moveTo(x, -2000); ctx.lineTo(x, 4000); ctx.stroke();
+            }
+            for (let y = -2000; y < 4000; y += gridSize) {
+                ctx.beginPath(); ctx.moveTo(-2000, y); ctx.lineTo(4000, y); ctx.stroke();
+            }
+
+            // Умовні ландшафти / сектори (імітація річок та доріг)
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.15)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(100, 200); ctx.bezierCurveTo(400, 300, 600, 100, 900, 500);
+            ctx.stroke();
+
+            // Лінія фронту (ЛБЗ) у стилі DeepState (червона пульсуюча/ламана лінія)
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 4;
+            ctx.shadowColor = '#ef4444';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.moveTo(200, 100);
+            ctx.lineTo(350, 250);
+            ctx.lineTo(500, 220);
+            ctx.lineTo(650, 400);
+            ctx.lineTo(800, 350);
+            ctx.stroke();
+            ctx.shadowBlur = 0; // скидання тіні
+
+            // Позначки підрозділів на мапі
+            drawUnitMarker(320, 230, 'Вовкодав [1-й БАТ]', '#38bdf8');
+            drawUnitMarker(520, 380, 'РДК [Спецрота]', '#eab308');
+            drawUnitMarker(750, 330, 'Норманська бригада', '#22c55e');
+
+            ctx.restore();
+        }
+
+        function drawUnitMarker(x, y, label, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x, y, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Напис під маркером
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = 'bold 12px Segoe UI';
+            ctx.fillText(label, x + 12, y + 4);
+        }
+
+        // Ініціалізація первинного малювання
+        resizeCanvas();
+
+        // Імітація внутрішньоігрового годинника
+        setInterval(() => {
+            let now = new Date();
+            let timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+            const timeEl = getElementByIdSafe('gameTime');
+            if (timeEl) timeEl.innerText = timeStr;
+        }, 1000);
     </script>
 </body>
 </html>
