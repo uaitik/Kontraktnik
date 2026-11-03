@@ -11,15 +11,15 @@
         :root {
             --bg-dark: #0a0f1a;
             --bg-deep: #070b14;
-            --bg-card: rgba(15, 23, 42, 0.85);
+            --bg-card: rgba(15, 23, 42, 0.88);
             --bg-footer: #05070c;
             --accent: #38bdf8;
             --accent-hover: #0ea5e9;
-            --accent-glow: rgba(56, 189, 248, 0.4);
-            --accent-light: rgba(56, 189, 248, 0.1);
-            --accent-border: rgba(56, 189, 248, 0.3);
+            --accent-glow: rgba(56, 189, 248, 0.45);
+            --accent-light: rgba(56, 189, 248, 0.12);
+            --accent-border: rgba(56, 189, 248, 0.35);
             --text-main: #cbd5e1;
-            --text-heading: #f1f5f9;
+            --text-heading: #f8fafc;
             --text-muted: #94a3b8;
             --text-subtle: #64748b;
             --status-online: #22c55e;
@@ -37,25 +37,26 @@
         .navbar { 
             position: fixed; top: 0; left: 0; width: 100%; z-index: 100; 
             display: flex; justify-content: space-between; align-items: center; 
-            background-color: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); 
-            padding: 1rem 2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+            background-color: rgba(15, 23, 42, 0.9); backdrop-filter: blur(14px); 
+            padding: 1.1rem 2.5rem; border-bottom: 1px solid rgba(56, 189, 248, 0.15); 
         }
-        .logo { font-size: 1.1rem; font-weight: bold; color: var(--text-muted); text-decoration: none; letter-spacing: 1px; text-transform: uppercase; }
-        .nav-links { display: flex; list-style: none; gap: 2rem; }
-        .nav-links a { color: var(--text-subtle); text-decoration: none; font-weight: 500; transition: color var(--transition-speed) ease; }
-        .nav-links a:hover { color: #f8fafc; }
+        .logo { font-size: 1.15rem; font-weight: 800; color: var(--text-heading); text-decoration: none; letter-spacing: 1.5px; text-transform: uppercase; text-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
+        .nav-links { display: flex; list-style: none; gap: 2.2rem; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: color var(--transition-speed) ease; }
+        .nav-links a:hover { color: var(--accent); }
 
         /* Мобільна панель */
         .mobile-bottom-bar {
-            display: none; position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
-            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px);
+            display: none; position: fixed; bottom: 0; left: 0; width: 100%; height: 65px;
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px);
             border-top: 1px solid var(--accent-border); z-index: 150;
             justify-content: space-around; align-items: center; padding: 0 10px;
         }
         .mobile-btn {
-            background: transparent; border: none; color: var(--text-muted); font-size: 0.8rem;
-            display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer;
+            background: transparent; border: none; color: var(--text-muted); font-size: 0.85rem; font-weight: 600;
+            display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; transition: color 0.2s;
         }
+        .mobile-btn span { font-size: 1.2rem; }
         .mobile-btn.active, .mobile-btn:hover { color: var(--accent); }
         @media (max-width: 768px) {
             .mobile-bottom-bar { display: flex; }
@@ -63,67 +64,74 @@
         }
 
         /* Hero Section */
-        .video-container { position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 6rem 2rem 4rem 2rem; overflow: hidden; }
-        .bg-video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); object-fit: cover; z-index: 1; opacity: 0.4; }
-        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(10, 15, 26, 0.6) 0%, rgba(10, 15, 26, 0.95) 100%); z-index: 2; }
+        .video-container { position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 7rem 2rem 4rem 2rem; overflow: hidden; }
+        .bg-video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); object-fit: cover; z-index: 1; opacity: 0.35; }
+        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(10, 15, 26, 0.4) 0%, rgba(7, 11, 20, 0.95) 100%), linear-gradient(180deg, rgba(10, 15, 26, 0.6) 0%, rgba(10, 15, 26, 0.98) 100%); z-index: 2; }
         
         .main-content { position: relative; z-index: 3; text-align: center; max-width: 1200px; width: 100%; }
-        h1 { font-size: 3.5rem; margin-bottom: 2rem; color: var(--text-heading); text-shadow: 0 0 30px rgba(0, 0, 0, 0.9); font-weight: 800; letter-spacing: 1px; }
+        h1 { font-size: 3.8rem; margin-bottom: 2rem; color: var(--text-heading); text-shadow: 0 0 35px rgba(0, 0, 0, 0.95); font-weight: 800; letter-spacing: 1px; line-height: 1.15; }
 
-        .btn-main-trigger { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-border); padding: 1rem 2.5rem; font-size: 1.1rem; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; border-radius: 8px; cursor: pointer; transition: all var(--transition-speed); margin-bottom: 3.5rem; }
-        .btn-main-trigger:hover { background: var(--accent); color: var(--bg-dark); box-shadow: 0 0 25px var(--accent-glow); transform: translateY(-2px); }
+        .btn-main-trigger { 
+            background: linear-gradient(135deg, var(--accent-light), rgba(56, 189, 248, 0.05)); 
+            color: var(--accent); border: 1px solid var(--accent-border); 
+            padding: 1.1rem 2.8rem; font-size: 1.15rem; font-weight: 800; letter-spacing: 1.5px; 
+            text-transform: uppercase; border-radius: 10px; cursor: pointer; transition: all var(--transition-speed); 
+            margin-bottom: 3.5rem; box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+        }
+        .btn-main-trigger:hover { background: var(--accent); color: var(--bg-dark); box-shadow: 0 0 30px var(--accent-glow); transform: translateY(-3px); }
 
         /* Картки підрозділів */
         .cards-grid { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; width: 100%; perspective: 1000px; }
         .team-card { 
-            flex: 1; min-width: 300px; max-width: 360px; background: var(--bg-card); backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 2rem; 
+            flex: 1; min-width: 300px; max-width: 360px; background: var(--bg-card); backdrop-filter: blur(12px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 2.2rem; 
             transition: transform 0.1s ease-out, box-shadow 0.3s ease, border-color 0.3s ease; 
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); text-align: left; display: flex; flex-direction: column; justify-content: space-between;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.55); text-align: left; display: flex; flex-direction: column; justify-content: space-between;
             transform-style: preserve-3d;
         }
-        .team-card:hover { border-color: var(--accent); box-shadow: 0 15px 35px rgba(56, 189, 248, 0.2); }
+        .team-card:hover { border-color: var(--accent); box-shadow: 0 18px 40px rgba(56, 189, 248, 0.22); }
         
-        .photo-container { background: rgba(10, 15, 26, 0.5); border-radius: 12px; height: 160px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.03); margin-bottom: 1.5rem; transform: translateZ(20px); }
-        .photo-container img { max-width: 85%; max-height: 85%; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5)); }
+        .photo-container { background: rgba(10, 15, 26, 0.6); border-radius: 12px; height: 170px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 1.5rem; transform: translateZ(20px); }
+        .photo-container img { max-width: 85%; max-height: 85%; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6)); }
         
-        .team-card h3 { color: var(--text-heading); font-size: 1.3rem; font-weight: 700; margin-bottom: 0.75rem; transform: translateZ(15px); }
-        .team-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem; transform: translateZ(10px); }
+        .team-card h3 { color: var(--text-heading); font-size: 1.35rem; font-weight: 700; margin-bottom: 0.75rem; transform: translateZ(15px); }
+        .team-card p { color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; margin-bottom: 1.5rem; transform: translateZ(10px); }
         
-        .footer-note { display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--accent); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; transform: translateZ(15px); }
-        .footer-note span.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; }
-        .dot-red { background-color: var(--status-alert); box-shadow: 0 0 8px var(--status-alert); }
-        .dot-yellow { background-color: var(--status-warning); box-shadow: 0 0 8px var(--status-warning); }
-        .dot-green { background-color: var(--status-online); box-shadow: 0 0 8px var(--status-online); }
-        @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        .footer-note { display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--accent); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; transform: translateZ(15px); }
+        .footer-note span.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; }
+        .dot-red { background-color: var(--status-alert); box-shadow: 0 0 10px var(--status-alert); }
+        .dot-yellow { background-color: var(--status-warning); box-shadow: 0 0 10px var(--status-warning); }
+        .dot-green { background-color: var(--status-online); box-shadow: 0 0 10px var(--status-online); }
+        @keyframes blink { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
 
         /* Калькулятор */
-        .calculator-section { background: var(--bg-deep); padding: 5rem 2rem; border-top: 1px solid rgba(255, 255, 255, 0.03); display: flex; justify-content: center; }
-        .calc-container { max-width: 900px; width: 100%; background: var(--bg-card); border: 1px solid var(--accent-border); border-radius: 16px; padding: 2.5rem; backdrop-filter: blur(10px); }
+        .calculator-section { background: var(--bg-deep); padding: 5rem 2rem; border-top: 1px solid rgba(255, 255, 255, 0.04); display: flex; justify-content: center; }
+        .calc-container { max-width: 900px; width: 100%; background: var(--bg-card); border: 1px solid var(--accent-border); border-radius: 16px; padding: 2.5rem; backdrop-filter: blur(12px); box-shadow: 0 15px 40px rgba(0,0,0,0.4); }
         .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
         @media (max-width: 768px) { .calc-grid { grid-template-columns: 1fr; } }
-        .calc-select { width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 1rem; }
-        .calc-result-box { background: rgba(10, 15, 26, 0.8); border: 1px solid var(--accent); border-radius: 12px; padding: 1.5rem; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .calc-amount { font-size: 2.5rem; font-weight: 800; color: var(--status-online); text-shadow: 0 0 15px rgba(34, 197, 94, 0.3); margin: 0.5rem 0; }
+        .calc-select { width: 100%; padding: 0.9rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; color: #fff; font-size: 1rem; }
+        .calc-result-box { background: rgba(10, 15, 26, 0.85); border: 1px solid var(--accent); border-radius: 12px; padding: 1.5rem; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: inset 0 0 15px rgba(56, 189, 248, 0.1); }
+        .calc-amount { font-size: 2.7rem; font-weight: 800; color: var(--status-online); text-shadow: 0 0 18px rgba(34, 197, 94, 0.35); margin: 0.5rem 0; }
 
         /* Етапи */
         .steps-section { padding: 5rem 2rem; max-width: 1200px; margin: 0 auto; text-align: center; }
         .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
-        .step-card { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1.8rem; text-align: left; position: relative; overflow: hidden; }
-        .step-num { font-size: 3rem; font-weight: 900; color: rgba(56, 189, 248, 0.15); position: absolute; top: 10px; right: 15px; }
+        .step-card { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 2rem; text-align: left; position: relative; overflow: hidden; transition: transform 0.2s; }
+        .step-card:hover { transform: translateY(-3px); border-color: rgba(56, 189, 248, 0.25); }
+        .step-num { font-size: 3.2rem; font-weight: 900; color: rgba(56, 189, 248, 0.15); position: absolute; top: 10px; right: 15px; }
 
         /* FAQ */
-        .faq-section { background: var(--bg-deep); padding: 5rem 2rem; border-top: 1px solid rgba(255, 255, 255, 0.03); display: flex; justify-content: center; }
+        .faq-section { background: var(--bg-deep); padding: 5rem 2rem; border-top: 1px solid rgba(255, 255, 255, 0.04); display: flex; justify-content: center; }
         .faq-container { max-width: 850px; width: 100%; }
-        .faq-item { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 10px; margin-bottom: 1rem; overflow: hidden; }
-        .faq-header { padding: 1.2rem 1.5rem; color: var(--text-heading); font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
-        .faq-header:hover { background: rgba(56, 189, 248, 0.05); }
-        .faq-body { padding: 0 1.5rem 1.2rem 1.5rem; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; display: none; }
+        .faq-item { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; margin-bottom: 1rem; overflow: hidden; transition: border-color 0.2s; }
+        .faq-header { padding: 1.3rem 1.6rem; color: var(--text-heading); font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
+        .faq-header:hover { background: rgba(56, 189, 248, 0.08); }
+        .faq-body { padding: 0 1.6rem 1.3rem 1.6rem; color: var(--text-muted); font-size: 0.98rem; line-height: 1.65; display: none; }
         .faq-item.active .faq-body { display: block; }
         .faq-item.active .faq-header { color: var(--accent); }
 
         /* Футер */
-        .tactical-footer { background: var(--bg-footer); padding: 4rem 2rem; border-top: 1px solid rgba(56, 189, 248, 0.1); display: flex; justify-content: center; }
+        .tactical-footer { background: var(--bg-footer); padding: 4rem 2rem; border-top: 1px solid rgba(56, 189, 248, 0.15); display: flex; justify-content: center; }
         .footer-content { max-width: 1200px; width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
         .footer-block { flex: 1; min-width: 250px; }
         .footer-block h4 { color: var(--text-heading); font-size: 1.1rem; margin-bottom: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
@@ -131,83 +139,84 @@
 
         /* Custom Select */
         .custom-select-wrapper { position: relative; width: 100%; }
-        .custom-select-trigger { width: 100%; padding: 0.8rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f8fafc; font-size: 1rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: border-color 0.2s; }
+        .custom-select-trigger { width: 100%; padding: 0.9rem 1.1rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #f8fafc; font-size: 1rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: border-color 0.2s; }
         .custom-select-trigger:after { content: ''; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid var(--text-muted); transition: transform 0.3s ease; }
-        .custom-select-wrapper.open .custom-select-trigger { border-color: var(--accent); }
+        .custom-select-wrapper.open .custom-select-trigger { border-color: var(--accent); box-shadow: 0 0 12px rgba(56, 189, 248, 0.2); }
         .custom-select-wrapper.open .custom-select-trigger:after { transform: rotate(180deg); }
-        .custom-options { position: absolute; top: calc(100% + 5px); left: 0; width: 100%; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-10px); transition: all 0.2s ease; z-index: 99; }
+        .custom-options { position: absolute; top: calc(100% + 5px); left: 0; width: 100%; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; box-shadow: 0 12px 30px rgba(0,0,0,0.6); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-10px); transition: all 0.2s ease; z-index: 99; }
         .custom-select-wrapper.open .custom-options { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
-        .custom-option { padding: 0.8rem 1rem; color: var(--text-main); cursor: pointer; transition: all 0.2s; font-size: 0.95rem; }
+        .custom-option { padding: 0.9rem 1.1rem; color: var(--text-main); cursor: pointer; transition: all 0.2s; font-size: 0.95rem; }
         .custom-option:hover { background: var(--accent-light); color: var(--accent); }
-        .custom-option.selected { background: rgba(56, 189, 248, 0.15); color: var(--accent); font-weight: 600; }
+        .custom-option.selected { background: rgba(56, 189, 248, 0.18); color: var(--accent); font-weight: 700; }
 
         /* Модалка */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.85); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; padding: 1rem; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.88); backdrop-filter: blur(10px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; padding: 1rem; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-window { width: 100%; max-width: 650px; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 16px; padding: 2rem; box-shadow: 0 25px 60px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
+        .modal-window { width: 100%; max-width: 680px; background: linear-gradient(145deg, #0f172a, #0b1120); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 18px; padding: 2.2rem; box-shadow: 0 30px 70px rgba(0,0,0,0.7); position: relative; overflow: hidden; }
 
         .fade-stage { opacity: 1; transform: translateY(0); transition: opacity 0.35s ease, transform 0.35s ease; }
-        .fade-stage.hidden { opacity: 0; transform: translateY(-15px); pointer-events: none; position: absolute; width: calc(100% - 4rem); }
-        .fade-stage.entrance { opacity: 0; transform: translateY(15px); pointer-events: none; position: absolute; width: calc(100% - 4rem); }
+        .fade-stage.hidden { opacity: 0; transform: translateY(-15px); pointer-events: none; position: absolute; width: calc(100% - 4.4rem); }
+        .fade-stage.entrance { opacity: 0; transform: translateY(15px); pointer-events: none; position: absolute; width: calc(100% - 4.4rem); }
 
-        .form-group { margin-bottom: 1.2rem; }
-        .form-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        .form-group input { width: 100%; padding: 0.8rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f8fafc; font-size: 1rem; transition: border-color 0.2s; }
-        .form-group input:focus { outline: none; border-color: var(--accent); }
+        .form-group { margin-bottom: 1.3rem; }
+        .form-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+        .form-group input { width: 100%; padding: 0.9rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #f8fafc; font-size: 1rem; transition: border-color 0.2s, box-shadow 0.2s; }
+        .form-group input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px rgba(56, 189, 248, 0.25); }
         
-        .btn-submit { width: 100%; padding: 1rem; background: var(--accent); color: var(--bg-dark); border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s; margin-top: 0.5rem; }
-        .btn-submit:hover { background: var(--accent-hover); transform: translateY(-1px); }
+        .btn-submit { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); color: var(--bg-dark); border: none; border-radius: 8px; font-weight: 800; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 0.8px; cursor: pointer; transition: all 0.2s; margin-top: 0.6rem; box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3); }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(56, 189, 248, 0.45); }
 
-        .close-modal { position: absolute; top: 1.2rem; right: 1.2rem; background: transparent; border: none; color: var(--text-subtle); font-size: 1.3rem; cursor: pointer; transition: color 0.2s; z-index: 10; }
-        .close-modal:hover { color: var(--text-heading); }
+        .close-modal { position: absolute; top: 1.2rem; right: 1.2rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-subtle); width: 32px; height: 32px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 10; }
+        .close-modal:hover { color: var(--text-heading); background: rgba(239, 68, 68, 0.2); border-color: var(--status-alert); }
 
-        /* Спискок кандидатів (Адмін-панель) */
+        /* Список кандидатів (Адмін-панель) */
         .admin-panel { display: flex; flex-direction: column; gap: 1rem; max-height: 420px; overflow-y: auto; padding-right: 5px; }
-        .candidate-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 10px; padding: 1rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
-        .candidate-info h4 { color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.2rem; }
-        .candidate-info p { color: var(--text-muted); font-size: 0.85rem; }
-        .candidate-actions { display: flex; gap: 6px; }
+        .candidate-card { background: rgba(20, 30, 48, 0.75); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; padding: 1.1rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
+        .candidate-info h4 { color: #f8fafc; font-size: 1rem; margin-bottom: 0.3rem; font-weight: 700; }
+        .candidate-info p { color: var(--text-muted); font-size: 0.88rem; }
+        .candidate-actions { display: flex; gap: 8px; }
 
-        /* 3 Кнопки рекрутера */
-        .btn-approve { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); padding: 6px 10px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: bold; }
-        .btn-approve:hover { background: #22c55e; color: #fff; }
+        /* 3 Кнопки рекрутера з покращеними стилями та іконками */
+        .btn-approve { background: rgba(34, 197, 94, 0.18); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.45); padding: 8px 12px; border-radius: 7px; font-size: 1rem; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        .btn-approve:hover { background: #22c55e; color: #fff; box-shadow: 0 0 12px rgba(34, 197, 94, 0.4); }
         
-        .btn-reject { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.4); padding: 6px 10px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: bold; }
-        .btn-reject:hover { background: #eab308; color: #000; }
+        .btn-reject { background: rgba(234, 179, 8, 0.18); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.45); padding: 8px 12px; border-radius: 7px; font-size: 1rem; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        .btn-reject:hover { background: #eab308; color: #000; box-shadow: 0 0 12px rgba(234, 179, 8, 0.4); }
         
-        .btn-chat { background: rgba(56, 189, 248, 0.2); color: var(--accent); border: 1px solid var(--accent-border); padding: 6px 10px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: bold; }
-        .btn-chat:hover { background: var(--accent); color: var(--bg-dark); }
+        .btn-chat { background: rgba(56, 189, 248, 0.18); color: var(--accent); border: 1px solid var(--accent-border); padding: 8px 14px; border-radius: 7px; font-size: 0.9rem; cursor: pointer; font-weight: 700; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        .btn-chat:hover { background: var(--accent); color: var(--bg-dark); box-shadow: 0 0 12px var(--accent-glow); }
+        .btn-chat span.chat-icon { font-size: 1.15rem; }
         
-        /* ТРЕТЯ КНОПКА — Остаточне видалення чату/заявки */
-        .btn-delete-room { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); padding: 6px 10px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: bold; }
-        .btn-delete-room:hover { background: #ef4444; color: #fff; }
+        .btn-delete-room { background: rgba(239, 68, 68, 0.18); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.45); padding: 8px 12px; border-radius: 7px; font-size: 1.1rem; cursor: pointer; font-weight: bold; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-delete-room:hover { background: #ef4444; color: #fff; box-shadow: 0 0 12px rgba(239, 68, 68, 0.4); }
 
         /* Скролбар */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar { width: 7px; height: 7px; }
         ::-webkit-scrollbar-track { background: var(--bg-deep); }
-        ::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.25); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.3); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-        /* Чат UI */
-        .chat-container { width: 100%; height: 400px; display: flex; flex-direction: column; background: var(--bg-dark); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; overflow: hidden; margin-top: 0.5rem; }
-        .chat-header { background: #1e293b; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between; }
-        .chat-header .status-dot { width: 8px; height: 8px; background: var(--status-online); border-radius: 50%; box-shadow: 0 0 6px var(--status-online); display: inline-block; }
+        /* Покращений Чат UI */
+        .chat-container { width: 100%; height: 420px; display: flex; flex-direction: column; background: var(--bg-dark); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 12px; overflow: hidden; margin-top: 0.5rem; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); }
+        .chat-header { background: #1e293b; padding: 0.9rem 1.2rem; font-size: 0.95rem; font-weight: 700; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: space-between; }
+        .chat-header .status-dot { width: 9px; height: 9px; background: var(--status-online); border-radius: 50%; box-shadow: 0 0 8px var(--status-online); display: inline-block; }
+        .chat-header .chat-main-icon { font-size: 1.3rem; margin-right: 4px; }
         
-        .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.8rem; background: var(--bg-deep); }
-        .message { max-width: 85%; padding: 0.6rem 0.9rem; border-radius: 8px; font-size: 0.9rem; line-height: 1.4; word-break: break-word; }
-        .message.intercom { background: rgba(56, 189, 248, 0.06); color: var(--accent); align-self: flex-start; border-left: 3px solid var(--accent); }
-        .message.friend { background: #1e293b; color: #f8fafc; align-self: flex-end; border-right: 3px solid var(--text-subtle); }
+        .chat-messages { flex: 1; padding: 1.2rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.9rem; background: var(--bg-deep); }
+        .message { max-width: 85%; padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.93rem; line-height: 1.45; word-break: break-word; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        .message.intercom { background: rgba(56, 189, 248, 0.08); color: var(--accent); align-self: flex-start; border-left: 3.5px solid var(--accent); }
+        .message.friend { background: #1e293b; color: #f8fafc; align-self: flex-end; border-right: 3.5px solid var(--text-subtle); }
         
-        .quick-tags-area { display: flex; gap: 8px; padding: 10px 8px; background: var(--bg-deep); border-top: 1px solid rgba(255,255,255,0.03); overflow-x: auto; white-space: nowrap; align-items: center; }
-        .quick-tags-area button { flex-shrink: 0; background: rgba(56, 189, 248, 0.06); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.2); padding: 6px 14px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 600; }
-        .quick-tags-area button:hover { background: rgba(56, 189, 248, 0.15); border-color: var(--accent); color: #f8fafc; }
-        .quick-tags-area #cryptoBtn { margin-left: auto; background: rgba(34, 197, 94, 0.08); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.15); }
+        .quick-tags-area { display: flex; gap: 8px; padding: 10px 12px; background: var(--bg-deep); border-top: 1px solid rgba(255,255,255,0.05); overflow-x: auto; white-space: nowrap; align-items: center; }
+        .quick-tags-area button { flex-shrink: 0; background: rgba(56, 189, 248, 0.08); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.25); padding: 7px 14px; border-radius: 7px; font-size: 0.8rem; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+        .quick-tags-area button:hover { background: rgba(56, 189, 248, 0.2); border-color: var(--accent); color: #f8fafc; }
+        .quick-tags-area #cryptoBtn { margin-left: auto; background: rgba(34, 197, 94, 0.1); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.25); }
 
-        .chat-input-area { display: flex; border-top: 1px solid rgba(255, 255, 255, 0.05); background: var(--bg-dark); }
-        .chat-input-area input { flex: 1; padding: 0.8rem 1rem; background: transparent; border: none; color: #f8fafc; font-size: 0.95rem; }
+        .chat-input-area { display: flex; border-top: 1px solid rgba(255, 255, 255, 0.08); background: var(--bg-dark); }
+        .chat-input-area input { flex: 1; padding: 0.9rem 1.2rem; background: transparent; border: none; color: #f8fafc; font-size: 0.98rem; }
         .chat-input-area input:focus { outline: none; }
-        .btn-send { background: #1e293b; color: var(--accent); border: none; padding: 0 1.2rem; cursor: pointer; font-weight: bold; transition: background 0.2s; font-size: 0.9rem; }
-        .btn-send:hover { background: #2d3748; }
+        .btn-send { background: linear-gradient(135deg, #1e293b, #0f172a); color: var(--accent); border: none; border-left: 1px solid rgba(255, 255, 255, 0.08); padding: 0 1.5rem; cursor: pointer; font-weight: 700; transition: all 0.2s; font-size: 0.95rem; }
+        .btn-send:hover { background: var(--accent); color: var(--bg-dark); }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -257,7 +266,7 @@
                     <div class="photo-container"><img src="RVC.png" alt="РДК" loading="lazy"></div>
                     <div>
                         <h3>Російський добровольчий корпус</h3>
-                        <p>Добровольче формування, що веде запеклі бої та проводити спецоперації на лінії зіткнення.</p>
+                        <p>Добровольче формування, що веде запеклі бої та проводить спецоперації на лінії зіткнення.</p>
                     </div>
                     <span class="footer-note"><span class="dot dot-yellow"></span> СТАТУС: СПЕЦОПЕРАЦІЇ / РОТАЦІЯ</span>
                 </div>
@@ -405,13 +414,13 @@
                 </form>
             </div>
 
-            <!-- Адмін-панель із 3-ма кнопками дій -->
+            <!-- Адмін-панель -->
             <div id="adminStage" class="fade-stage entrance" style="display: none;">
-                <h2 style="font-size: 1.3rem; margin-bottom: 1rem; color: #f1f5f9; text-align: center;">Панель Рекрутера: Кандидати</h2>
+                <h2 style="font-size: 1.4rem; margin-bottom: 1rem; color: #f1f5f9; text-align: center; font-weight: 700;">База Кандидатів (Панель Рекрутера)</h2>
                 <div class="admin-panel" id="adminCandidatesList">
                     <p style="text-align: center; color: var(--text-muted); padding: 2rem;">Завантаження заявок...</p>
                 </div>
-                <button class="btn-submit" style="margin-top: 1rem; background: #1e293b; color: var(--accent);" onclick="goBackToForm()">← Вийти з адмінки</button>
+                <button class="btn-submit" style="margin-top: 1.2rem; background: #1e293b; color: var(--accent);" onclick="goBackToForm()">← Вийти з адмінки</button>
             </div>
 
             <!-- Чат -->
@@ -420,11 +429,12 @@
                 <div class="chat-container">
                     <div class="chat-header">
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <button onclick="goBackFromChat()" style="background: transparent; border: none; color: #64748b; cursor: pointer; font-size: 1.1rem;" title="Назад">←</button>
+                            <button onclick="goBackFromChat()" style="background: transparent; border: none; color: #64748b; cursor: pointer; font-size: 1.2rem;" title="Назад">←</button>
+                            <span class="chat-main-icon">💬</span>
                             <span class="status-dot"></span>
                             <span id="chatTitleName">Загальна лінія зв'язку</span>
                         </div>
-                        <button id="clearChatBtn" onclick="clearChat()" style="display: none; background: #ef4444; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">Очистити листування</button>
+                        <button id="clearChatBtn" onclick="clearChat()" style="display: none; background: #ef4444; color: white; border: none; padding: 5px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold;">Очистити листування</button>
                     </div>
                     
                     <div class="chat-messages" id="chatMessages"></div>
@@ -578,7 +588,6 @@
             }, 350);
         }
 
-        // Відображення списку з 3-ма кнопками дій
         function loadRecruiterAdminPanel() {
             candidatesRef.on('value', (snapshot) => {
                 DOM.adminCandidatesList.innerHTML = '';
@@ -604,7 +613,7 @@
                         <div class="candidate-actions">
                             <button class="btn-approve" onclick="updateCandidateStatus('${c.id}', 'approved')" title="Схвалити">✓</button>
                             <button class="btn-reject" onclick="updateCandidateStatus('${c.id}', 'rejected')" title="Відхилити">✕</button>
-                            <button class="btn-chat" onclick="openChatRoom('${c.id}', 'Чат: ${escapeHtml(c.name)}')" title="Перейти в чат">💬 Чат</button>
+                            <button class="btn-chat" onclick="openChatRoom('${c.id}', 'Чат: ${escapeHtml(c.name)}')" title="Перейти в чат"><span class="chat-icon">💬</span> Чат</button>
                             <button class="btn-delete-room" onclick="deleteCandidateAndChat('${c.id}')" title="Остаточно видалити">🗑️</button>
                         </div>
                     `;
@@ -613,7 +622,6 @@
             });
         }
 
-        // Зміна статусу без видалення зі списку
         function updateCandidateStatus(roomId, status) {
             candidatesRef.child(roomId).update({ status: status });
             const roomMsgsRef = database.ref('rooms/' + roomId + '/messages');
@@ -624,7 +632,6 @@
             }
         }
 
-        // ТРЕТЯ КНОПКА — Остаточне видалення чату та картки рекрутера
         function deleteCandidateAndChat(roomId) {
             if (confirm("Ви дійсно хочете остаточно видалити цього кандидата та весь його чат?")) {
                 candidatesRef.child(roomId).remove();
@@ -698,7 +705,7 @@
             } else if (sender === "Штаб Рекрутингу") {
                 msgDiv.className = 'message intercom';
                 msgDiv.style.background = 'rgba(56, 189, 248, 0.12)';
-                msgDiv.style.borderLeft = '3px solid var(--accent)';
+                msgDiv.style.borderLeft = '3.5px solid var(--accent)';
                 msgDiv.innerHTML = `<strong>${escapeHtml(sender)}:</strong> ${escapeHtml(text)}`;
             } else {
                 msgDiv.className = 'message intercom';
