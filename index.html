@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Рекрутинг до Інтернаціональних бригад ЗСУ">
-    <title>Strike — Рекрутинговий Центр</title> 
+    <title>Strike — Рекрутинг</title> 
     <link class="site-icon" rel="icon" type="image/png" href="strike.jpg">
 
     <style>
+        /* CSS Variables — jednolita paleta i łatwiejsze utrzymanie */
         :root {
             --bg-dark: #0a0f1a;
             --bg-deep: #070b14;
@@ -24,303 +25,171 @@
             --text-subtle: #64748b;
             --status-online: #22c55e;
             --status-alert: #ef4444;
-            --transition-speed: 0.25s;
+            --transition-speed: 0.3s;
         }
 
+        /* Base Reset */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         html { scroll-behavior: smooth; }
         body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
         body.modal-open { overflow: hidden; }
 
-        button, select { font-family: inherit; user-select: none; -webkit-tap-highlight-color: transparent; }
-
-        /* Навігація */
+        /* Navbar */
         .navbar { 
             position: fixed; top: 0; left: 0; width: 100%; z-index: 100; 
             display: flex; justify-content: space-between; align-items: center; 
             background-color: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); 
-            padding: 1rem 3rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+            padding: 1rem 2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
         }
         .logo { font-size: 1.1rem; font-weight: bold; color: var(--text-muted); text-decoration: none; letter-spacing: 1px; text-transform: uppercase; }
         .nav-links { display: flex; list-style: none; gap: 2rem; }
         .nav-links a { color: var(--text-subtle); text-decoration: none; font-weight: 500; transition: color var(--transition-speed) ease; }
         .nav-links a:hover { color: #f8fafc; }
         
-        /* Головна секція (Hero) */
+        /* Hero Section */
         .video-container { position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 6rem 2rem 4rem 2rem; overflow: hidden; }
-        .bg-video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); object-fit: cover; z-index: 1; opacity: 0.35; }
-        .video-overlay { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: linear-gradient(180deg, rgba(10, 15, 26, 0.6) 0%, rgba(10, 15, 26, 0.95) 100%),
-                        radial-gradient(circle at center, transparent 0%, rgba(7, 11, 20, 0.8) 100%); 
-            z-index: 2; 
-        }
-
-        .tactical-grid {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;
-            background-image: linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-        }
+        .bg-video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); object-fit: cover; z-index: 1; opacity: 0.5; }
+        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(10, 15, 26, 0.6) 0%, rgba(10, 15, 26, 0.95) 100%); z-index: 2; }
         
-        .main-content { position: relative; z-index: 3; text-align: center; max-width: 1400px; width: 100%; }
-        h1 { font-size: 3.8rem; margin-bottom: 1.5rem; color: var(--text-heading); text-shadow: 0 0 30px rgba(0, 0, 0, 0.9); font-weight: 800; letter-spacing: 1px; }
+        .main-content { position: relative; z-index: 3; text-align: center; max-width: 1200px; width: 100%; }
+        h1 { font-size: 3.5rem; margin-bottom: 2rem; color: var(--text-heading); text-shadow: 0 0 30px rgba(0, 0, 0, 0.9); font-weight: 800; letter-spacing: 1px; }
 
-        .btn-main-trigger { 
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(56, 189, 248, 0.05)); 
-            color: var(--accent); border: 1px solid var(--accent-border); 
-            padding: 1.2rem 3rem; font-size: 1.2rem; font-weight: 700; letter-spacing: 1.5px; 
-            text-transform: uppercase; border-radius: 10px; cursor: pointer; transition: all var(--transition-speed); 
-            margin-bottom: 3.5rem; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-        .btn-main-trigger:hover { background: var(--accent); color: var(--bg-dark); box-shadow: 0 0 25px var(--accent-glow); transform: translateY(-2px); }
+        /* Main CTA Button */
+        .btn-main-trigger { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-border); padding: 0.8rem 2rem; font-size: 1.1rem; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; border-radius: 8px; cursor: pointer; transition: all var(--transition-speed); margin-bottom: 3rem; }
+        .btn-main-trigger:hover { background: var(--accent); color: var(--bg-dark); box-shadow: 0 0 20px var(--accent-glow); }
 
-        /* Картки підрозділів */
+        /* Cards Grid */
         .cards-grid { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; width: 100%; }
-        .team-card { 
-            flex: 1; min-width: 320px; max-width: 420px; background: var(--bg-card); backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 2.2rem; 
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
-            text-align: left; display: flex; flex-direction: column; justify-content: space-between;
-        }
+        .team-card { flex: 1; min-width: 300px; max-width: 360px; background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 2rem; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); text-align: left; display: flex; flex-direction: column; justify-content: space-between; }
         .team-card:hover { transform: translateY(-5px); background: rgba(20, 30, 54, 0.95); border-color: var(--accent); box-shadow: 0 15px 35px rgba(56, 189, 248, 0.15); }
         
-        .photo-container { background: rgba(10, 15, 26, 0.5); border-radius: 12px; height: 180px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.03); transition: transform var(--transition-speed) ease; margin-bottom: 1.5rem; }
+        .photo-container { background: rgba(10, 15, 26, 0.5); border-radius: 12px; height: 160px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.03); transition: transform var(--transition-speed) ease; margin-bottom: 1.5rem; }
         .team-card:hover .photo-container { transform: scale(1.03); }
         .photo-container img { max-width: 85%; max-height: 85%; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5)); }
         
-        .team-card h3 { color: var(--text-heading); font-size: 1.4rem; font-weight: 700; margin-bottom: 0.75rem; }
-        .team-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; }
+        .team-card h3 { color: var(--text-heading); font-size: 1.3rem; font-weight: 700; margin-bottom: 0.75rem; }
+        .team-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem; }
         
         .footer-note { display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--accent); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
         .footer-note span { animation: blink 1.5s infinite; color: var(--status-alert); }
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        /* Калькулятор виплат */
-        .calculator-section { background: var(--bg-deep); padding: 5rem 2rem; border-top: 1px solid rgba(255, 255, 255, 0.03); display: flex; justify-content: center; }
-        .calc-container { max-width: 1000px; width: 100%; background: var(--bg-card); border: 1px solid var(--accent-border); border-radius: 16px; padding: 2.5rem; backdrop-filter: blur(10px); }
-        .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
-        @media (max-width: 768px) { .calc-grid { grid-template-columns: 1fr; } }
-        
-        .calc-input-group label { display: block; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        .calc-select { width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 1rem; }
-        .calc-result-box { background: rgba(10, 15, 26, 0.8); border: 1px solid var(--accent); border-radius: 12px; padding: 1.5rem; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .calc-amount { font-size: 2.8rem; font-weight: 800; color: var(--status-online); text-shadow: 0 0 15px rgba(34, 197, 94, 0.3); margin: 0.5rem 0; }
+        /* Info Section */
+        .info-section { position: relative; padding: 6rem 2rem; background: var(--bg-deep); display: flex; justify-content: center; border-top: 1px solid rgba(255, 255, 255, 0.02); }
+        .info-container { max-width: 1000px; width: 100%; text-align: left; }
+        .info-container h2 { font-size: 2rem; color: var(--text-heading); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
+        .info-container p { color: var(--text-muted); font-size: 1.05rem; line-height: 1.8; margin-bottom: 1.5rem; }
 
-        /* Етапи рекрутингу */
-        .steps-section { padding: 5rem 2rem; max-width: 1300px; margin: 0 auto; text-align: center; }
-        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
-        .step-card { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 2rem; text-align: left; position: relative; overflow: hidden; }
-        .step-num { font-size: 3.5rem; font-weight: 900; color: rgba(56, 189, 248, 0.15); position: absolute; top: 10px; right: 15px; }
-        .step-card h4 { color: var(--text-heading); font-size: 1.2rem; margin-bottom: 0.75rem; font-weight: 700; }
-        .step-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
-
-        /* FAQ */
-        .faq-section { background: var(--bg-deep); padding: 5rem 2rem; border-top: 1px solid rgba(255, 255, 255, 0.03); display: flex; justify-content: center; }
-        .faq-container { max-width: 900px; width: 100%; }
-        .faq-item { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 10px; margin-bottom: 1rem; overflow: hidden; }
-        .faq-header { padding: 1.2rem 1.5rem; color: var(--text-heading); font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
-        .faq-header:hover { background: rgba(56, 189, 248, 0.05); }
-        .faq-body { padding: 0 1.5rem 1.2rem 1.5rem; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; display: none; }
-        .faq-item.active .faq-body { display: block; }
-        .faq-item.active .faq-header { color: var(--accent); }
-
-        /* Футер */
-        .tactical-footer { background: var(--bg-footer); padding: 4rem 3rem; border-top: 1px solid rgba(56, 189, 248, 0.1); display: flex; justify-content: center; }
-        .footer-content { max-width: 1400px; width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
-        .footer-block { flex: 1; min-width: 280px; }
+        /* Footer */
+        .tactical-footer { background: var(--bg-footer); padding: 4rem 2rem; border-top: 1px solid rgba(56, 189, 248, 0.1); display: flex; justify-content: center; }
+        .footer-content { max-width: 1200px; width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
+        .footer-block { flex: 1; min-width: 250px; }
         .footer-block h4 { color: var(--text-heading); font-size: 1.1rem; margin-bottom: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
         .footer-block p { color: var(--text-subtle); font-size: 0.95rem; line-height: 1.6; }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 0.6rem; }
+        .footer-links a { color: var(--accent); text-decoration: none; font-size: 0.95rem; transition: color 0.2s; }
+        .footer-links a:hover { color: var(--accent-hover); }
 
-        /* Кастомний селект */
+        /* Custom Select */
         .custom-select-wrapper { position: relative; width: 100%; }
-        .custom-select-trigger { width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f8fafc; font-size: 1rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
+        .custom-select-trigger { width: 100%; padding: 0.8rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f8fafc; font-size: 1rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: border-color 0.2s; }
         .custom-select-trigger:after { content: ''; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid var(--text-muted); transition: transform 0.3s ease; }
-        .custom-select-wrapper.open .custom-select-trigger { border-color: var(--accent); box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
+        .custom-select-wrapper.open .custom-select-trigger { border-color: var(--accent); }
         .custom-select-wrapper.open .custom-select-trigger:after { transform: rotate(180deg); }
-        
-        .custom-options { 
-            position: absolute; top: calc(100% + 5px); left: 0; width: 100%; 
-            background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; visibility: hidden; pointer-events: none; 
-            transform: translateY(-10px); transition: all 0.2s ease; z-index: 99;
-            max-height: 180px; overflow-y: auto; 
-        }
-        .custom-options::-webkit-scrollbar { width: 6px; }
-        .custom-options::-webkit-scrollbar-track { background: rgba(10, 15, 26, 0.5); border-radius: 4px; }
-        .custom-options::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
-
+        .custom-options { position: absolute; top: calc(100% + 5px); left: 0; width: 100%; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-10px); transition: all 0.2s ease; z-index: 99; }
         .custom-select-wrapper.open .custom-options { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
-        .custom-option { padding: 0.85rem 1rem; color: var(--text-main); cursor: pointer; transition: all 0.2s; font-size: 0.95rem; }
+        .custom-option { padding: 0.8rem 1rem; color: var(--text-main); cursor: pointer; transition: all 0.2s; font-size: 0.95rem; }
         .custom-option:hover { background: var(--accent-light); color: var(--accent); }
         .custom-option.selected { background: rgba(56, 189, 248, 0.15); color: var(--accent); font-weight: 600; }
 
-        /* Модальні вікна */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.88); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; padding: 1rem; }
+        /* Modal Overlay & Window */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.85); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-window { width: 100%; max-width: 860px; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 16px; padding: 2.2rem; box-shadow: 0 25px 60px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
+        .modal-window { width: 100%; max-width: 480px; background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 16px; padding: 2rem; box-shadow: 0 25px 60px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
 
         .fade-stage { opacity: 1; transform: translateY(0); transition: opacity 0.35s ease, transform 0.35s ease; }
-        .fade-stage.hidden { opacity: 0; transform: translateY(-15px); pointer-events: none; position: absolute; width: calc(100% - 4.4rem); }
-        .fade-stage.entrance { opacity: 0; transform: translateY(15px); pointer-events: none; position: absolute; width: calc(100% - 4.4rem); }
+        .fade-stage.hidden { opacity: 0; transform: translateY(-15px); pointer-events: none; position: absolute; width: calc(100% - 4rem); }
+        .fade-stage.entrance { opacity: 0; transform: translateY(15px); pointer-events: none; position: absolute; width: calc(100% - 4rem); }
 
         .form-group { margin-bottom: 1.2rem; }
         .form-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        .form-group input { width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f8fafc; font-size: 1rem; transition: border-color 0.2s; }
-        .form-group input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
+        .form-group input { width: 100%; padding: 0.8rem; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f8fafc; font-size: 1rem; transition: border-color 0.2s; }
+        .form-group input:focus { outline: none; border-color: var(--accent); }
         
-        .btn-submit { 
-            width: 100%; padding: 1rem; 
-            background: linear-gradient(135deg, var(--accent), var(--accent-hover)); 
-            color: var(--bg-dark); border: none; border-radius: 8px; 
-            font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; 
-            cursor: pointer; transition: all 0.2s; margin-top: 0.5rem; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
-        }
-        .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4); }
+        .btn-submit { width: 100%; padding: 1rem; background: var(--accent); color: var(--bg-dark); border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s; margin-top: 0.5rem; }
+        .btn-submit:hover { background: var(--accent-hover); transform: translateY(-1px); }
 
-        .close-modal { 
-            position: absolute; top: 1rem; right: 1rem; width: 32px; height: 32px; border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); 
-            color: var(--text-subtle); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s; z-index: 120; 
-        }
-        .close-modal:hover { color: #f8fafc; background: rgba(239, 68, 68, 0.2); border-color: var(--status-alert); transform: rotate(90deg); }
+        .close-modal { position: absolute; top: 1.2rem; right: 1.2rem; background: transparent; border: none; color: var(--text-subtle); font-size: 1.3rem; cursor: pointer; transition: color 0.2s; z-index: 10; }
+        .close-modal:hover { color: var(--text-heading); }
 
-        /* Повноекранний режим гри */
-        .modal-overlay.game-fullscreen .modal-window {
-            max-width: 100vw !important; width: 100vw !important; height: 100vh !important;
-            border-radius: 0 !important; padding: 0 !important; border: none !important;
-        }
-
-        /* Інтерфейс чату */
-        .chat-container { width: 100%; height: 440px; display: flex; flex-direction: column; background: var(--bg-dark); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; overflow: hidden; margin-top: 0.5rem; }
-        .chat-header { background: #1e293b; padding: 0.85rem 1.2rem; font-size: 0.9rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        /* Chat UI */
+        .chat-container { width: 100%; height: 380px; display: flex; flex-direction: column; background: var(--bg-dark); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; overflow: hidden; margin-top: 0.5rem; }
+        .chat-header { background: #1e293b; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between; }
         .chat-header .status-dot { width: 8px; height: 8px; background: var(--status-online); border-radius: 50%; box-shadow: 0 0 6px var(--status-online); display: inline-block; }
         
-        .btn-back-chat {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); 
-            color: var(--text-muted); width: 30px; height: 30px; border-radius: 6px;
-            cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s;
-        }
-        .btn-back-chat:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
-
-        .recruiter-actions { display: none; gap: 8px; align-items: center; }
-        .btn-candidates { background: rgba(56, 189, 248, 0.1); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold; transition: all 0.2s; }
-        .btn-candidates:hover { background: rgba(56, 189, 248, 0.25); border-color: var(--accent); }
-
-        .btn-clear-chat { background: rgba(239, 68, 68, 0.15); color: var(--status-alert); border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold; transition: all 0.2s; }
-        .btn-clear-chat:hover { background: var(--status-alert); color: #fff; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
-
-        .chat-messages { flex: 1; padding: 1.2rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.9rem; background: var(--bg-deep); }
-        .message { max-width: 80%; padding: 0.7rem 1rem; border-radius: 8px; font-size: 0.92rem; line-height: 1.45; word-break: break-word; position: relative; }
-        .message .msg-time { display: block; font-size: 0.65rem; color: var(--text-subtle); margin-top: 4px; text-align: right; }
-        
+        .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.8rem; background: var(--bg-deep); }
+        .message { max-width: 85%; padding: 0.6rem 0.9rem; border-radius: 8px; font-size: 0.9rem; line-height: 1.4; word-break: break-word; }
         .message.intercom { background: rgba(56, 189, 248, 0.06); color: var(--accent); align-self: flex-start; border-left: 3px solid var(--accent); }
         .message.friend { background: #1e293b; color: #f8fafc; align-self: flex-end; border-right: 3px solid var(--text-subtle); }
-        .message.approved { background: rgba(34, 197, 94, 0.1); color: #4ade80; align-self: center; border: 1px solid rgba(34, 197, 94, 0.3); width: 95%; text-align: center; }
-        .message.rejected { background: rgba(239, 68, 68, 0.1); color: #f87171; align-self: center; border: 1px solid rgba(239, 68, 68, 0.3); width: 95%; text-align: center; }
-
-        .quick-tags-area { display: flex; gap: 8px; padding: 10px 12px; background: var(--bg-deep); border-top: 1px solid rgba(255,255,255,0.03); overflow-x: auto; white-space: nowrap; align-items: center; scrollbar-width: thin; scrollbar-color: rgba(56, 189, 248, 0.2) transparent; }
-        .quick-tags-area button { flex-shrink: 0; background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(56, 189, 248, 0.02)); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.2); padding: 6px 14px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; font-weight: 600; }
-        .quick-tags-area button:hover { background: rgba(56, 189, 248, 0.18); border-color: var(--accent); color: #f8fafc; }
-        .quick-tags-area #cryptoBtn { margin-left: auto; background: rgba(34, 197, 94, 0.08); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.2); }
+        
+        /* Quick Tags Scrollable Bar */
+        .quick-tags-area { 
+            display: flex; gap: 8px; padding: 10px 8px; background: var(--bg-deep); 
+            border-top: 1px solid rgba(255,255,255,0.03); overflow-x: auto; 
+            white-space: nowrap; align-items: center;
+            scrollbar-width: thin; scrollbar-color: rgba(56, 189, 248, 0.2) transparent;
+        }
+        .quick-tags-area::-webkit-scrollbar { height: 4px; }
+        .quick-tags-area::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.25); border-radius: 4px; }
+        .quick-tags-area::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.5); }
+        
+        .quick-tags-area button {
+            flex-shrink: 0; background: rgba(56, 189, 248, 0.06); color: var(--accent); 
+            border: 1px solid rgba(56, 189, 248, 0.2); padding: 6px 14px; border-radius: 6px; 
+            font-size: 0.75rem; cursor: pointer; transition: all 0.2s; font-weight: 600;
+        }
+        .quick-tags-area button:hover { background: rgba(56, 189, 248, 0.15); border-color: var(--accent); color: #f8fafc; }
+        .quick-tags-area #cryptoBtn { margin-left: auto; background: rgba(34, 197, 94, 0.08); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.15); }
 
         .chat-input-area { display: flex; border-top: 1px solid rgba(255, 255, 255, 0.05); background: var(--bg-dark); }
-        .chat-input-area input { flex: 1; padding: 0.9rem 1.2rem; background: transparent; border: none; color: #f8fafc; font-size: 0.95rem; }
+        .chat-input-area input { flex: 1; padding: 0.8rem 1rem; background: transparent; border: none; color: #f8fafc; font-size: 0.95rem; }
         .chat-input-area input:focus { outline: none; }
-        .btn-send { background: linear-gradient(135deg, #1e293b, #0f172a); color: var(--accent); border: none; border-left: 1px solid rgba(255,255,255,0.05); padding: 0 1.6rem; cursor: pointer; font-weight: bold; transition: all 0.2s; font-size: 0.9rem; }
-        .btn-send:hover { background: var(--accent); color: var(--bg-dark); }
-
-        /* Список кандидатів (Адмін-панель) */
-        .candidates-list { height: 380px; overflow-y: auto; background: var(--bg-dark); border-radius: 8px; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.05); margin-top: 10px; }
-        .candidate-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.15); border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; text-align: left; display: flex; justify-content: space-between; align-items: center; }
-        .candidate-info h4 { color: #f8fafc; font-size: 1rem; margin-bottom: 4px; display: flex; gap: 10px; align-items: center; }
-        .candidate-info h4 span { font-size: 0.75rem; color: var(--text-subtle); font-weight: normal; }
-        .candidate-info p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; }
-        .candidate-info strong { color: var(--accent); }
-        
-        .candidate-actions { display: flex; gap: 8px; align-items: center; }
-        .btn-action-open { background: rgba(56, 189, 248, 0.15); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: bold; transition: all 0.2s; }
-        .btn-action-open:hover { background: var(--accent); color: var(--bg-dark); }
-        .btn-approve { background: rgba(34, 197, 94, 0.15); color: var(--status-online); border: 1px solid rgba(34, 197, 94, 0.4); width: 34px; height: 34px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
-        .btn-approve:hover { background: var(--status-online); color: #fff; box-shadow: 0 0 10px rgba(34, 197, 94, 0.4); }
-        .btn-reject { background: rgba(239, 68, 68, 0.15); color: var(--status-alert); border: 1px solid rgba(239, 68, 68, 0.4); width: 34px; height: 34px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
-        .btn-reject:hover { background: var(--status-alert); color: #fff; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
-
-        .candidate-count-badge { background: rgba(56, 189, 248, 0.15); color: var(--accent); padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; border: 1px solid rgba(56, 189, 248, 0.3); margin-left: 8px; }
-
-        /* Вибір типу гри */
-        .op-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1.5rem; }
-        @media (max-width: 600px) { .op-card-grid { grid-template-columns: 1fr; } }
-        .op-card { background: rgba(10, 15, 26, 0.8); border: 1px solid var(--accent-border); border-radius: 12px; padding: 1.5rem 1rem; text-align: center; cursor: pointer; transition: all 0.3s; }
-        .op-card:hover { border-color: var(--accent); background: rgba(56, 189, 248, 0.1); transform: translateY(-3px); }
-        .op-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .op-title { color: #f1f5f9; font-weight: bold; font-size: 1.1rem; margin-bottom: 0.5rem; }
-        .op-desc { color: var(--text-muted); font-size: 0.8rem; line-height: 1.4; }
-
-        /* 3D FPS стилі */
-        .fps-container { width: 100vw; height: 100vh; position: relative; background: #000; overflow: hidden; }
-        .fps-crosshair { position: absolute; top: 50%; left: 50%; width: 10px; height: 10px; border: 2px solid rgba(56, 189, 248, 0.9); border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 10; }
-        .fps-crosshair::after { content: ''; position: absolute; top: 50%; left: 50%; width: 2px; height: 2px; background: #fff; transform: translate(-50%, -50%); }
-
-        .radio-ticker { position: absolute; top: 15px; left: 20px; z-index: 10; background: rgba(15, 23, 42, 0.75); border: 1px solid var(--accent-border); padding: 8px 16px; border-radius: 8px; color: var(--accent); font-size: 0.85rem; font-weight: bold; backdrop-filter: blur(4px); }
-        .fps-hud { position: absolute; bottom: 20px; left: 20px; z-index: 10; display: flex; gap: 15px; }
-        .hud-card { background: rgba(15, 23, 42, 0.85); border: 1px solid var(--accent-border); border-radius: 8px; padding: 10px 18px; color: #fff; font-size: 0.9rem; font-weight: bold; backdrop-filter: blur(4px); display: flex; flex-direction: column; }
-        .hud-card span { color: var(--accent); font-size: 1.2rem; }
-
-        .pointer-hint { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 12; background: rgba(15, 23, 42, 0.92); border: 2px solid var(--accent); color: #fff; padding: 20px 30px; border-radius: 12px; font-weight: bold; font-size: 1.1rem; text-align: center; pointer-events: none; box-shadow: 0 0 30px rgba(0,0,0,0.8); }
-        .hit-flash { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(239, 68, 68, 0.3); pointer-events: none; z-index: 9; opacity: 0; transition: opacity 0.15s ease-out; }
-
-        /* Інтерфейс здоров'я у стилі Tarkov */
-        .tarkov-ui {
-            display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 480px; background: rgba(12, 16, 24, 0.96); border: 2px solid #334155; border-radius: 12px;
-            padding: 20px; box-shadow: 0 0 40px rgba(0,0,0,0.95); z-index: 100; color: #e2e8f0;
-        }
-        .tarkov-header { display: flex; justify-content: space-between; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px; color: var(--accent); }
-        .tarkov-body { display: flex; gap: 20px; align-items: center; }
-        .skeleton-view { width: 170px; height: 280px; position: relative; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; background: rgba(0,0,0,0.4); display: flex; justify-content: center; align-items: center; }
-        .skeleton-svg { width: 130px; height: 240px; }
-        .limb-list { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-        .limb-box { background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 6px; padding: 6px 10px; cursor: pointer; transition: all 0.2s; }
-        .limb-box:hover, .limb-box.selected { border-color: var(--accent); background: rgba(56, 189, 248, 0.15); }
-        .limb-info { display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: bold; margin-bottom: 3px; }
-        .limb-bar-bg { width: 100%; height: 6px; background: #0f172a; border-radius: 3px; overflow: hidden; }
-        .limb-bar-fill { height: 100%; background: var(--status-online); width: 100%; transition: width 0.3s ease, background 0.3s; }
-        .med-actions { display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid #334155; padding-top: 12px; }
-        .btn-med { flex: 1; padding: 8px; background: #1e293b; border: 1px solid var(--accent-border); color: #fff; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: all 0.2s; }
-        .btn-med:hover { background: var(--accent); color: #000; }
+        .btn-send { background: #1e293b; color: var(--accent); border: none; padding: 0 1.2rem; cursor: pointer; font-weight: bold; transition: background 0.2s; font-size: 0.9rem; }
+        .btn-send:hover { background: #2d3748; }
     </style>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
     <nav class="navbar">
-        <a href="#" class="logo">Strike — Рекрутинговий Центр</a>
+        <a href="#" class="logo">Долучись до Інтернаціональних бригад ЗСУ</a>
         <ul class="nav-links">
             <li><a href="#">Головна</a></li>
-            <li><a href="#calc">Калькулятор</a></li>
-            <li><a href="#steps">Етапи</a></li>
-            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#about">Про нас</a></li>
+            <li><a href="#more">Більше</a></li>
             <li><a href="#contacts">Контакт</a></li>
         </ul>
     </nav>
 
     <div class="video-container">
-        <video autoplay loop muted playsinline class="bg-video"><source src="mp4/krak.mp4" type="video/mp4"></video>
+        <video autoplay loop muted playsinline class="bg-video">
+            <source src="mp4/krak.mp4" type="video/mp4">
+        </video>
         <div class="video-overlay"></div>
-        <div class="tactical-grid"></div>
 
         <main class="main-content">
-            <h1>Твій шлях до професійного підрозділу</h1>
-            <button class="btn-main-trigger" onclick="toggleModal(true)">Подати заявку зараз →</button>
+            <h1>Готовий Підписати Контракт</h1>
+            
+            <button class="btn-main-trigger" onclick="toggleModal(true)">Вривайся до нас →</button>
             
             <div class="cards-grid">
                 <div class="team-card">
-                    <div class="photo-container"><img src="vovkodav.png" alt="1-й батальйон Вовкодав" loading="lazy"></div>
+                    <div class="photo-container">
+                        <img src="vovkodav.png" alt="1-й батальйон Вовкодав" loading="lazy">
+                    </div>
                     <div>
                         <h3>1-й батальйон "Вовкодав"</h3>
                         <p>Інтернаціональний підрозділ, що виконує складні бойові завдання безпосередньо на передньому краї.</p>
@@ -329,7 +198,9 @@
                 </div>
 
                 <div class="team-card">
-                    <div class="photo-container"><img src="RVC.png" alt="РДК" loading="lazy"></div>
+                    <div class="photo-container">
+                        <img src="RVC.png" alt="РДК" loading="lazy">
+                    </div>
                     <div>
                         <h3>Російський добровольчий корпус</h3>
                         <p>Добровольче формування, що веде запеклі бої та проводить спецоперації на лінії зіткнення.</p>
@@ -338,7 +209,9 @@
                 </div>
 
                 <div class="team-card">
-                    <div class="photo-container"><img src="Norman.png" alt="Норманська бригада" loading="lazy"></div>
+                    <div class="photo-container">
+                        <img src="Norman.png" alt="Норманська бригада" loading="lazy">
+                    </div>
                     <div>
                         <h3>Норманська бригада</h3>
                         <p>Згуртований загін іноземних ветеранів, що забезпечує точність і тактичну перевагу в бою.</p>
@@ -349,213 +222,55 @@
         </main>
     </div>
 
-    <!-- Калькулятор виплат -->
-    <section class="calculator-section" id="calc">
-        <div class="calc-container">
-            <h2 style="color: var(--text-heading); font-size: 2rem; text-transform: uppercase; text-align: center;">Калькулятор грошового забезпечення</h2>
-            <p style="color: var(--text-muted); text-align: center; margin-top: 0.5rem;">Розрахуй свій щомісячний дохід залежно від обраної спеціальності та зони виконання завдань.</p>
+    <section class="info-section" id="about">
+        <div class="info-container">
+            <h2>Про наші підрозділи</h2>
+            <p>Інтернаціональні бригади об'єднують досвідчених бійців та добровольців з усього світу, які стали на захист свободи. Ми забезпечуємо найвищий уровень підготовки, сучасне озброєння та повну інтеграцію у структуру Збройних Сил України.</p>
             
-            <div class="calc-grid">
-                <div>
-                    <div class="calc-input-group" style="margin-bottom: 1.2rem;">
-                        <label>Обирай спеціалізацію:</label>
-                        <select id="roleSelect" class="calc-select" onchange="calculatePay()">
-                            <option value="20000">Стрілець / Піхота</option>
-                            <option value="25000">Оператор БПЛА (FPV)</option>
-                            <option value="23000">Бойовий Медик</option>
-                            <option value="28000">Артилерист / Механік</option>
-                        </select>
-                    </div>
-                    <div class="calc-input-group">
-                        <label>Зона виконання завдань:</label>
-                        <select id="zoneSelect" class="calc-select" onchange="calculatePay()">
-                            <option value="0">Тил / Навчальний центр (+0 грн)</option>
-                            <option value="30000">Завдання в зоні бойових дій (+30 000 грн)</option>
-                            <option value="100000">Передній край / ЛБЗ (+100 000 грн)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="calc-result-box">
-                    <span style="color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase;">Орієнтовний дохід на місяць:</span>
-                    <div class="calc-amount" id="totalPay">20,000 грн</div>
-                    <span style="color: var(--text-subtle); font-size: 0.8rem;">+ Повний пакет соц. забезпечення та медичного страхування</span>
-                </div>
+            <div id="more" style="padding-top: 2rem;">
+                <h2>Більше інформації про умови контракту</h2>
+                <p>Офіційне оформлення через Міністерство оборони України. Всім рекрутам надається повне речове та медичне забезпечення, а також інтенсивний курс підготовки (БЗВП) під керівництвом інструкторів із реальним бойовим досвідом.</p>
             </div>
         </div>
     </section>
 
-    <!-- Етапи рекрутингу -->
-    <section class="steps-section" id="steps">
-        <h2 style="color: var(--text-heading); font-size: 2.2rem; text-transform: uppercase; text-align: center;">Етапи Долучення До Лав</h2>
-        <p style="color: var(--text-muted); text-align: center; margin-top: 0.5rem;">Від подачі онлайн-заявки до першого виходу на бойове злагодження</p>
-
-        <div class="steps-grid">
-            <div class="step-card">
-                <span class="step-num">01</span>
-                <h4>Подача Заявки</h4>
-                <p>Заповнюйте анкету у модальному вікні та переходьте до прямого зв'язку з рекрутером.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">02</span>
-                <h4>Співбесіда & МЕК</h4>
-                <p>Проходження онлайн-інтерв'ю та збір первинного пакета медичних документів.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">03</span>
-                <h4>Курс БЗВП (30-40 днів)</h4>
-                <p>Інтенсивна вишколова програма з вогневої, тактичної та медичної підготовки.</p>
-            </div>
-            <div class="step-card">
-                <span class="step-num">04</span>
-                <h4>Підписання Контракту</h4>
-                <p>Офіційне зарахування до обраної бригади ЗСУ та отримання спорядження.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ -->
-    <section class="faq-section" id="faq">
-        <div class="faq-container">
-            <h2 style="color: var(--text-heading); font-size: 2rem; text-transform: uppercase; text-align: center; margin-bottom: 2rem;">Часті запитання (FAQ)</h2>
-            <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-header">Хто може долучитися до бригади? <span>+</span></div>
-                <div class="faq-body">Громадяни України та іноземці, які відповідають вимогам стану здоров'я та пройшли співбесіду.</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Кнопки гри та рекорди -->
-    <div style="background: var(--bg-deep); padding: 2rem; border-top: 1px solid var(--accent-border); text-align: center; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
-        <button class="btn-main-trigger" style="margin-bottom: 0; padding: 0.8rem 1.8rem; font-size: 0.95rem;" onclick="openGameModal()">🎮 Грати: 3D FPS Шутер (Штурм + Tarkov Мед)</button>
-        <button class="btn-main-trigger" style="margin-bottom: 0; padding: 0.8rem 1.8rem; font-size: 0.95rem; border-color: rgba(34, 197, 94, 0.4); color: var(--status-online);" onclick="openLeaderboardModal()">🏆 Таблиця Рекордів</button>
-    </div>
-
-    <!-- Футер -->
     <footer class="tactical-footer" id="contacts">
         <div class="footer-content">
             <div class="footer-block">
                 <h4>Штаб рекрутингу</h4>
-                <p>Лінія зв'язку працює цілодобово. Подавай заявку через захищене модальне вікно для отримання інструкцій.</p>
+                <p>Лінія зв'язку працює цілодобово. Подавай заявку через захищене модальне вікно для отримання детальних інструкцій від наших інструкторів.</p>
+            </div>
+            <div class="footer-block">
+                <h4>Офіційні Канали</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Telegram Канал</a></li>
+                    <li><a href="#">Signal Бойова Лінія</a></li>
+                    <li><a href="#">Офіційний Email</a></li>
+                </ul>
+            </div>
+            <div class="footer-block">
+                <h4>Безпека даних</h4>
+                <p style="color: #475569; font-size: 0.85rem;">Усі повідомлення та анкети проходять через захищені протоколи шифрування кінцевих точок баз даних. Ваша приватність повністю захищена.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Модальне вікно гри (3D FPS) -->
-    <div class="modal-overlay" id="gameModal">
-        <div class="modal-window" style="position: relative;">
-            <button class="close-modal" onclick="closeGameModal()">×</button>
-            
-            <div id="opSelectScreen" style="padding: 2rem;">
-                <h2 style="color: #f1f5f9; margin-bottom: 0.5rem; text-align: center;">🎯 Виберіть тип бойової операції 3D FPS</h2>
-                <p style="color: var(--text-muted); font-size: 0.9rem; text-align: center;">Клацніть у вікно гри, щоб заблокувати курсор та керувати поглядом!</p>
-
-                <div class="op-card-grid">
-                    <div class="op-card" onclick="startFPSGame('assault')">
-                        <div class="op-icon">🪖</div>
-                        <div class="op-title">Штурм Позицій 3D</div>
-                        <div class="op-desc">Стріляйте в голову (50 шкоди, +100 очок) або в корпус (25 шкоди).</div>
-                    </div>
-                    <div class="op-card" onclick="startFPSGame('defense')">
-                        <div class="op-icon">🛡️</div>
-                        <div class="op-title">Оборона Сектора 3D</div>
-                        <div class="op-desc">Утримуйте позицію та лікуйте поранення клавішею 'M'.</div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="canvasScreen" style="display: none;">
-                <div class="fps-container" id="threeJsContainer">
-                    <div class="pointer-hint" id="pointerHint">🎯 Клацніть на екрані, щоб увімкнути тактичний приціл!</div>
-                </div>
-
-                <div class="tarkov-ui" id="tarkovMedicalUi">
-                    <div class="tarkov-header">
-                        <span>🏥 СТАН ЗДОРОВ'Я (TCCC ДІАГНОСТИКА)</span>
-                        <span style="cursor: pointer;" onclick="toggleTarkovUi(false)">✕</span>
-                    </div>
-                    <div class="tarkov-body">
-                        <div class="skeleton-view">
-                            <svg class="skeleton-svg" viewBox="0 0 100 200">
-                                <circle id="svgHead" cx="50" cy="20" r="14" fill="#22c55e" opacity="0.8"/>
-                                <rect id="svgThorax" x="32" y="38" width="36" height="45" rx="5" fill="#22c55e" opacity="0.8"/>
-                                <rect id="svgStomach" x="35" y="86" width="30" height="30" rx="4" fill="#22c55e" opacity="0.8"/>
-                                <rect id="svgRArm" x="12" y="40" width="16" height="55" rx="3" fill="#22c55e" opacity="0.8"/>
-                                <rect id="svgLArm" x="72" y="40" width="16" height="55" rx="3" fill="#22c55e" opacity="0.8"/>
-                                <rect id="svgRLeg" x="32" y="120" width="15" height="70" rx="3" fill="#22c55e" opacity="0.8"/>
-                                <rect id="svgLLeg" x="53" y="120" width="15" height="70" rx="3" fill="#22c55e" opacity="0.8"/>
-                            </svg>
-                        </div>
-                        <div class="limb-list">
-                            <div class="limb-box" id="box-head" onclick="selectLimb('head')">
-                                <div class="limb-info"><span>ГОЛОВА (HEAD)</span><span id="hp-head">35/35</span></div>
-                                <div class="limb-bar-bg"><div class="limb-bar-fill" id="bar-head"></div></div>
-                            </div>
-                            <div class="limb-box" id="box-thorax" onclick="selectLimb('thorax')">
-                                <div class="limb-info"><span>ГРУДИ (THORAX)</span><span id="hp-thorax">85/85</span></div>
-                                <div class="limb-bar-bg"><div class="limb-bar-fill" id="bar-thorax"></div></div>
-                            </div>
-                            <div class="limb-box" id="box-stomach" onclick="selectLimb('stomach')">
-                                <div class="limb-info"><span>ЖИВІТ (STOMACH)</span><span id="hp-stomach">70/70</span></div>
-                                <div class="limb-bar-bg"><div class="limb-bar-fill" id="bar-stomach"></div></div>
-                            </div>
-                            <div class="limb-box" id="box-rarm" onclick="selectLimb('rarm')">
-                                <div class="limb-info"><span>ПРАВА РУКА</span><span id="hp-rarm">60/60</span></div>
-                                <div class="limb-bar-bg"><div class="limb-bar-fill" id="bar-rarm"></div></div>
-                            </div>
-                            <div class="limb-box" id="box-larm" onclick="selectLimb('larm')">
-                                <div class="limb-info"><span>ЛІВА РУКА</span><span id="hp-larm">60/60</span></div>
-                                <div class="limb-bar-bg"><div class="limb-bar-fill" id="bar-larm"></div></div>
-                            </div>
-                            <div class="limb-box" id="box-rleg" onclick="selectLimb('rleg')">
-                                <div class="limb-info"><span>ПРАВА НОГА</span><span id="hp-rleg">65/65</span></div>
-                                <div class="limb-bar-bg"><div class="limb-bar-fill" id="bar-rleg"></div></div>
-                            </div>
-                            <div class="limb-box" id="box-lleg" onclick="selectLimb('lleg')">
-                                <div class="limb-info"><span>ЛІВА НОГА</span><span id="hp-lleg">65/65</span></div>
-                                <div class="limb-bar-bg"><div class="limb-bar-fill" id="bar-lleg"></div></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="med-actions">
-                        <button class="btn-med" onclick="useMedItem('tourniquet')">🩸 Турнікет (Стаза)</button>
-                        <button class="btn-med" onclick="useMedItem('bandage')">🩹 Ізраїльський бандаж</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Модальне вікно таблиці рекордів -->
-    <div class="modal-overlay" id="leaderboardModal">
-        <div class="modal-window" style="max-width: 500px;">
-            <button class="close-modal" onclick="closeLeaderboardModal()">×</button>
-            <h2 style="color: #f1f5f9; margin-bottom: 1rem; text-align: center;">🏆 Таблиця Рекордів</h2>
-            <div style="max-height: 320px; overflow-y: auto; background: var(--bg-dark); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); padding: 0.8rem;">
-                <table style="width: 100%; color: var(--text-main); border-collapse: collapse; text-align: left;">
-                    <thead>
-                        <tr style="border-bottom: 1px solid var(--accent-border); color: var(--accent); font-size: 0.85rem;">
-                            <th style="padding: 6px;">#</th><th style="padding: 6px;">Боєць</th><th style="padding: 6px; text-align: right;">Бали</th>
-                        </tr>
-                    </thead>
-                    <tbody id="leaderboardBody">
-                        <tr><td colspan="3" style="text-align:center; padding: 1rem; color: var(--text-subtle);">Завантаження...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- Головне модальне вікно анкети та чату -->
+    <!-- Modal overlay & window -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-window">
             <button class="close-modal" onclick="toggleModal(false)">×</button>
             
             <div id="formStage" class="fade-stage">
-                <h2 style="margin-bottom: 1.5rem; color: #f1f5f9; text-align: center;">Подати заявку</h2>
+                <h2 style="margin-bottom: 1.5rem; font-size: 1.5rem; color: #f1f5f9; text-align: center; font-weight: 700;">Подати заявку</h2>
                 <form onsubmit="handleSubmit(event)">
-                    <div class="form-group"><label>Позивний або Ім'я (введіть REK для адміна)</label><input type="text" id="userName" required placeholder="Ваш нікнейм"></div>
-                    <div class="form-group"><label>Контакт у Telegram / Signal (введіть REK для адміна)</label><input type="text" id="userContact" required placeholder="@username або номер"></div>
+                    <div class="form-group">
+                        <label for="userName">Позивний або Ім'я</label>
+                        <input type="text" id="userName" required placeholder="Введіть ваш нікнейм">
+                    </div>
+                    <div class="form-group">
+                        <label for="userContact">Контакт у Telegram / Signal</label>
+                        <input type="text" id="userContact" required placeholder="@username або номер">
+                    </div>
                     
                     <div class="form-group">
                         <label>Бажаний підрозділ</label>
@@ -569,53 +284,44 @@
                             </div>
                         </div>
                     </div>
-
+                    
                     <button type="submit" class="btn-submit">Надіслати заявку</button>
                 </form>
             </div>
 
-            <!-- Етап чату -->
             <div id="chatStage" class="fade-stage entrance" style="display: none;">
-                <h2 style="font-size: 1.5rem; margin-bottom: 1rem; color: #f1f5f9; text-align: center;">Захищений Канал Зв'язку</h2>
+                <h2 style="font-size: 1.4rem; margin-bottom: 1rem; color: #f1f5f9; text-align: center; font-weight: 700;">Захищений Канал Зв'язку</h2>
+                
                 <div class="chat-container">
-                    <div class="chat-header">
+                    <div class="chat-header" id="chatPartner">
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <button class="btn-back-chat" onclick="goBackToForm()">←</button>
+                            <button onclick="goBackToForm()" style="background: transparent; border: none; color: #64748b; cursor: pointer; font-size: 1.1rem; padding: 0 2px; transition: color 0.2s;" title="Назад до анкети">←</button>
                             <span class="status-dot"></span>
-                            <span id="chatHeaderTitle">Персональний чат</span>
+                            <span>Загальна лінія зв'язку</span>
                         </div>
-                        <div class="recruiter-actions" id="recruiterActions">
-                            <button class="btn-candidates" onclick="openCandidatesList()">👥 Кандидати <span class="candidate-count-badge" id="candidateBadge">0</span></button>
-                            <button class="btn-clear-chat" onclick="directClearChat()">Очистити</button>
-                        </div>
+                        <button id="clearChatBtn" onclick="clearChat()" style="display: none; background: #ef4444; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: bold;">Очистити чат</button>
                     </div>
+                    
                     <div class="chat-messages" id="chatMessages"></div>
+                    
                     <div class="quick-tags-area" id="quickTagsArea">
                         <button onclick="sendQuickQuestion('docs')">📋 Документи?</button>
                         <button onclick="sendQuickQuestion('training')">🪖 Навчання?</button>
                         <button onclick="sendQuickQuestion('gear')">📦 Забезпечення?</button>
                         <button id="cryptoBtn" onclick="checkCryptoLink()">🔐 Лінія: Захищена</button>
                     </div>
+
                     <div class="chat-input-area">
                         <input type="text" id="chatInput" placeholder="Напишіть повідомлення..." onkeypress="handleKeyPress(event)">
-                        <button class="btn-send" onclick="sendMessage()">Надіслати</button>
+                        <button class="btn-send" onclick="sendMessage()">Друк</button>
                     </div>
                 </div>
-            </div>
-
-            <!-- Адмін-панель (список кандидатів) -->
-            <div id="candidatesStage" class="fade-stage entrance" style="display: none;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h2 style="font-size: 1.4rem; color: #f1f5f9;">База Кандидатів (Адмін-Панель)</h2>
-                    <button class="btn-back-chat" onclick="backToChatFromCandidates()">← В чат</button>
-                </div>
-                <div class="candidates-list" id="candidatesListContainer"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // Ініціалізація Firebase[cite: 1]
+        // Init Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyCeWM1wdHdN6bIXFXTqHXO7WgJNJK53nwk",
             authDomain: "storinka-d7bd6.firebaseapp.com",
@@ -626,671 +332,222 @@
             appId: "1:317173750408:web:62d09563fc750e20589d3d",
             measurementId: "G-5HX3ES92NE"
         };
+
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const candidatesRef = database.ref('candidates');
-        const scoresRef = database.ref('leaderboard');
-
-        let currentRoomId = null;
-        let isRecruiter = false;
+        const messagesRef = database.ref('messages');
+        
+        // Cache Elements for performance
+        const DOM = {
+            overlay: document.getElementById('modalOverlay'),
+            formStage: document.getElementById('formStage'),
+            chatStage: document.getElementById('chatStage'),
+            chatMessages: document.getElementById('chatMessages'),
+            chatInput: document.getElementById('chatInput'),
+            userName: document.getElementById('userName'),
+            userContact: document.getElementById('userContact'),
+            userSquad: document.getElementById('userSquad'),
+            squadWrapper: document.getElementById('squadSelectWrapper'),
+            clearChatBtn: document.getElementById('clearChatBtn'),
+            chatPartnerTitle: document.querySelector('#chatPartner span:not(.status-dot)'),
+            cryptoBtn: document.getElementById('cryptoBtn'),
+            quickTagsArea: document.getElementById('quickTagsArea')
+        };
+        
         let globalSenderName = "Гість";
-        let activeRoomListener = null;
+        let isCheckingCrypto = false;
 
+        // Bot answers map
         const BOT_RESPONSES = {
-            docs: "📋 Довідка Чергової частини: Для підписання контракту необхідні: Паспорт/ID-картка, податковий код (ІПН), військовий квиток (за наявності). Для іноземців — закордонний паспорт.",
-            training: "🪖 Навчальний Центр: Базовий курс військової підготовки (БЗВП) триває від 30 до 40 діб. Включає вогневу, тактичну медицину (TCCC) та топографію.",
-            gear: "📦 Логістичне забезпечення: Підрозділ повністю забезпечує формою, бронежилетом 4+ класу, шоломом, тактичною аптечкою НАТО та індивідуальною зброєю."
+            docs: "📋 Довідка Чергової частини: Для підписання контракту необхідні: Паспорт/ID-картка, податковий код (ІПН), військовий квиток або приписне (за наявності), а також документи про освіту. Для іноземних добровольців — чистий закордонний паспорт та підтвердження легального перебування.",
+            training: "🪖 Навчальний Центр: Базовий курс військової підготовки (БЗВП) триває від 30 до 40 діб залежно від обраної спеціалізації. Навчання включає вогневу, тактичну медицину (TCCC), топографію та злагодження під керівництвом інструкторів з бойовим досвідом.",
+            gear: "📦 Логістичне забезпечення: Підрозділ повністю забезпечує бійця сучасною формою (за сезоном), бронежилетом 4+ класу захисту, балістичним шоломом, тактичним розвантаженням, аптечкою стандарту НАТО та закріпленою індивідуальною зброєю."
         };
 
         const QUESTIONS_TEXT = {
-            docs: '📋 Які документи необхідні для оформлення контракту?',
-            training: '🪖 Скільки триває базовий курс підготовки (БЗВП)?',
-            gear: '📦 Яке речове забезпечення надає підрозділ?'
+            docs: 'Які документи необхідні для оформлення контракту?',
+            training: 'Скільки триває базовий курс підготовки (БЗВП)?',
+            gear: 'Яке речове забезпечення надає підрозділ?'
         };
 
-        const playBeep = (freq = 600, duration = 0.05) => {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator(); const gain = ctx.createGain();
-                osc.type = 'sine'; osc.frequency.value = freq;
-                gain.gain.setValueAtTime(0.05, ctx.currentTime);
-                osc.connect(gain); gain.connect(ctx.destination);
-                osc.start(); osc.stop(ctx.currentTime + duration);
-            } catch(e) {}
-        };
-
-        function calculatePay() {
-            let val = parseInt(document.getElementById('roleSelect').value) || 20000;
-            let zone = parseInt(document.getElementById('zoneSelect').value) || 0;
-            document.getElementById('totalPay').innerText = (val + zone).toLocaleString('uk-UA') + ' грн';
-        }
-
-        function toggleFaq(el) { el.classList.toggle('active'); }
-        function toggleModal(show) { 
-            document.getElementById('modalOverlay').classList.toggle('active', show); 
-            document.body.classList.toggle('modal-open', show); 
+        function toggleModal(show) {
+            DOM.overlay.classList.toggle('active', show);
+            document.body.classList.toggle('modal-open', show);
+            if (!show) messagesRef.off();
         }
 
         function toggleCustomSelect() {
-            document.getElementById('squadSelectWrapper').classList.toggle('open');
+            DOM.squadWrapper.classList.toggle('open');
         }
 
         function selectOption(element, value) {
             document.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
             element.classList.add('selected');
-            document.querySelector('#squadSelectWrapper .custom-select-trigger').innerText = element.innerText;
-            document.getElementById('userSquad').value = value;
-            document.getElementById('squadSelectWrapper').classList.remove('open');
+            
+            DOM.squadWrapper.querySelector('.custom-select-trigger').innerText = element.innerText;
+            DOM.userSquad.value = value;
+            DOM.squadWrapper.classList.remove('open');
         }
 
         window.addEventListener('click', (e) => {
-            const wrapper = document.getElementById('squadSelectWrapper');
-            if (wrapper && !wrapper.contains(e.target)) wrapper.classList.remove('open');
+            if (DOM.squadWrapper && !DOM.squadWrapper.contains(e.target)) {
+                DOM.squadWrapper.classList.remove('open');
+            }
         });
 
-        /* --- Авторизація адміністратора / Вхід (REK / REK) --- */
         function handleSubmit(e) {
             e.preventDefault();
-            const name = document.getElementById('userName').value.trim();
-            const contact = document.getElementById('userContact').value.trim();
-            const squad = document.getElementById('userSquad').value;
+            
+            const nameInput = DOM.userName.value.trim();
+            const contactInput = DOM.userContact.value.trim();
+            const squadInput = DOM.userSquad.value;
 
-            globalSenderName = name;
-            isRecruiter = (name.toUpperCase() === 'REK' && contact.toUpperCase() === 'REK');
+            globalSenderName = nameInput;
 
-            document.getElementById('formStage').classList.add('hidden');
+            DOM.formStage.classList.add('hidden');
+
             setTimeout(() => {
-                document.getElementById('formStage').style.display = 'none';
-                if (isRecruiter) {
-                    document.getElementById('recruiterActions').style.display = 'flex';
-                    openCandidatesList();
-                } else {
-                    document.getElementById('recruiterActions').style.display = 'none';
-                    let roomId = 'room_' + Date.now();
-                    candidatesRef.child(roomId).set({ 
-                        id: roomId, 
-                        name: name, 
-                        contact: contact, 
-                        squad: squad, 
-                        status: 'pending',
-                        timestamp: new Date().toLocaleTimeString() 
-                    });
-                    
-                    openChatRoom(roomId, `Чат: ${name} (${squad})`);
-                    
-                    database.ref('rooms/' + roomId).push({
-                        sender: "Штаб Рекрутингу",
-                        text: `Вітаємо, ${name}! Ваша заявка прийнята. Очікуйте на відповідь рекрутера.`,
-                        type: 'intercom'
-                    });
-                }
+                DOM.formStage.style.display = 'none';
+                DOM.chatStage.style.display = 'block';
+                
+                setTimeout(() => {
+                    DOM.chatStage.classList.remove('entrance');
+                }, 20);
             }, 350);
+
+            const isRecruiter = nameInput.toUpperCase() === 'REK' && contactInput.toUpperCase() === 'REK';
+            DOM.clearChatBtn.style.display = isRecruiter ? 'block' : 'none';
+            DOM.chatPartnerTitle.innerText = isRecruiter ? "Панель рекрутера (Вхід виконано)" : "Загальна лінія зв'язку";
+
+            if (!isRecruiter) {
+                messagesRef.push({
+                    sender: "Система",
+                    text: `Кандидат [${nameInput}] цікавиться підрозділом: "${squadInput}". Контакт для зв'язку: ${contactInput}`
+                });
+            }
+
+            DOM.chatMessages.innerHTML = '';
+            messagesRef.off(); 
+            
+            messagesRef.limitToLast(50).on('child_added', (snapshot) => {
+                const data = snapshot.val();
+                if (data) displayMessage(data.sender, data.text);
+            });
+
+            messagesRef.on('value', (snapshot) => {
+                if (!snapshot.exists()) DOM.chatMessages.innerHTML = '';
+            });
         }
 
-        function openChatRoom(roomId, title) {
-            if (activeRoomListener) activeRoomListener.off();
-            currentRoomId = roomId;
-
-            document.getElementById('chatHeaderTitle').innerText = title;
-            document.getElementById('chatMessages').innerHTML = '';
-            document.getElementById('candidatesStage').style.display = 'none';
-            document.getElementById('chatStage').style.display = 'block';
-            setTimeout(() => document.getElementById('chatStage').classList.remove('entrance', 'hidden'), 20);
-
-            activeRoomListener = database.ref('rooms/' + roomId);
-            activeRoomListener.on('child_added', snap => {
-                const data = snap.val();
-                if (data) displayMessage(data.sender, data.text, data.type);
+        // Horizontal scroll with wheel
+        if (DOM.quickTagsArea) {
+            DOM.quickTagsArea.addEventListener('wheel', (evt) => {
+                evt.preventDefault();
+                DOM.quickTagsArea.scrollLeft += evt.deltaY;
             });
         }
 
         function sendMessage() {
-            const txt = document.getElementById('chatInput').value.trim();
-            if (!txt || !currentRoomId) return;
-            database.ref('rooms/' + currentRoomId).push({ 
-                sender: isRecruiter ? "Рекрутер" : globalSenderName, 
-                text: txt, 
-                type: 'normal' 
+            const messageText = DOM.chatInput.value.trim();
+            if (!messageText) return;
+
+            messagesRef.push({
+                sender: globalSenderName,
+                text: messageText
             });
-            document.getElementById('chatInput').value = '';
+
+            DOM.chatInput.value = '';
+        }
+
+        function displayMessage(sender, text) {
+            const msgDiv = document.createElement('div');
+            
+            if (sender === globalSenderName) {
+                msgDiv.className = 'message friend';
+                msgDiv.innerHTML = `<strong>Ви:</strong> ${escapeHtml(text)}`;
+            } else if (sender === "Система") {
+                msgDiv.className = 'message intercom';
+                msgDiv.style.background = 'rgba(234, 179, 8, 0.08)';
+                msgDiv.style.color = '#eab308';
+                msgDiv.style.borderLeft = '3px solid #eab308';
+                msgDiv.innerHTML = `<strong>${escapeHtml(text)}</strong>`;
+            } else {
+                msgDiv.className = 'message intercom';
+                msgDiv.innerHTML = `<strong>${escapeHtml(sender)}:</strong> ${escapeHtml(text)}`;
+            }
+
+            DOM.chatMessages.appendChild(msgDiv);
+            DOM.chatMessages.scrollTop = DOM.chatMessages.scrollHeight;
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        function clearChat() {
+            if (confirm("Ви дійсно хочете видалити всі повідомлення?")) {
+                messagesRef.remove();
+                DOM.chatMessages.innerHTML = '';
+            }
+        }
+
+        function goBackToForm() {
+            DOM.chatStage.classList.add('entrance'); 
+
+            setTimeout(() => {
+                DOM.chatStage.style.display = 'none';
+                DOM.formStage.style.display = 'block';
+                
+                setTimeout(() => {
+                    DOM.formStage.classList.remove('hidden'); 
+                }, 20);
+            }, 350);
+
+            messagesRef.off();
         }
 
         function sendQuickQuestion(type) {
-            if (!currentRoomId || !QUESTIONS_TEXT[type]) return;
-            database.ref('rooms/' + currentRoomId).push({ sender: globalSenderName, text: QUESTIONS_TEXT[type], type: 'normal' });
+            if (!globalSenderName || globalSenderName === "Гість" || !BOT_RESPONSES[type]) return;
+            
+            messagesRef.push({
+                sender: globalSenderName,
+                text: QUESTIONS_TEXT[type]
+            });
 
             setTimeout(() => {
-                database.ref('rooms/' + currentRoomId).push({
+                messagesRef.push({
                     sender: "Черговий інструктор",
-                    text: BOT_RESPONSES[type],
-                    type: 'intercom'
+                    text: BOT_RESPONSES[type]
                 });
             }, 800);
         }
 
-        function displayMessage(sender, text, type = 'normal') {
-            const div = document.createElement('div');
+        function checkCryptoLink() {
+            if (isCheckingCrypto) return;
+            isCheckingCrypto = true;
             
-            if (type === 'approved') {
-                div.className = 'message approved';
-                div.innerHTML = `<strong>✅ ${escapeHtml(sender)}:</strong> ${escapeHtml(text)}`;
-            } else if (type === 'rejected') {
-                div.className = 'message rejected';
-                div.innerHTML = `<strong>❌ ${escapeHtml(sender)}:</strong> ${escapeHtml(text)}`;
-            } else {
-                div.className = `message ${sender === globalSenderName || (isRecruiter && sender === 'Рекрутер') ? 'friend' : 'intercom'}`;
-                div.innerHTML = `<strong>${escapeHtml(sender)}:</strong> ${escapeHtml(text)}<span class="msg-time">${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>`;
-            }
-
-            document.getElementById('chatMessages').appendChild(div);
-            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
-        }
-
-        function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
-        function escapeHtml(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
-
-        /* Панель адміністратора (Список кандидатів) */
-        function openCandidatesList() {
-            document.getElementById('chatStage').style.display = 'none';
-            document.getElementById('candidatesStage').style.display = 'block';
-
-            candidatesRef.on('value', snap => {
-                const container = document.getElementById('candidatesListContainer');
-                const badge = document.getElementById('candidateBadge');
-                container.innerHTML = '';
-                
-                if (!snap.exists()) { 
-                    container.innerHTML = '<p style="text-align:center; color:var(--text-subtle); padding: 2rem;">Немає нових кандидатів.</p>'; 
-                    if (badge) badge.innerText = '0';
-                    return; 
-                }
-
-                let count = 0;
-                snap.forEach(child => {
-                    count++;
-                    const c = child.val();
-                    const statusText = c.status === 'approved' ? ' (✅ Прийнято)' : (c.status === 'rejected' ? ' (❌ Відхилено)' : '');
-                    
-                    const div = document.createElement('div');
-                    div.className = 'candidate-card';
-                    div.innerHTML = `
-                        <div class="candidate-info">
-                            <h4>${escapeHtml(c.name || 'Кандидат')} <span>${c.timestamp || ''}</span></h4>
-                            <p><strong>Підрозділ:</strong> ${escapeHtml(c.squad || '—')} ${statusText}</p>
-                            <p><strong>Контакт:</strong> ${escapeHtml(c.contact || '—')}</p>
-                        </div>
-                        <div class="candidate-actions">
-                            <button class="btn-action-open" onclick="openChatRoom('${c.id}', 'Чат: ${escapeHtml(c.name)}')">💬 В чат</button>
-                            <button class="btn-approve" onclick="updateCandidateStatus('${c.id}', 'approved')" title="Прийняти">✓</button>
-                            <button class="btn-reject" onclick="updateCandidateStatus('${c.id}', 'rejected')" title="Відхилити">✕</button>
-                        </div>
-                    `;
-                    container.appendChild(div);
-                });
-
-                if (badge) badge.innerText = count;
-            });
-        }
-
-        function updateCandidateStatus(roomId, status) {
-            candidatesRef.child(roomId).update({ status: status });
-            
-            if (status === 'approved') {
-                database.ref('rooms/' + roomId).push({
-                    sender: "Штаб Рекрутингу",
-                    text: "Вашу заявку схвалено! Інструктор зв'яжеться з вами найближчим часом для оформлення.",
-                    type: 'approved'
-                });
-            } else if (status === 'rejected') {
-                database.ref('rooms/' + roomId).push({
-                    sender: "Штаб Рекрутингу",
-                    text: "На жаль, вашу заявку наразі відхилено.",
-                    type: 'rejected'
-                });
-            }
-        }
-
-        function backToChatFromCandidates() {
-            document.getElementById('candidatesStage').style.display = 'none';
-            document.getElementById('chatStage').style.display = 'block';
-        }
-
-        function goBackToForm() {
-            if (activeRoomListener) activeRoomListener.off();
-            document.getElementById('chatStage').style.display = 'none';
-            document.getElementById('formStage').style.display = 'block';
-            document.getElementById('formStage').classList.remove('hidden');
-        }
-
-        function directClearChat() { 
-            if (currentRoomId && confirm("Очистити поточний чат?")) {
-                database.ref('rooms/' + currentRoomId).remove(); 
-                document.getElementById('chatMessages').innerHTML = '';
-            }
-        }
-
-        function checkCryptoLink() { 
-            const btn = document.getElementById('cryptoBtn');
+            const btn = DOM.cryptoBtn;
             btn.innerText = "⏳ Сканування...";
+            btn.style.color = "#eab308";
+            btn.style.background = "rgba(234, 179, 8, 0.08)";
+            btn.style.borderColor = "rgba(234, 179, 8, 0.15)";
+
             setTimeout(() => {
-                btn.innerText = "⚡ Шифр: OK";
-                setTimeout(() => { btn.innerText = "🔐 Лінія: Захищена"; }, 2000);
-            }, 1000);
-        }
-
-        // =========================================================================
-        // --- 3D FPS ШУТЕР (Виправлено: вертикальний кут заблоковано від 360) ---
-        // =========================================================================
-        let scene, cameraFPS, rendererFPS, isFPSRunning = false, animFPSId = null, aiIntervalFPS = null;
-        let ammoFPS = 30, scoreFPS = 0, playerYaw = 0, playerPitch = 0;
-        const mouseSensitivity = 0.0018;
-
-        let keysFPS = {};
-        let bulletsFPS = [], enemiesFPS = [], obstaclesFPS = [], enemyBulletsFPS = [];
-
-        let bodyParts = {
-            head: { current: 35, max: 35, bleeding: false },
-            thorax: { current: 85, max: 85, bleeding: false },
-            stomach: { current: 70, max: 70, bleeding: false },
-            rarm: { current: 60, max: 60, bleeding: false },
-            larm: { current: 60, max: 60, bleeding: false },
-            rleg: { current: 65, max: 65, bleeding: false },
-            lleg: { current: 65, max: 65, bleeding: false }
-        };
-        let selectedLimb = 'thorax';
-        let tourniquetsCount = 3, bandagesCount = 5;
-
-        function openGameModal() {
-            document.getElementById('gameModal').classList.add('active');
-            document.body.classList.add('modal-open');
-            document.getElementById('opSelectScreen').style.display = 'block';
-            document.getElementById('canvasScreen').style.display = 'none';
-        }
-
-        function closeGameModal() {
-            if (document.exitPointerLock) document.exitPointerLock();
-            document.getElementById('gameModal').classList.remove('active', 'game-fullscreen');
-            document.body.classList.remove('modal-open');
-            stopFPSGame();
-        }
-
-        function startFPSGame(opType) {
-            document.getElementById('gameModal').classList.add('game-fullscreen');
-            document.getElementById('opSelectScreen').style.display = 'none';
-            document.getElementById('canvasScreen').style.display = 'block';
-
-            initFPSScene();
-            isFPSRunning = true;
-
-            window.removeEventListener('keydown', handleFPSKeyDown); window.removeEventListener('keyup', handleFPSKeyUp);
-            window.addEventListener('keydown', handleFPSKeyDown); window.addEventListener('keyup', handleFPSKeyUp);
-
-            initMouseLook();
-
-            if (aiIntervalFPS) clearInterval(aiIntervalFPS);
-            aiIntervalFPS = setInterval(updateFPSAI, 800);
-
-            gameFPSLoop();
-        }
-
-        function initFPSScene() {
-            const container = document.getElementById('threeJsContainer');
-            container.innerHTML = `
-                <div class="pointer-hint" id="pointerHint">🎯 Клацніть в екрані, щоб заблокувати мишу та почати бій!</div>
-                <div class="hit-flash" id="hitFlash"></div>
-                <div class="radio-ticker">📡 [FPS РАДІО]: WASD — рух | Миша — приціл (обмежений) | M — Медицина</div>
-                <div class="fps-crosshair"></div>
-                <div class="fps-hud">
-                    <div class="hud-card">Набої: <span id="uiAmmo">30/30</span></div>
-                    <div class="hud-card">Бали: <span id="uiScore">0</span></div>
-                    <div class="hud-card" onclick="toggleTarkovUi()" style="cursor:pointer; border-color:var(--status-online);">🏥 Мед (M)</div>
-                </div>
-            `;
-
-            for (let part in bodyParts) {
-                bodyParts[part].current = bodyParts[part].max;
-                bodyParts[part].bleeding = false;
-            }
-
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x0b131a);
-            scene.fog = new THREE.FogExp2(0x0b131a, 0.018);
-
-            cameraFPS = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            cameraFPS.position.set(0, 1.6, 0);
-
-            rendererFPS = new THREE.WebGLRenderer({ antialias: true });
-            rendererFPS.setSize(window.innerWidth, window.innerHeight);
-            rendererFPS.shadowMap.enabled = true;
-            container.appendChild(rendererFPS.domElement);
-
-            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-            const dirLight = new THREE.DirectionalLight(0xfffaed, 0.8);
-            dirLight.position.set(30, 50, 30);
-            scene.add(dirLight);
-
-            const ground = new THREE.Mesh(
-                new THREE.PlaneGeometry(300, 300),
-                new THREE.MeshStandardMaterial({ color: 0x162216, roughness: 0.8 })
-            );
-            ground.rotation.x = -Math.PI / 2;
-            scene.add(ground);
-
-            bulletsFPS = []; enemyBulletsFPS = []; enemiesFPS = []; obstaclesFPS = [];
-            scoreFPS = 0; ammoFPS = 30; playerYaw = 0; playerPitch = 0; updateFPSUI();
-
-            for (let i = 0; i < 10; i++) {
-                let bx = (Math.random() - 0.5) * 120, bz = (Math.random() - 0.5) * 120;
-                if (Math.hypot(bx, bz) < 15) continue;
-                createFPSHouse(bx, bz, 10, 6, 10);
-            }
-
-            for (let i = 0; i < 14; i++) {
-                let enemy = createEnemy3D();
-                enemy.position.set((Math.random() - 0.5) * 140, 0, (Math.random() - 0.5) * 140);
-                scene.add(enemy);
-            }
-
-            container.addEventListener('click', () => {
-                if (document.pointerLockElement !== container) {
-                    container.requestPointerLock();
-                } else {
-                    shootFPSBullet();
-                }
-            });
-
-            document.addEventListener('pointerlockchange', () => {
-                const hint = document.getElementById('pointerHint');
-                if (hint) {
-                    hint.style.display = (document.pointerLockElement === container) ? 'none' : 'block';
-                }
-            });
-
-            window.addEventListener('resize', onWindowResize);
-        }
-
-        function onWindowResize() {
-            if (!isFPSRunning || !rendererFPS || !cameraFPS) return;
-            cameraFPS.aspect = window.innerWidth / window.innerHeight;
-            cameraFPS.updateProjectionMatrix();
-            rendererFPS.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        function createFPSHouse(x, z, w, h, d) {
-            const house = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshStandardMaterial({ color: 0x334155 }));
-            house.position.set(x, h/2, z);
-            scene.add(house);
-            obstaclesFPS.push({ x: x, z: z, radius: Math.max(w, d) / 2 + 0.6 });
-        }
-
-        function createEnemy3D() {
-            const group = new THREE.Group();
-            
-            const body = new THREE.Mesh(
-                new THREE.BoxGeometry(0.8, 1.4, 0.6), 
-                new THREE.MeshStandardMaterial({ color: 0xdc2626 })
-            );
-            body.position.y = 0.7;
-            body.userData = { type: 'body' };
-            group.add(body);
-
-            const head = new THREE.Mesh(
-                new THREE.SphereGeometry(0.35, 10, 10), 
-                new THREE.MeshStandardMaterial({ color: 0x7f1d1d })
-            );
-            head.position.y = 1.55;
-            head.userData = { type: 'head' };
-            group.add(head);
-
-            group.userData = { hp: 50 };
-            enemiesFPS.push(group);
-            return group;
-        }
-
-        /* Керування мишею з жорстким обмеженням вертикального нахилу */
-        function initMouseLook() {
-            window.addEventListener('mousemove', (e) => {
-                if (!isFPSRunning) return;
-                if (document.pointerLockElement) {
-                    playerYaw -= e.movementX * mouseSensitivity;
-                    playerPitch -= e.movementY * mouseSensitivity;
-                    
-                    // Обмежуємо кут огляду по вертикалі (не дає робити 360-градусні перевороти навколо осі)
-                    const limit = Math.PI / 2.2;
-                    playerPitch = Math.max(-limit, Math.min(limit, playerPitch));
-                }
-            });
-        }
-
-        function handleFPSKeyDown(e) { 
-            let k = e.key.toLowerCase();
-            keysFPS[k] = true; 
-            if (k === 'r') { ammoFPS = 30; updateFPSUI(); }
-            if (k === 'm' || e.key === 'Tab') { 
-                e.preventDefault(); 
-                if (document.exitPointerLock) document.exitPointerLock();
-                toggleTarkovUi(); 
-            }
-        }
-        function handleFPSKeyUp(e) { keysFPS[e.key.toLowerCase()] = false; }
-
-        function shootFPSBullet() {
-            if (!isFPSRunning || ammoFPS <= 0) return;
-            playBeep(1200, 0.03); ammoFPS--; updateFPSUI();
-
-            const bullet = new THREE.Mesh(
-                new THREE.SphereGeometry(0.1, 6, 6), 
-                new THREE.MeshBasicMaterial({ color: 0xfacc15 })
-            );
-            bullet.position.copy(cameraFPS.position);
-
-            let dir = new THREE.Vector3(0, 0, -1);
-            let euler = new THREE.Euler(playerPitch, playerYaw, 0, 'YXZ');
-            dir.applyEuler(euler);
-
-            bulletsFPS.push({ mesh: bullet, dir: dir, life: 60 });
-            scene.add(bullet);
-        }
-
-        function updateFPSAI() {
-            if (!isFPSRunning) return;
-            enemiesFPS.forEach(e => {
-                let dx = cameraFPS.position.x - e.position.x;
-                let dz = cameraFPS.position.z - e.position.z;
-                let dist = Math.hypot(dx, dz);
-                if (dist < 40) {
-                    e.position.x += (dx / dist) * 0.1;
-                    e.position.z += (dz / dist) * 0.1;
-
-                    if (Math.random() < 0.25) {
-                        const eb = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 6), new THREE.MeshBasicMaterial({ color: 0xef4444 }));
-                        eb.position.copy(e.position); eb.position.y = 1.4;
-                        let edir = new THREE.Vector3(dx, 0, dz).normalize();
-                        enemyBulletsFPS.push({ mesh: eb, dir: edir, life: 50 });
-                        scene.add(eb);
-                    }
-                }
-            });
-        }
-
-        function triggerPlayerDamage(amount) {
-            playBeep(200, 0.15);
-            const flash = document.getElementById('hitFlash');
-            if (flash) { flash.style.opacity = '1'; setTimeout(() => flash.style.opacity = '0', 200); }
-
-            const parts = ['thorax', 'head', 'stomach', 'rarm', 'larm', 'rleg', 'lleg'];
-            let hitPart = parts[Math.floor(Math.random() * parts.length)];
-            bodyParts[hitPart].current -= amount;
-            if (Math.random() < 0.3) bodyParts[hitPart].bleeding = true;
-            updateTarkovUi();
-
-            if (bodyParts.head.current <= 0 || bodyParts.thorax.current <= 0) {
-                alert("Вас поранено несумісно з життям! Операцію завершено.");
-                closeGameModal();
-            }
-        }
-
-        function toggleTarkovUi(show) {
-            let el = document.getElementById('tarkovMedicalUi');
-            if (!el) return;
-            if (show !== undefined) el.style.display = show ? 'block' : 'none';
-            else el.style.display = el.style.display === 'block' ? 'none' : 'block';
-            if (el.style.display === 'block') updateTarkovUi();
-        }
-
-        function selectLimb(limb) {
-            selectedLimb = limb;
-            document.querySelectorAll('.limb-box').forEach(b => b.classList.remove('selected'));
-            document.getElementById('box-' + limb)?.classList.add('selected');
-        }
-
-        function updateTarkovUi() {
-            for (let limb in bodyParts) {
-                let p = bodyParts[limb];
-                let pct = Math.max(0, (p.current / p.max) * 100);
-                let hpEl = document.getElementById('hp-' + limb);
-                let fill = document.getElementById('bar-' + limb);
-                let svgEl = document.getElementById('svg' + limb.charAt(0).toUpperCase() + limb.slice(1));
+                btn.innerText = "⚡ Шихр: OK";
+                btn.style.color = "#22c55e";
+                btn.style.background = "rgba(34, 197, 94, 0.08)";
+                btn.style.borderColor = "rgba(34, 197, 94, 0.15)";
                 
-                if (hpEl) hpEl.innerText = `${Math.floor(p.current)}/${p.max}`;
-                if (fill) {
-                    fill.style.width = pct + '%';
-                    let col = pct < 30 ? '#ef4444' : (pct < 70 ? '#eab308' : '#22c55e');
-                    fill.style.background = col;
-                    if (svgEl) svgEl.setAttribute('fill', col);
-                }
-            }
+                setTimeout(() => {
+                    btn.innerText = "🔐 Лінія: Захищена";
+                    isCheckingCrypto = false;
+                }, 2500); 
+            }, 1000); 
         }
-
-        function useMedItem(item) {
-            let p = bodyParts[selectedLimb];
-            if (item === 'tourniquet' && tourniquetsCount > 0 && p.bleeding) {
-                playBeep(900, 0.1); tourniquetsCount--; p.bleeding = false;
-            } else if (item === 'bandage' && bandagesCount > 0 && p.current < p.max) {
-                playBeep(1100, 0.1); bandagesCount--; p.current = Math.min(p.max, p.current + 30);
-            }
-            updateTarkovUi();
-        }
-
-        function updateFPSLogic() {
-            // Переміщення суворо на горизонтальній площині землі
-            let moveX = (keysFPS['d'] || keysFPS['в'] ? 1 : 0) - (keysFPS['a'] || keysFPS['ф'] ? 1 : 0);
-            let moveZ = (keysFPS['s'] || keysFPS['і'] ? 1 : 0) - (keysFPS['w'] || keysFPS['ц'] ? 1 : 0);
-
-            let speed = 0.14;
-            let forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), playerYaw);
-            let side = new THREE.Vector3(1, 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), playerYaw);
-
-            let nextX = cameraFPS.position.x + (forward.x * -moveZ + side.x * moveX) * speed;
-            let nextZ = cameraFPS.position.z + (forward.z * -moveZ + side.z * moveX) * speed;
-
-            let collide = false;
-            obstaclesFPS.forEach(obs => {
-                if (Math.hypot(nextX - obs.x, nextZ - obs.z) < obs.radius) collide = true;
-            });
-
-            if (!collide) {
-                cameraFPS.position.x = nextX;
-                cameraFPS.position.z = nextZ;
-            }
-
-            // Фіксуємо рівень очей на землі (висота 1.6)
-            cameraFPS.position.y = 1.6;
-            cameraFPS.rotation.set(0, 0, 0);
-            cameraFPS.rotation.y = playerYaw;
-            cameraFPS.rotation.x = playerPitch;
-
-            for (let i = bulletsFPS.length - 1; i >= 0; i--) {
-                let b = bulletsFPS[i];
-                b.mesh.position.addScaledVector(b.dir, 1.4);
-                b.life--;
-
-                let hitRegistered = false;
-                for (let j = enemiesFPS.length - 1; j >= 0; j--) {
-                    let enemyGroup = enemiesFPS[j];
-                    
-                    for (let child of enemyGroup.children) {
-                        let worldPos = new THREE.Vector3();
-                        child.getWorldPosition(worldPos);
-
-                        let isHead = (child.userData.type === 'head');
-                        let hitRadius = isHead ? 0.45 : 0.75;
-
-                        if (b.mesh.position.distanceTo(worldPos) < hitRadius) {
-                            let damage = isHead ? 50 : 25;
-                            enemyGroup.userData.hp -= damage;
-
-                            if (enemyGroup.userData.hp <= 0) {
-                                scene.remove(enemyGroup);
-                                enemiesFPS.splice(j, 1);
-                                scoreFPS += (isHead ? 100 : 50);
-                                updateFPSUI();
-                            }
-
-                            scene.remove(b.mesh);
-                            bulletsFPS.splice(i, 1);
-                            hitRegistered = true;
-                            break;
-                        }
-                    }
-                    if (hitRegistered) break;
-                }
-
-                if (!hitRegistered && b.life <= 0 && bulletsFPS[i]) {
-                    scene.remove(b.mesh); bulletsFPS.splice(i, 1);
-                }
-            }
-
-            for (let i = enemyBulletsFPS.length - 1; i >= 0; i--) {
-                let eb = enemyBulletsFPS[i];
-                eb.mesh.position.addScaledVector(eb.dir, 0.7);
-                eb.life--;
-
-                if (eb.mesh.position.distanceTo(cameraFPS.position) < 1.0) {
-                    triggerPlayerDamage(15);
-                    scene.remove(eb.mesh); enemyBulletsFPS.splice(i, 1);
-                    continue;
-                }
-                if (eb.life <= 0 && enemyBulletsFPS[i]) { scene.remove(eb.mesh); enemyBulletsFPS.splice(i, 1); }
-            }
-        }
-
-        function updateFPSUI() {
-            let elAmmo = document.getElementById('uiAmmo');
-            let elScore = document.getElementById('uiScore');
-            if (elAmmo) elAmmo.innerText = `${ammoFPS}/30`;
-            if (elScore) elScore.innerText = scoreFPS;
-        }
-
-        function gameFPSLoop() {
-            if (!isFPSRunning) return;
-            updateFPSLogic();
-            rendererFPS.render(scene, cameraFPS);
-            animFPSId = requestAnimationFrame(gameFPSLoop);
-        }
-
-        function stopFPSGame() { 
-            isFPSRunning = false; 
-            if (animFPSId) cancelAnimationFrame(animFPSId); 
-            if (aiIntervalFPS) clearInterval(aiIntervalFPS); 
-            window.removeEventListener('resize', onWindowResize);
-        }
-
-        function openLeaderboardModal() {
-            document.getElementById('leaderboardModal').classList.add('active');
-            scoresRef.orderByChild('score').limitToLast(10).on('value', (snapshot) => {
-                const tbody = document.getElementById('leaderboardBody'); tbody.innerHTML = '';
-                if (!snapshot.exists()) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:1rem;">Немає рекордів.</td></tr>'; return; }
-                let list = []; snapshot.forEach(c => list.push(c.val())); list.sort((a,b) => b.score - a.score);
-                list.forEach((item, index) => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td style="padding:6px;">${index+1}</td><td style="padding:6px;">${escapeHtml(item.name || 'Воїн')}</td><td style="padding:6px; text-align:right;">${item.score}</td>`;
-                    tbody.appendChild(tr);
-                });
-            });
-        }
-
-        function closeLeaderboardModal() { document.getElementById('leaderboardModal').classList.remove('active'); }
     </script>
 </body>
 </html>
