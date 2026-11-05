@@ -184,23 +184,49 @@
         "Нікопольський район","Бериславський район","Запорізький район"
     ]);
 
-    function raionStyle(name) {
-        if (redNames.has(name)) return { color:'#7f1d1d', weight:1.2, fillColor:'#7f1d1d', fillOpacity:0.22 };
-        if (greyNames.has(name)) return { color:'#475569', weight:1.2, fillColor:'#475569', fillOpacity:0.20 };
+    function getRayonStatus(name, layer) {
+        if (redNames.has(name)) {
+            // Якщо це Первомайський район, перевіряємо широту: на Миколаївщині він північніше 46.8, у Криму — південніше
+            if (name === "Первомайський район") {
+                let lat = 48.0;
+                try {
+                    lat = layer.getBounds().getCenter().lat;
+                } catch(e) {}
+                return lat < 46.5 ? 'red' : 'green';
+            }
+            return 'red';
+        }
+        if (greyNames.has(name)) return 'grey';
+        
+        // Додаткова перевірка для Криму за географічною широтою (все що нижче 46.2 градусів — окупований Крим)
+        try {
+            const centerLat = layer.getBounds().getCenter().lat;
+            if (centerLat < 46.2) return 'red';
+        } catch(e) {}
+
+        return 'green';
+    }
+
+    function raionStyle(status) {
+        if (status === 'red') return { color:'#7f1d1d', weight:1.2, fillColor:'#7f1d1d', fillOpacity:0.22 };
+        if (status === 'grey') return { color:'#475569', weight:1.2, fillColor:'#475569', fillOpacity:0.20 };
         return { color:'#166534', weight:1.0, fillColor:'#166534', fillOpacity:0.16 };
     }
 
-    // Виправлене завантаження GeoJSON із коректним зчитуванням назв районів
+    // Завантаження GeoJSON із коректним визначенням статусів та назв
     fetch('https://raw.githubusercontent.com/slawomirmatuszak/ukrainian_geodata/master/rayony.geojson')
         .then(r => r.json())
         .then(geo => {
             geo.features.forEach(f => {
                 const props = f.properties || {};
                 const name = props.rayon || props.name || props.shapeName || props.NAME_2 || props.NAME_3 || "Невідомий район";
-                let status = redNames.has(name) ? 'red' : greyNames.has(name) ? 'grey' : 'green';
+                
+                // Тимчасовий шар для визначення центру (широти)
+                const tempLayer = L.geoJSON(f);
+                const status = getRayonStatus(name, tempLayer);
                 
                 L.geoJSON(f, {
-                    style: raionStyle(name),
+                    style: raionStyle(status),
                     onEachFeature: (feature, layer) => {
                         layer.on('click', (e) => {
                             L.DomEvent.stopPropagation(e);
