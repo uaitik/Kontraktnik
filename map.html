@@ -3,448 +3,516 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carlan Division — Strategy</title>
+    <title>Carlan Division — Strategy Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
-            --panel-bg: rgba(10, 15, 26, 0.95);
-            --accent-blue: #38bdf8;
-            --text-heading: #f8fafc;
-            --text-main: #cbd5e1;
+            --panel-bg: rgba(10, 15, 26, 0.96);
+            --accent: #38bdf8;
+            --text: #e2e8f0;
+            --heading: #f8fafc;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body, html { width: 100%; height: 100%; overflow: hidden; background: #070b14; color: var(--text-main); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background: #070b14; color: var(--text); }
 
-        .hoi-topbar {
-            position: fixed; top: 0; left: 0; width: 100%; height: 54px;
-            background: var(--panel-bg); backdrop-filter: blur(12px);
-            border-bottom: 2px solid rgba(56,189,248,0.2);
+        /* ===== TOP PANEL ===== */
+        .topbar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 58px;
+            background: var(--panel-bg); backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(56,189,248,0.25);
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 16px; z-index: 1000;
+            padding: 0 16px; z-index: 2000; gap: 12px;
         }
-        .hoi-group { display: flex; align-items: center; gap: 10px; }
-        .hoi-title { font-size: 0.92rem; font-weight: 800; color: var(--text-heading); text-transform: uppercase; }
-        .hoi-stat {
-            font-size: 0.82rem; font-weight: 700; color: var(--text-heading);
-            background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.08);
+        .brand {
+            font-weight: 800; font-size: 0.95rem; color: var(--heading);
+            letter-spacing: 0.5px; white-space: nowrap;
         }
-        .hoi-stat span { color: var(--accent-blue); }
+        .stats {
+            display: flex; gap: 8px; flex-wrap: wrap;
+        }
+        .stat {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 4px 10px; border-radius: 6px;
+            font-size: 0.8rem; font-weight: 600;
+        }
+        .stat span { color: var(--accent); }
+        .controls {
+            display: flex; gap: 6px; flex-wrap: wrap;
+        }
+        .btn {
+            padding: 5px 11px; border-radius: 6px; font-size: 0.78rem; font-weight: 700;
+            border: 1px solid; cursor: pointer; transition: 0.15s; background: transparent; color: var(--text);
+        }
+        .btn:hover { filter: brightness(1.15); }
+        .btn-blue { border-color: #38bdf8; color: #38bdf8; }
+        .btn-blue.active, .btn-blue:hover { background: #38bdf8; color: #000; }
+        .btn-green { border-color: #22c55e; color: #22c55e; }
+        .btn-red { border-color: #ef4444; color: #f87171; }
+        .btn-grey { border-color: #64748b; color: #94a3b8; }
 
         #map { width: 100vw; height: 100vh; background: #0b0f19; }
 
+        /* Popup */
         .leaflet-popup-content-wrapper {
-            background: #0f172a !important; color: #f8fafc !important;
+            background: #0f172a !important; color: #f1f5f9 !important;
             border: 1px solid rgba(56,189,248,0.3); border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
         }
-        .leaflet-popup-content h3 { color: #38bdf8; margin-bottom: 4px; font-size: 0.93rem; }
-        .leaflet-popup-content p { margin: 2px 0; font-size: 0.83rem; }
-        .popup-btn {
-            margin-top: 5px; width: 100%; padding: 5px; border: none; border-radius: 4px;
-            font-weight: 700; cursor: pointer; color: #fff; font-size: 0.82rem;
+        .leaflet-popup-content h3 { color: #38bdf8; margin-bottom: 4px; font-size: 0.95rem; }
+        .leaflet-popup-content p { margin: 3px 0; font-size: 0.82rem; }
+        .pbtn {
+            display: block; width: 100%; margin-top: 6px; padding: 6px;
+            border: none; border-radius: 5px; font-weight: 700; cursor: pointer; color: #fff; font-size: 0.8rem;
         }
-        .btn-attack { background: #ef4444; }
-        .btn-attack:hover { background: #dc2626; }
-        .btn-entrench { background: #64748b; }
-        .btn-entrench:hover { background: #475569; }
+        .pbtn-attack { background: #ef4444; }
+        .pbtn-attack:hover { background: #dc2626; }
+        .pbtn-entrench { background: #64748b; }
+        .pbtn-entrench:hover { background: #475569; }
 
         .legend {
             position: fixed; bottom: 16px; left: 16px; z-index: 1000;
             background: var(--panel-bg); padding: 10px 13px; border-radius: 8px;
-            border: 1px solid rgba(56,189,248,0.25); font-size: 0.78rem;
+            border: 1px solid rgba(56,189,248,0.2); font-size: 0.78rem;
         }
-        .legend div { display: flex; align-items: center; gap: 7px; margin: 2px 0; }
+        .legend div { display: flex; align-items: center; gap: 7px; margin: 3px 0; }
         .legend-color { width: 13px; height: 10px; border-radius: 2px; }
+
+        /* Settings modal */
+        .modal-bg {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+            z-index: 3000; align-items: center; justify-content: center;
+        }
+        .modal-bg.open { display: flex; }
+        .modal {
+            background: #0f172a; border: 1px solid rgba(56,189,248,0.3);
+            border-radius: 12px; padding: 20px; width: 320px; max-width: 90vw;
+        }
+        .modal h3 { color: #38bdf8; margin-bottom: 12px; }
+        .modal label { display: block; margin: 8px 0 4px; font-size: 0.85rem; }
+        .modal select, .modal input {
+            width: 100%; padding: 6px 8px; border-radius: 6px;
+            background: #1e293b; border: 1px solid #334155; color: #e2e8f0;
+        }
+        .modal-actions { margin-top: 16px; display: flex; gap: 8px; justify-content: flex-end; }
     </style>
 </head>
 <body>
-    <header class="hoi-topbar">
-        <div class="hoi-group">
-            <div class="hoi-title">🛡️ Carlan Division</div>
-        </div>
-        <div class="hoi-group">
-            <div class="hoi-stat">Свої: <span id="friendlyPower">0</span></div>
-            <div class="hoi-stat">Ворог: <span id="enemyPower">0</span></div>
-            <div class="hoi-stat">Час: <span id="gameTime">00:00</span></div>
-        </div>
-    </header>
 
-    <div id="map"></div>
+<header class="topbar">
+    <div class="brand">🛡️ CARLAN DIVISION</div>
 
-    <div class="legend">
-        <div><div class="legend-color" style="background:#166534;"></div> ЗСУ</div>
-        <div><div class="legend-color" style="background:#475569;"></div> Сіра зона</div>
-        <div><div class="legend-color" style="background:#7f1d1d;"></div> Окуповано</div>
-        <div style="margin-top:6px;font-size:0.71rem;opacity:0.85;">Пересування тільки по секторах<br>Окопи + місцева перевага</div>
+    <div class="stats">
+        <div class="stat">Свої: <span id="friendlyPower">0</span></div>
+        <div class="stat">Ворог: <span id="enemyPower">0</span></div>
+        <div class="stat">Міста ЗСУ: <span id="citiesGreen">0</span></div>
+        <div class="stat">Час: <span id="gameTime">00:00</span></div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([48.55, 37.6], 8);
-        L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
-        L.control.zoom({ position: 'bottomright' }).addTo(map);
+    <div class="controls">
+        <button class="btn btn-blue" id="btnMove" onclick="setMode('move')">Переміщення</button>
+        <button class="btn btn-red" id="btnAttack" onclick="setMode('attack')">Атака</button>
+        <button class="btn btn-grey" onclick="openSettings()">⚙️ Налаштування</button>
+        <button class="btn btn-green" onclick="endTurn()">⏭ Хід</button>
+    </div>
+</header>
 
-        // ===== БАЗОВІ РАЙОНИ =====
-        const redNames = new Set([
-            "Євпаторійський район","Бахчисарайський район","Джанкойський район","Керченський район",
-            "Сімферопольський район","Феодосійський район","Ялтинський район","Білогірський район",
-            "Красногвардійський район","Красноперекопський район","Ленінський район","Нижньогірський район",
-            "Первомайський район","Роздольненський район","Сакський район","Совєтський район","Чорноморський район",
-            "Алчевський район","Довжанський район","Луганський район","Ровеньківський район",
-            "Сватівський район","Сєвєродонецький район","Старобільський район","Щастинський район",
-            "Горлівський район","Донецький район","Кальміуський район","Маріупольський район",
-            "Волноваський район","Покровський район","Бердянський район","Мелітопольський район",
-            "Пологівський район","Василівський район","Генічеський район","Каховський район",
-            "Скадовський район","Херсонський район"
-        ]);
-        const greyNames = new Set([
-            "Бахмутський район","Краматорський район","Лиманський район","Ізюмський район",
-            "Куп'янський район","Богодухівський район","Чугуївський район","Синельниківський район",
-            "Нікопольський район","Бериславський район","Запорізький район"
-        ]);
+<div id="map"></div>
 
-        function raionStyle(name) {
-            if (redNames.has(name)) return { color:'#7f1d1d', weight:1, fillColor:'#7f1d1d', fillOpacity:0.5 };
-            if (greyNames.has(name)) return { color:'#475569', weight:1, fillColor:'#475569', fillOpacity:0.5 };
-            return { color:'#166534', weight:1, fillColor:'#166534', fillOpacity:0.5 };
-        }
+<div class="legend">
+    <div><div class="legend-color" style="background:#166534;"></div> ЗСУ</div>
+    <div><div class="legend-color" style="background:#475569;"></div> Сіра зона</div>
+    <div><div class="legend-color" style="background:#7f1d1d;"></div> Окуповано</div>
+    <div style="margin-top:6px;font-size:0.72rem;opacity:0.85;">Клікай місто / район<br>Перетягуй підрозділи</div>
+</div>
 
-        fetch('https://raw.githubusercontent.com/slawomirmatuszak/ukrainian_geodata/master/rayony.geojson')
-            .then(r => r.json())
-            .then(geo => {
-                L.geoJSON(geo, {
-                    style: f => raionStyle(f.properties.rayon),
-                    interactive: false
+<!-- Settings Modal -->
+<div class="modal-bg" id="settingsModal">
+    <div class="modal">
+        <h3>Налаштування</h3>
+        <label>Розмір зони впливу міст</label>
+        <select id="optInfluence">
+            <option value="5">Маленька</option>
+            <option value="7" selected>Середня</option>
+            <option value="9">Велика</option>
+        </select>
+        <label>Складність бою</label>
+        <select id="optDifficulty">
+            <option value="0.9">Легко</option>
+            <option value="1.0" selected>Нормально</option>
+            <option value="1.15">Важко</option>
+        </select>
+        <label>Показувати лінію фронту</label>
+        <select id="optFrontline">
+            <option value="1" selected>Так</option>
+            <option value="0">Ні</option>
+        </select>
+        <div class="modal-actions">
+            <button class="btn btn-grey" onclick="closeSettings()">Закрити</button>
+            <button class="btn btn-blue" onclick="applySettings()">Застосувати</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    let mode = 'move';
+    let selectedUnit = null;
+    let influenceExtra = 7;
+    let difficulty = 1.0;
+    let showFrontline = true;
+
+    const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([48.55, 37.5], 7.8);
+    L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+    const redNames = new Set([
+        "Євпаторійський район","Бахчисарайський район","Джанкойський район","Керченський район",
+        "Сімферопольський район","Феодосійський район","Ялтинський район","Білогірський район",
+        "Красногвардійський район","Красноперекопський район","Ленінський район","Нижньогірський район",
+        "Первомайський район","Роздольненський район","Сакський район","Совєтський район","Чорноморський район",
+        "Алчевський район","Довжанський район","Луганський район","Ровеньківський район",
+        "Сватівський район","Сєвєродонецький район","Старобільський район","Щастинський район",
+        "Горлівський район","Донецький район","Кальміуський район","Маріупольський район",
+        "Волноваський район","Покровський район","Бердянський район","Мелітопольський район",
+        "Пологівський район","Василівський район","Генічеський район","Каховський район",
+        "Скадовський район","Херсонський район"
+    ]);
+    const greyNames = new Set([
+        "Бахмутський район","Краматорський район","Лиманський район","Ізюмський район",
+        "Куп'янський район","Богодухівський район","Чугуївський район","Синельниківський район",
+        "Нікопольський район","Бериславський район","Запорізький район"
+    ]);
+
+    function raionStyle(name) {
+        if (redNames.has(name)) return { color:'#7f1d1d', weight:1.2, fillColor:'#7f1d1d', fillOpacity:0.22 };
+        if (greyNames.has(name)) return { color:'#475569', weight:1.2, fillColor:'#475569', fillOpacity:0.20 };
+        return { color:'#166534', weight:1.0, fillColor:'#166534', fillOpacity:0.16 };
+    }
+
+    // Виправлене завантаження GeoJSON із коректним зчитуванням назв районів
+    fetch('https://raw.githubusercontent.com/slawomirmatuszak/ukrainian_geodata/master/rayony.geojson')
+        .then(r => r.json())
+        .then(geo => {
+            geo.features.forEach(f => {
+                const props = f.properties || {};
+                const name = props.rayon || props.name || props.shapeName || props.NAME_2 || props.NAME_3 || "Невідомий район";
+                let status = redNames.has(name) ? 'red' : greyNames.has(name) ? 'grey' : 'green';
+                
+                L.geoJSON(f, {
+                    style: raionStyle(name),
+                    onEachFeature: (feature, layer) => {
+                        layer.on('click', (e) => {
+                            L.DomEvent.stopPropagation(e);
+                            layer.bindPopup(`<h3>${name}</h3><p>Статус: <b>${statusText(status)}</b></p>`).openPopup();
+                        });
+                    }
                 }).addTo(map);
             });
+        });
 
-        // ===== ДРІБНІ СЕКТОРИ =====
-        const fineSectors = [];
-        const fineLayer = L.layerGroup().addTo(map);
-        const cellSize = 0.052;
+    const frontCoords = [
+        [49.80, 37.90],[49.55, 37.75],[49.30, 37.60],[49.05, 37.70],
+        [48.85, 37.85],[48.70, 37.95],[48.55, 37.98],[48.40, 37.90],
+        [48.25, 37.78],[48.10, 37.65],[47.95, 37.40],[47.80, 37.15],
+        [47.65, 36.80],[47.52, 36.40],[47.42, 36.00],[47.35, 35.70]
+    ];
 
-        const gridBounds = { minLat: 46.5, maxLat: 50.1, minLng: 35.0, maxLng: 40.0 };
+    let frontLine = L.polyline(frontCoords, { color: '#f87171', weight: 4, opacity: 0.9, dashArray: '10 8' }).addTo(map);
+    let frontZone = L.polyline(frontCoords, { color: '#ef4444', weight: 18, opacity: 0.15, lineCap: 'round' }).addTo(map);
 
-        function cellStyle(status, isKey = false) {
-            const base = status === 'green' ? {c:'#14532d', f:'#166534'} :
-                         status === 'grey'  ? {c:'#334155', f:'#475569'} :
-                                              {c:'#7f1d1d', f:'#991b1b'};
-            return {
-                color: base.c,
-                weight: isKey ? 1.8 : 0.5,
-                fillColor: base.f,
-                fillOpacity: isKey ? 0.85 : 0.72
-            };
-        }
+    const cities = [
+        { id:'bakhmut', name:"Бахмут", lat:48.595, lng:38.000, status:'red', radius:5.0 },
+        { id:'chasivyar', name:"Часів Яр", lat:48.588, lng:37.836, status:'grey', radius:3.9 },
+        { id:'toretsk', name:"Торецьк", lat:48.392, lng:37.848, status:'grey', radius:4.2 },
+        { id:'newyork', name:"Нью-Йорк", lat:48.332, lng:37.836, status:'red', radius:3.3 },
+        { id:'avdiivka', name:"Авдіївка", lat:48.140, lng:37.742, status:'red', radius:3.7 },
+        { id:'kramatorsk', name:"Краматорськ", lat:48.723, lng:37.556, status:'green', radius:5.0 },
+        { id:'sloviansk', name:"Слов'янськ", lat:48.848, lng:37.606, status:'green', radius:4.6 },
+        { id:'kostiantynivka', name:"Костянтинівка", lat:48.522, lng:37.706, status:'green', radius:4.1 },
+        { id:'druzhkivka', name:"Дружківка", lat:48.621, lng:37.528, status:'green', radius:3.5 },
+        { id:'lyman', name:"Лиман", lat:48.988, lng:37.811, status:'green', radius:4.1 },
+        { id:'izium', name:"Ізюм", lat:49.212, lng:37.257, status:'green', radius:4.6 },
+        { id:'kupyansk', name:"Куп'янськ", lat:49.710, lng:37.597, status:'grey', radius:4.4 },
+        { id:'pokrovsk', name:"Покровськ", lat:48.282, lng:37.176, status:'green', radius:4.6 },
+        { id:'myrnohrad', name:"Мирноград", lat:48.305, lng:37.261, status:'green', radius:3.5 },
+        { id:'selidove', name:"Селидове", lat:48.147, lng:37.304, status:'grey', radius:3.5 },
+        { id:'ukrainsk', name:"Українськ", lat:48.100, lng:37.370, status:'grey', radius:3.0 },
+        { id:'orikhiv', name:"Оріхів", lat:47.697, lng:35.785, status:'green', radius:4.1 },
+        { id:'huliaipole', name:"Гуляйполе", lat:47.664, lng:36.263, status:'grey', radius:3.7 },
+        { id:'robotyne', name:"Роботине", lat:47.449, lng:35.859, status:'grey', radius:3.0 },
+        { id:'verbove', name:"Вербове", lat:47.430, lng:35.950, status:'red', radius:2.8 },
+        { id:'vuhledar', name:"Вугледар", lat:47.778, lng:37.238, status:'red', radius:3.7 },
+        { id:'velykanovoselivka', name:"Велика Новосілка", lat:47.841, lng:36.831, status:'green', radius:3.7 }
+    ];
 
-        // Ключові точки (умовні міста)
-        const keyPoints = [
-            {lat: 48.59, lng: 37.99, name: "Бахмут"},
-            {lat: 48.72, lng: 37.58, name: "Костянтинівка"},
-            {lat: 48.85, lng: 37.62, name: "Краматорськ"},
-            {lat: 48.94, lng: 38.49, name: "Сєвєродонецьк"},
-            {lat: 47.78, lng: 36.25, name: "Гуляйполе"},
-            {lat: 47.45, lng: 35.52, name: "Оріхів"}
-        ];
+    const cityLayers = {};
 
-        for (let lat = gridBounds.minLat; lat < gridBounds.maxLat; lat += cellSize) {
-            for (let lng = gridBounds.minLng; lng < gridBounds.maxLng; lng += cellSize) {
-                let status = 'green';
-                if (lng > 37.55) status = 'red';
-                else if (lng > 36.9 && lat > 47.6 && lat < 49.4) status = 'grey';
+    function cityStyle(s) {
+        if (s === 'green') return { color:'#14532d', fillColor:'#166534', fillOpacity:0.85, weight:2.4 };
+        if (s === 'grey')  return { color:'#334155', fillColor:'#475569', fillOpacity:0.83, weight:2.4 };
+        return { color:'#7f1d1d', fillColor:'#991b1b', fillOpacity:0.85, weight:2.4 };
+    }
+    function influenceStyle(s) {
+        if (s === 'green') return { color:'#166534', fillColor:'#166534', fillOpacity:0.14, weight:0 };
+        if (s === 'grey')  return { color:'#475569', fillColor:'#475569', fillOpacity:0.12, weight:0 };
+        return { color:'#7f1d1d', fillColor:'#7f1d1d', fillOpacity:0.14, weight:0 };
+    }
+    function statusText(s) {
+        return s === 'green' ? 'ЗСУ' : s === 'grey' ? 'Сіра зона' : 'Окуповано';
+    }
 
-                // Чи ключовий сектор
-                let isKey = false;
-                let keyName = null;
-                for (const kp of keyPoints) {
-                    if (Math.abs(kp.lat - (lat + cellSize/2)) < cellSize*0.7 &&
-                        Math.abs(kp.lng - (lng + cellSize/2)) < cellSize*0.7) {
-                        isKey = true;
-                        keyName = kp.name;
-                        break;
-                    }
-                }
+    function rebuildCities() {
+        Object.values(cityLayers).forEach(c => {
+            map.removeLayer(c.circle);
+            map.removeLayer(c.influence);
+        });
 
-                const bounds = [[lat, lng], [lat + cellSize, lng + cellSize]];
-                const rect = L.rectangle(bounds, {
-                    ...cellStyle(status, isKey),
-                    interactive: true
-                }).addTo(fineLayer);
-
-                const sector = {
-                    id: fineSectors.length,
-                    lat: lat + cellSize / 2,
-                    lng: lng + cellSize / 2,
-                    status,
-                    rect,
-                    isKey,
-                    keyName,
-                    bounds
-                };
-                fineSectors.push(sector);
-
-                rect.on('click', () => {
-                    rect.bindPopup(`
-                        <h3>${sector.isKey ? '⭐ ' + sector.keyName : 'Сектор #' + sector.id}</h3>
-                        <p>Статус: <b>${statusText(sector.status)}</b></p>
-                        ${sector.isKey ? '<p style="color:#fbbf24">Ключовий пункт (+сила)</p>' : ''}
-                    `).openPopup();
-                });
-            }
-        }
-
-        function statusText(s) {
-            return s === 'green' ? 'ЗСУ' : s === 'grey' ? 'Сіра зона' : 'Окуповано';
-        }
-
-        function setSectorStatus(sector, newStatus) {
-            sector.status = newStatus;
-            sector.rect.setStyle(cellStyle(newStatus, sector.isKey));
-        }
-
-        // Знайти найближчий сектор до точки
-        function findNearestSector(lat, lng) {
-            let best = null, bestDist = Infinity;
-            for (const sec of fineSectors) {
-                const d = map.distance([lat, lng], [sec.lat, sec.lng]);
-                if (d < bestDist) {
-                    bestDist = d;
-                    best = sec;
-                }
-            }
-            return best;
-        }
-
-        // ===== ПІДРОЗДІЛИ =====
-        const units = [];
-
-        function makeIcon(color, strength, entrenched) {
-            const size = 13 + Math.min(strength / 14, 7);
-            const border = entrenched ? '3px solid #fbbf24' : '2px solid #fff';
-            return L.divIcon({
-                html: `<div style="background:\( {color};width: \){size}px;height:\( {size}px;border-radius:50%;border: \){border};box-shadow:0 0 8px ${color};"></div>`,
-                iconSize: [size, size], className: ''
-            });
-        }
-
-        function createUnit(data) {
-            // Ставимо юніта в центр найближчого сектора
-            const startSec = findNearestSector(data.lat, data.lng);
-            const marker = L.marker([startSec.lat, startSec.lng], {
-                icon: makeIcon(data.color, data.strength, false),
-                draggable: true
+        cities.forEach(c => {
+            const influence = L.circle([c.lat, c.lng], {
+                radius: (c.radius + influenceExtra) * 1000,
+                ...influenceStyle(c.status),
+                interactive: false
             }).addTo(map);
 
-            const unit = {
-                ...data,
-                lat: startSec.lat,
-                lng: startSec.lng,
-                sectorId: startSec.id,
-                marker,
-                entrenched: false
-            };
+            const circle = L.circle([c.lat, c.lng], {
+                radius: c.radius * 1000,
+                ...cityStyle(c.status),
+                interactive: true
+            }).addTo(map);
 
-            marker.bindPopup(() => `
+            circle.on('click', (e) => {
+                L.DomEvent.stopPropagation(e);
+                showCityPopup(c, circle);
+            });
+
+            cityLayers[c.id] = { ...c, circle, influence };
+        });
+        updatePower();
+    }
+
+    function showCityPopup(c, layer) {
+        layer.bindPopup(`
+            <h3>⭐ ${c.name}</h3>
+            <p>Статус: <b>${statusText(c.status)}</b></p>
+            ${selectedUnit && selectedUnit.side === 'friendly' ? `
+                <button class="pbtn pbtn-attack" onclick="attackCity('${c.id}')">⚔️ Штурмувати місто</button>
+            ` : ''}
+        `).openPopup();
+    }
+
+    function setCityStatus(id, status) {
+        const c = cityLayers[id];
+        if (!c) return;
+        c.status = status;
+        const orig = cities.find(x => x.id === id);
+        if (orig) orig.status = status;
+        c.circle.setStyle(cityStyle(status));
+        c.influence.setStyle(influenceStyle(status));
+        updatePower();
+    }
+
+    rebuildCities();
+
+    const units = [];
+
+    function makeIcon(color, strength, entrenched) {
+        const size = 14 + Math.min(strength / 12, 7);
+        const border = entrenched ? '3px solid #fbbf24' : '2px solid #fff';
+        return L.divIcon({
+            html: `<div style="background:${color};width:${size}px;height:${size}px;border-radius:50%;border:${border};box-shadow:0 0 9px ${color};"></div>`,
+            iconSize: [size, size], className: ''
+        });
+    }
+
+    function findNearestCity(lat, lng) {
+        let best = null, bestD = Infinity;
+        for (const id in cityLayers) {
+            const c = cityLayers[id];
+            const d = map.distance([lat, lng], [c.lat, c.lng]);
+            if (d < bestD) { bestD = d; best = c; }
+        }
+        return best;
+    }
+
+    function createUnit(data) {
+        const start = findNearestCity(data.lat, data.lng);
+        const marker = L.marker([start.lat, start.lng], {
+            icon: makeIcon(data.color, data.strength, false),
+            draggable: true
+        }).addTo(map);
+
+        const unit = { ...data, lat: start.lat, lng: start.lng, marker, entrenched: false, currentCity: start.id };
+
+        marker.on('click', (e) => {
+            L.DomEvent.stopPropagation(e);
+            selectedUnit = unit;
+            marker.bindPopup(`
                 <h3>${unit.name}</h3>
                 <p>Сторона: <b>${unit.side === 'friendly' ? 'ЗСУ' : 'Ворог'}</b></p>
-                <p>Сила: <b>\( {Math.round(unit.strength)}</b> · Орг: <b> \){Math.round(unit.org)}%</b></p>
-                <p>${unit.entrenched ? '🛡️ В окопах' : 'В русі'}</p>
+                <p>Сила: <b>${Math.round(unit.strength)}</b> · Орг: <b>${Math.round(unit.org)}%</b></p>
+                <p>${unit.entrenched ? '🛡️ В окопах' : 'Готовий до руху'}</p>
                 ${unit.side === 'friendly' ? `
-                    <button class="popup-btn btn-attack" onclick="window.doAttack('${unit.id}')">⚔️ Атакувати</button>
-                    <button class="popup-btn btn-entrench" onclick="window.toggleEntrench('${unit.id}')">
+                    <button class="pbtn pbtn-entrench" onclick="toggleEntrench('${unit.id}')">
                         ${unit.entrenched ? 'Вийти з окопів' : '🛡️ Окопатися'}
                     </button>
                 ` : ''}
-            `);
+            `).openPopup();
+        });
 
-            // Пересування тільки по секторах
-            marker.on('dragend', e => {
-                const pos = e.target.getLatLng();
-                const targetSec = findNearestSector(pos.lat, pos.lng);
+        marker.on('dragend', e => {
+            const pos = e.target.getLatLng();
+            const target = findNearestCity(pos.lat, pos.lng);
 
-                // Вартість руху
-                let moveCost = unit.entrenched ? 18 : 8;
-                if (unit.org < moveCost + 15) {
-                    alert('Занадто низька організація для пересування');
-                    marker.setLatLng([unit.lat, unit.lng]);
-                    return;
-                }
-
-                unit.org = Math.max(20, unit.org - moveCost);
-                unit.entrenched = false;
-                unit.lat = targetSec.lat;
-                unit.lng = targetSec.lng;
-                unit.sectorId = targetSec.id;
-                marker.setLatLng([targetSec.lat, targetSec.lng]);
-                marker.setIcon(makeIcon(unit.color, unit.strength, false));
-
-                // Захват при вході в сектор
-                captureAround(unit, unit.side === 'friendly' ? 'green' : 'red', 1.8);
-                updatePower();
-            });
-
-            units.push(unit);
-            return unit;
-        }
-
-        function captureAround(unit, status, radiusKm) {
-            const bonus = localSuperiority(unit) ? 0.25 : 0;
-            fineSectors.forEach(sec => {
-                const d = map.distance([unit.lat, unit.lng], [sec.lat, sec.lng]) / 1000;
-                if (d < radiusKm) {
-                    const chance = 0.5 + (unit.strength / 220) + (unit.org / 350) + bonus;
-                    if (Math.random() < chance) {
-                        setSectorStatus(sec, status);
-                    } else if (status === 'green' && sec.status === 'red') {
-                        setSectorStatus(sec, 'grey');
-                    }
-                }
-            });
-        }
-
-        // Місцева перевага — скільки своїх юнітів поруч
-        function localSuperiority(unit) {
-            let count = 0;
-            units.forEach(u => {
-                if (u.side === unit.side && u.id !== unit.id) {
-                    const d = map.distance([unit.lat, unit.lng], [u.lat, u.lng]) / 1000;
-                    if (d < 14) count++;
-                }
-            });
-            return count >= 1;
-        }
-
-        // ===== ОКОПИ =====
-        window.toggleEntrench = function(id) {
-            const unit = units.find(u => u.id === id);
-            if (!unit) return;
-            unit.entrenched = !unit.entrenched;
-            unit.marker.setIcon(makeIcon(unit.color, unit.strength, unit.entrenched));
-            if (unit.entrenched) {
-                unit.org = Math.min(100, unit.org + 6);
-                // Трохи зміцнюємо свій сектор
-                const sec = fineSectors[unit.sectorId];
-                if (sec && unit.side === 'friendly') setSectorStatus(sec, 'green');
-            }
-            unit.marker.closePopup();
-        };
-
-        // ===== БІЙ =====
-        window.doAttack = function(id) {
-            const attacker = units.find(u => u.id === id);
-            if (!attacker || attacker.side !== 'friendly') return;
-
-            let enemy = null, minD = 20;
-            units.forEach(u => {
-                if (u.side === 'enemy') {
-                    const d = map.distance([attacker.lat, attacker.lng], [u.lat, u.lng]) / 1000;
-                    if (d < minD) { minD = d; enemy = u; }
-                }
-            });
-
-            const nearby = fineSectors.filter(sec => {
-                const d = map.distance([attacker.lat, attacker.lng], [sec.lat, sec.lng]) / 1000;
-                return d < 8.5 && sec.status !== 'green';
-            });
-
-            if (!enemy && nearby.length === 0) {
-                alert('Поруч немає цілей');
+            const cost = unit.entrenched ? 12 : 5;
+            if (unit.org < cost + 8) {
+                alert('Організація занадто низька');
+                marker.setLatLng([unit.lat, unit.lng]);
                 return;
             }
 
-            let atkPower = attacker.strength * (attacker.org / 100);
-            if (localSuperiority(attacker)) atkPower *= 1.22; // бонус місцевої переваги
-            if (attacker.entrenched) atkPower *= 0.85;       // в окопах трохи гірше атакувати
+            unit.org = Math.max(12, unit.org - cost);
+            unit.entrenched = false;
+            unit.lat = target.lat;
+            unit.lng = target.lng;
+            unit.currentCity = target.id;
+            marker.setLatLng([target.lat, target.lng]);
+            marker.setIcon(makeIcon(unit.color, unit.strength, false));
 
-            let msg = '';
-
-            if (enemy) {
-                let defPower = enemy.strength * (enemy.org / 100);
-                if (enemy.entrenched) defPower *= 1.35;
-
-                const ratio = atkPower / (defPower + 1);
-
-                if (ratio > 1.18) {
-                    const dmg = 11 + Math.random() * 15;
-                    enemy.strength = Math.max(12, enemy.strength - dmg);
-                    enemy.org = Math.max(28, enemy.org - 11);
-                    attacker.org = Math.min(100, attacker.org + 4);
-                    msg = `Перемога! \( {enemy.name} втратив \~ \){Math.round(dmg)}`;
-                    captureAround(attacker, 'green', 6.5);
-                    if (enemy.entrenched) {
-                        enemy.entrenched = false;
-                        enemy.marker.setIcon(makeIcon(enemy.color, enemy.strength, false));
-                    }
-                } else if (ratio < 0.72) {
-                    const dmg = 8 + Math.random() * 12;
-                    attacker.strength = Math.max(12, attacker.strength - dmg);
-                    attacker.org = Math.max(28, attacker.org - 15);
-                    msg = `Відбито. Втрати \~${Math.round(dmg)}`;
-                } else {
-                    attacker.strength = Math.max(15, attacker.strength - 6);
-                    enemy.strength = Math.max(15, enemy.strength - 6);
-                    attacker.org = Math.max(32, attacker.org - 9);
-                    enemy.org = Math.max(32, enemy.org - 9);
-                    msg = 'Затяжний бій';
-                    captureAround(attacker, 'grey', 5);
+            if (target) {
+                const desired = unit.side === 'friendly' ? 'green' : 'red';
+                if (target.status !== desired) {
+                    if (target.status !== 'grey') setCityStatus(target.id, 'grey');
+                    else setCityStatus(target.id, desired);
                 }
-                enemy.marker.setIcon(makeIcon(enemy.color, enemy.strength, enemy.entrenched));
-            } else {
-                msg = `Зачистка ${nearby.length} секторів`;
-                nearby.forEach(sec => {
-                    if (Math.random() < 0.65 + (localSuperiority(attacker) ? 0.15 : 0)) {
-                        setSectorStatus(sec, 'green');
-                    } else {
-                        setSectorStatus(sec, 'grey');
-                    }
-                });
-                attacker.org = Math.min(100, attacker.org + 3);
             }
-
-            // Бонус від ключових секторів під контролем
-            const keyBonus = fineSectors.filter(s => s.isKey && s.status === 'green').length * 1.5;
-            // (можна пізніше впливати на силу)
-
-            attacker.marker.setIcon(makeIcon(attacker.color, attacker.strength, attacker.entrenched));
             updatePower();
-            alert(msg);
-        };
+        });
 
-        // Створюємо підрозділи
-        createUnit({ id:'f1', name:"1-й батальйон 'Вовкодав'", side:'friendly', lat:48.70, lng:37.70, strength:88, org:90, color:'#38bdf8' });
-        createUnit({ id:'f2', name:"3-тя ОШБр", side:'friendly', lat:48.50, lng:37.48, strength:96, org:86, color:'#22c55e' });
-        createUnit({ id:'f3', name:"92-га ОМБр", side:'friendly', lat:49.00, lng:37.20, strength:83, org:84, color:'#a78bfa' });
-        createUnit({ id:'f4', name:"РДК", side:'friendly', lat:47.52, lng:36.10, strength:73, org:76, color:'#eab308' });
+        units.push(unit);
+        return unit;
+    }
 
-        createUnit({ id:'e1', name:"51-а ОМСБр (РФ)", side:'enemy', lat:48.30, lng:37.90, strength:91, org:79, color:'#ef4444' });
-        createUnit({ id:'e2', name:"155-а ОБрМП (РФ)", side:'enemy', lat:47.36, lng:36.60, strength:77, org:71, color:'#f97316' });
-        createUnit({ id:'e3', name:"76-а ДШД (РФ)", side:'enemy', lat:48.85, lng:38.20, strength:85, org:75, color:'#dc2626' });
-
-        function updatePower() {
-            let f = 0, e = 0;
-            units.forEach(u => {
-                if (u.side === 'friendly') f += u.strength;
-                else e += u.strength;
-            });
-            // Невеликий бонус від ключових секторів
-            const keys = fineSectors.filter(s => s.isKey && s.status === 'green').length;
-            f += keys * 4;
-            document.getElementById('friendlyPower').textContent = Math.round(f);
-            document.getElementById('enemyPower').textContent = Math.round(e);
+    window.toggleEntrench = function(id) {
+        const u = units.find(x => x.id === id);
+        if (!u) return;
+        u.entrenched = !u.entrenched;
+        u.marker.setIcon(makeIcon(u.color, u.strength, u.entrenched));
+        if (u.entrenched && u.currentCity && u.side === 'friendly') {
+            setCityStatus(u.currentCity, 'green');
+            u.org = Math.min(100, u.org + 5);
         }
+        u.marker.closePopup();
         updatePower();
+    };
 
-        setInterval(() => {
-            const n = new Date();
-            document.getElementById('gameTime').textContent =
-                String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
-        }, 1000);
+    window.attackCity = function(cityId) {
+        if (!selectedUnit || selectedUnit.side !== 'friendly') {
+            alert('Спочатку вибери свій підрозділ');
+            return;
+        }
+        const city = cityLayers[cityId];
+        if (!city || city.status === 'green') return;
 
-        // Старт — невеликий захват
-        setTimeout(() => {
-            units.forEach(u => captureAround(u, u.side === 'friendly' ? 'green' : 'red', 2.2));
-            updatePower();
-        }, 600);
-    </script>
+        const dist = map.distance([selectedUnit.lat, selectedUnit.lng], [city.lat, city.lng]) / 1000;
+        if (dist > 22) {
+            alert('Місто занадто далеко');
+            return;
+        }
+
+        let power = selectedUnit.strength * (selectedUnit.org / 100);
+        if (selectedUnit.entrenched) power *= 0.85;
+
+        let support = 0;
+        units.forEach(u => {
+            if (u.side === 'friendly' && u.id !== selectedUnit.id) {
+                if (map.distance([selectedUnit.lat, selectedUnit.lng], [u.lat, u.lng]) / 1000 < 18) support++;
+            }
+        });
+        if (support) power *= 1.15;
+
+        power /= difficulty;
+
+        const roll = Math.random();
+        if (roll < 0.45 + (power / 180)) {
+            setCityStatus(cityId, 'green');
+            selectedUnit.org = Math.min(100, selectedUnit.org + 4);
+            alert(`✅ ${city.name} захоплено!`);
+        } else if (roll < 0.75) {
+            setCityStatus(cityId, 'grey');
+            selectedUnit.strength = Math.max(15, selectedUnit.strength - 6);
+            selectedUnit.org = Math.max(25, selectedUnit.org - 8);
+            alert(`Сіра зона в ${city.name}. Є втрати.`);
+        } else {
+            selectedUnit.strength = Math.max(12, selectedUnit.strength - 10);
+            selectedUnit.org = Math.max(20, selectedUnit.org - 12);
+            alert(`Штурм відбито. Втрати значні.`);
+        }
+        selectedUnit.marker.setIcon(makeIcon(selectedUnit.color, selectedUnit.strength, selectedUnit.entrenched));
+        updatePower();
+    };
+
+    function setMode(m) {
+        mode = m;
+        document.getElementById('btnMove').classList.toggle('active', m === 'move');
+        document.getElementById('btnAttack').classList.toggle('active', m === 'attack');
+    }
+    setMode('move');
+
+    function endTurn() {
+        units.forEach(u => {
+            if (u.side === 'friendly') u.org = Math.min(100, u.org + 4);
+        });
+        units.filter(u => u.side === 'enemy').forEach(u => {
+            const near = findNearestCity(u.lat, u.lng);
+            if (near && near.status === 'green' && Math.random() < 0.25) {
+                setCityStatus(near.id, 'grey');
+            }
+        });
+        updatePower();
+        alert('Хід завершено. Організація трохи відновлена.');
+    }
+
+    function openSettings() { document.getElementById('settingsModal').classList.add('open'); }
+    function closeSettings() { document.getElementById('settingsModal').classList.remove('open'); }
+    function applySettings() {
+        influenceExtra = parseInt(document.getElementById('optInfluence').value);
+        difficulty = parseFloat(document.getElementById('optDifficulty').value);
+        showFrontline = document.getElementById('optFrontline').value === '1';
+
+        if (showFrontline) { frontLine.addTo(map); frontZone.addTo(map); }
+        else { map.removeLayer(frontLine); map.removeLayer(frontZone); }
+        rebuildCities();
+        closeSettings();
+    }
+
+    createUnit({ id:'f1', name:"1-й батальйон 'Вовкодав'", side:'friendly', lat:48.70, lng:37.60, strength:90, org:92, color:'#38bdf8' });
+    createUnit({ id:'f2', name:"3-тя ОШБр", side:'friendly', lat:48.50, lng:37.45, strength:96, org:88, color:'#22c55e' });
+    createUnit({ id:'f3', name:"92-га ОМБр", side:'friendly', lat:48.95, lng:37.20, strength:85, org:86, color:'#a78bfa' });
+    createUnit({ id:'f4', name:"РДК", side:'friendly', lat:47.55, lng:36.10, strength:75, org:78, color:'#eab308' });
+
+    createUnit({ id:'e1', name:"51-а ОМСБр (РФ)", side:'enemy', lat:48.35, lng:37.95, strength:92, org:80, color:'#ef4444' });
+    createUnit({ id:'e2', name:"155-а ОБрМП (РФ)", side:'enemy', lat:47.40, lng:36.60, strength:78, org:72, color:'#f97316' });
+    createUnit({ id:'e3', name:"76-а ДШД (РФ)", side:'enemy', lat:48.85, lng:38.20, strength:86, org:76, color:'#dc2626' });
+
+    function updatePower() {
+        let f = 0, e = 0, g = 0;
+        units.forEach(u => {
+            if (u.side === 'friendly') f += u.strength;
+            else e += u.strength;
+        });
+        Object.values(cityLayers).forEach(c => { if (c.status === 'green') g++; });
+        document.getElementById('friendlyPower').textContent = Math.round(f);
+        document.getElementById('enemyPower').textContent = Math.round(e);
+        document.getElementById('citiesGreen').textContent = g;
+    }
+    updatePower();
+
+    setInterval(() => {
+        const n = new Date();
+        document.getElementById('gameTime').textContent =
+            String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+    }, 1000);
+</script>
 </body>
 </html>
