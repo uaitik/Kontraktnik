@@ -51,7 +51,7 @@
         .btn-red { border-color: #ef4444; color: #f87171; }
         .btn-grey { border-color: #64748b; color: #94a3b8; }
 
-        #map { width: 100vw; height: 100vh; background: #0b0f19; }
+        #map { width: 100vw; height: 100vh; background: #000; }
 
         /* Popup */
         .leaflet-popup-content-wrapper {
@@ -121,9 +121,9 @@
 
 <div class="legend">
     <div><div class="legend-color" style="background:#166534;"></div> ЗСУ</div>
-    <div><div class="legend-color" style="background:#475569;"></div> Сіра зона</div>
+    <div><div class="legend-color" style="background:#334155;"></div> Сіра зона</div>
     <div><div class="legend-color" style="background:#7f1d1d;"></div> Окуповано</div>
-    <div style="margin-top:6px;font-size:0.72rem;opacity:0.85;">Клікай місто / район<br>Перетягуй підрозділи</div>
+    <div style="margin-top:6px;font-size:0.72rem;opacity:0.85;">Тільки обводки міст та районів</div>
 </div>
 
 <!-- Settings Modal -->
@@ -162,8 +162,19 @@
     let difficulty = 1.0;
     let showFrontline = true;
 
+    // Спутникова мапа Esri World Imagery (безкоштовна, без ключів)
     const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([48.55, 37.5], 7.8);
-    L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 18,
+        attribution: 'Esri'
+    }).addTo(map);
+
+    // Додаємо шар із назвами міст та доріг поверх супутника для зручності
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 18,
+        opacity: 0.65
+    }).addTo(map);
+
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
     const redNames = new Set([
@@ -186,42 +197,34 @@
 
     function getRayonStatus(name, layer) {
         if (redNames.has(name)) {
-            // Якщо це Первомайський район, перевіряємо широту: на Миколаївщині він північніше 46.8, у Криму — південніше
             if (name === "Первомайський район") {
                 let lat = 48.0;
-                try {
-                    lat = layer.getBounds().getCenter().lat;
-                } catch(e) {}
+                try { lat = layer.getBounds().getCenter().lat; } catch(e) {}
                 return lat < 46.5 ? 'red' : 'green';
             }
             return 'red';
         }
         if (greyNames.has(name)) return 'grey';
-        
-        // Додаткова перевірка для Криму за географічною широтою (все що нижче 46.2 градусів — окупований Крим)
         try {
             const centerLat = layer.getBounds().getCenter().lat;
             if (centerLat < 46.2) return 'red';
         } catch(e) {}
-
         return 'green';
     }
 
+    // Тільки темні обводки без суцільного заповнення районів
     function raionStyle(status) {
-        if (status === 'red') return { color:'#7f1d1d', weight:1.2, fillColor:'#7f1d1d', fillOpacity:0.22 };
-        if (status === 'grey') return { color:'#475569', weight:1.2, fillColor:'#475569', fillOpacity:0.20 };
-        return { color:'#166534', weight:1.0, fillColor:'#166534', fillOpacity:0.16 };
+        if (status === 'red') return { color:'#7f1d1d', weight:1.5, fillColor:'#7f1d1d', fillOpacity:0.04 };
+        if (status === 'grey') return { color:'#334155', weight:1.5, fillColor:'#334155', fillOpacity:0.04 };
+        return { color:'#14532d', weight:1.5, fillColor:'#166534', fillOpacity:0.04 };
     }
 
-    // Завантаження GeoJSON із коректним визначенням статусів та назв
     fetch('https://raw.githubusercontent.com/slawomirmatuszak/ukrainian_geodata/master/rayony.geojson')
         .then(r => r.json())
         .then(geo => {
             geo.features.forEach(f => {
                 const props = f.properties || {};
                 const name = props.rayon || props.name || props.shapeName || props.NAME_2 || props.NAME_3 || "Невідомий район";
-                
-                // Тимчасовий шар для визначення центру (широти)
                 const tempLayer = L.geoJSON(f);
                 const status = getRayonStatus(name, tempLayer);
                 
@@ -274,15 +277,16 @@
 
     const cityLayers = {};
 
+    // Тільки темні обводки для міст (без заповнення всередині)
     function cityStyle(s) {
-        if (s === 'green') return { color:'#14532d', fillColor:'#166534', fillOpacity:0.85, weight:2.4 };
-        if (s === 'grey')  return { color:'#334155', fillColor:'#475569', fillOpacity:0.83, weight:2.4 };
-        return { color:'#7f1d1d', fillColor:'#991b1b', fillOpacity:0.85, weight:2.4 };
+        if (s === 'green') return { color:'#14532d', fillColor:'transparent', fillOpacity:0, weight:2.5 };
+        if (s === 'grey')  return { color:'#334155', fillColor:'transparent', fillOpacity:0, weight:2.5 };
+        return { color:'#7f1d1d', fillColor:'transparent', fillOpacity:0, weight:2.5 };
     }
     function influenceStyle(s) {
-        if (s === 'green') return { color:'#166534', fillColor:'#166534', fillOpacity:0.14, weight:0 };
-        if (s === 'grey')  return { color:'#475569', fillColor:'#475569', fillOpacity:0.12, weight:0 };
-        return { color:'#7f1d1d', fillColor:'#7f1d1d', fillOpacity:0.14, weight:0 };
+        if (s === 'green') return { color:'#166534', fillColor:'#166534', fillOpacity:0.08, weight:0 };
+        if (s === 'grey')  return { color:'#334155', fillColor:'#334155', fillOpacity:0.06, weight:0 };
+        return { color:'#7f1d1d', fillColor:'#7f1d1d', fillOpacity:0.08, weight:0 };
     }
     function statusText(s) {
         return s === 'green' ? 'ЗСУ' : s === 'grey' ? 'Сіра зона' : 'Окуповано';
