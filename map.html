@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carlan Division — Strategy Map</title>
+    <title>Carlan Division — Advanced Strategy Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
-            --panel-bg: rgba(10, 15, 26, 0.96);
+            --panel-bg: rgba(10, 15, 26, 0.95);
             --accent: #38bdf8;
             --text: #e2e8f0;
             --heading: #f8fafc;
@@ -15,9 +15,9 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
         body, html { width: 100%; height: 100%; overflow: hidden; background: #070b14; color: var(--text); }
 
-        /* ===== TOP PANEL ===== */
+        /* TOP PANEL */
         .topbar {
-            position: fixed; top: 0; left: 0; width: 100%; height: 58px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
             background: var(--panel-bg); backdrop-filter: blur(14px);
             border-bottom: 1px solid rgba(56,189,248,0.25);
             display: flex; align-items: center; justify-content: space-between;
@@ -25,76 +25,72 @@
         }
         .brand {
             font-weight: 800; font-size: 0.95rem; color: var(--heading);
-            letter-spacing: 0.5px; white-space: nowrap;
+            letter-spacing: 0.5px; white-space: nowrap; display: flex; align-items: center; gap: 8px;
         }
-        .stats {
-            display: flex; gap: 8px; flex-wrap: wrap;
-        }
+        .stats { display: flex; gap: 8px; flex-wrap: wrap; }
         .stat {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 4px 10px; border-radius: 6px;
-            font-size: 0.8rem; font-weight: 600;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600;
         }
         .stat span { color: var(--accent); }
-        .controls {
-            display: flex; gap: 6px; flex-wrap: wrap;
-        }
+        .controls { display: flex; gap: 6px; flex-wrap: wrap; }
         .btn {
-            padding: 5px 11px; border-radius: 6px; font-size: 0.78rem; font-weight: 700;
+            padding: 5px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 700;
             border: 1px solid; cursor: pointer; transition: 0.15s; background: transparent; color: var(--text);
         }
-        .btn:hover { filter: brightness(1.15); }
+        .btn:hover { filter: brightness(1.2); }
         .btn-blue { border-color: #38bdf8; color: #38bdf8; }
         .btn-blue.active, .btn-blue:hover { background: #38bdf8; color: #000; }
         .btn-green { border-color: #22c55e; color: #22c55e; }
+        .btn-green:hover { background: #22c55e; color: #000; }
         .btn-red { border-color: #ef4444; color: #f87171; }
         .btn-grey { border-color: #64748b; color: #94a3b8; }
 
         #map { width: 100vw; height: 100vh; background: #000; }
 
-        /* Popup */
+        /* POPUPS */
         .leaflet-popup-content-wrapper {
             background: #0f172a !important; color: #f1f5f9 !important;
             border: 1px solid rgba(56,189,248,0.3); border-radius: 8px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
-        .leaflet-popup-content h3 { color: #38bdf8; margin-bottom: 4px; font-size: 0.95rem; }
-        .leaflet-popup-content p { margin: 3px 0; font-size: 0.82rem; }
+        .leaflet-popup-content h3 { color: #38bdf8; margin-bottom: 6px; font-size: 1rem; }
+        .leaflet-popup-content p { margin: 4px 0; font-size: 0.84rem; }
         .pbtn {
-            display: block; width: 100%; margin-top: 6px; padding: 6px;
+            display: block; width: 100%; margin-top: 8px; padding: 7px;
             border: none; border-radius: 5px; font-weight: 700; cursor: pointer; color: #fff; font-size: 0.8rem;
+            transition: opacity 0.15s;
         }
+        .pbtn:hover { opacity: 0.85; }
         .pbtn-attack { background: #ef4444; }
-        .pbtn-attack:hover { background: #dc2626; }
         .pbtn-entrench { background: #64748b; }
-        .pbtn-entrench:hover { background: #475569; }
 
+        /* LEGEND */
         .legend {
             position: fixed; bottom: 16px; left: 16px; z-index: 1000;
-            background: var(--panel-bg); padding: 10px 13px; border-radius: 8px;
+            background: var(--panel-bg); padding: 10px 14px; border-radius: 8px;
             border: 1px solid rgba(56,189,248,0.2); font-size: 0.78rem;
         }
-        .legend div { display: flex; align-items: center; gap: 7px; margin: 3px 0; }
-        .legend-color { width: 13px; height: 10px; border-radius: 2px; }
+        .legend div { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+        .legend-color { width: 14px; height: 10px; border-radius: 2px; }
 
-        /* Settings modal */
+        /* MODAL */
         .modal-bg {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
             z-index: 3000; align-items: center; justify-content: center;
         }
         .modal-bg.open { display: flex; }
         .modal {
             background: #0f172a; border: 1px solid rgba(56,189,248,0.3);
-            border-radius: 12px; padding: 20px; width: 320px; max-width: 90vw;
+            border-radius: 12px; padding: 22px; width: 340px; max-width: 90vw;
         }
-        .modal h3 { color: #38bdf8; margin-bottom: 12px; }
-        .modal label { display: block; margin: 8px 0 4px; font-size: 0.85rem; }
+        .modal h3 { color: #38bdf8; margin-bottom: 14px; }
+        .modal label { display: block; margin: 10px 0 4px; font-size: 0.85rem; }
         .modal select, .modal input {
-            width: 100%; padding: 6px 8px; border-radius: 6px;
+            width: 100%; padding: 7px 10px; border-radius: 6px;
             background: #1e293b; border: 1px solid #334155; color: #e2e8f0;
         }
-        .modal-actions { margin-top: 16px; display: flex; gap: 8px; justify-content: flex-end; }
+        .modal-actions { margin-top: 18px; display: flex; gap: 8px; justify-content: flex-end; }
     </style>
 </head>
 <body>
@@ -105,15 +101,14 @@
     <div class="stats">
         <div class="stat">Свої: <span id="friendlyPower">0</span></div>
         <div class="stat">Ворог: <span id="enemyPower">0</span></div>
-        <div class="stat">Міста ЗСУ: <span id="citiesGreen">0</span></div>
+        <div class="stat">Контроль міст: <span id="citiesGreen">0</span>/22</div>
         <div class="stat">Час: <span id="gameTime">00:00</span></div>
     </div>
 
     <div class="controls">
         <button class="btn btn-blue" id="btnMove" onclick="setMode('move')">Переміщення</button>
-        <button class="btn btn-red" id="btnAttack" onclick="setMode('attack')">Атака</button>
         <button class="btn btn-grey" onclick="openSettings()">⚙️ Налаштування</button>
-        <button class="btn btn-green" onclick="endTurn()">⏭ Хід</button>
+        <button class="btn btn-green" onclick="endTurn()">⏭ Наступний хід</button>
     </div>
 </header>
 
@@ -123,33 +118,33 @@
     <div><div class="legend-color" style="background:#166534;"></div> ЗСУ</div>
     <div><div class="legend-color" style="background:#334155;"></div> Сіра зона</div>
     <div><div class="legend-color" style="background:#7f1d1d;"></div> Окуповано</div>
-    <div style="margin-top:6px;font-size:0.72rem;opacity:0.85;">Тільки обводки міст та районів</div>
+    <div style="margin-top:6px; font-size:0.72rem; opacity:0.8;">Клікни місто для деталей<br>Перетягуй юніти для атак</div>
 </div>
 
-<!-- Settings Modal -->
+<!-- SETTINGS MODAL -->
 <div class="modal-bg" id="settingsModal">
     <div class="modal">
-        <h3>Налаштування</h3>
-        <label>Розмір зони впливу міст</label>
+        <h3>Системні налаштування</h3>
+        <label>Радіус впливу міст</label>
         <select id="optInfluence">
-            <option value="5">Маленька</option>
-            <option value="7" selected>Середня</option>
-            <option value="9">Велика</option>
+            <option value="5">Малий</option>
+            <option value="7" selected>Стандартний</option>
+            <option value="10">Великий</option>
         </select>
-        <label>Складність бою</label>
+        <label>Коефіцієнт складності боїв</label>
         <select id="optDifficulty">
-            <option value="0.9">Легко</option>
-            <option value="1.0" selected>Нормально</option>
-            <option value="1.15">Важко</option>
+            <option value="0.85">Легко (Бонуси ЗСУ)</option>
+            <option value="1.0" selected>Реалістично (Баланс)</option>
+            <option value="1.25">Хардкор (Перевага ворога)</option>
         </select>
-        <label>Показувати лінію фронту</label>
+        <label>Лінія фронту</label>
         <select id="optFrontline">
-            <option value="1" selected>Так</option>
-            <option value="0">Ні</option>
+            <option value="1" selected>Відображати</option>
+            <option value="0">Приховати</option>
         </select>
         <div class="modal-actions">
             <button class="btn btn-grey" onclick="closeSettings()">Закрити</button>
-            <button class="btn btn-blue" onclick="applySettings()">Застосувати</button>
+            <button class="btn btn-blue" onclick="applySettings()">Зберегти</button>
         </div>
     </div>
 </div>
@@ -162,19 +157,10 @@
     let difficulty = 1.0;
     let showFrontline = true;
 
-    // Спутникова мапа Esri World Imagery (безкоштовна, без ключів)
+    // Спутникова мапа високої чіткості + підписи
     const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([48.55, 37.5], 7.8);
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        maxZoom: 18,
-        attribution: 'Esri'
-    }).addTo(map);
-
-    // Додаємо шар із назвами міст та доріг поверх супутника для зручності
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
-        maxZoom: 18,
-        opacity: 0.65
-    }).addTo(map);
-
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18 }).addTo(map);
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18, opacity: 0.65 }).addTo(map);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
     const redNames = new Set([
@@ -212,7 +198,6 @@
         return 'green';
     }
 
-    // Тільки темні обводки без суцільного заповнення районів
     function raionStyle(status) {
         if (status === 'red') return { color:'#7f1d1d', weight:1.5, fillColor:'#7f1d1d', fillOpacity:0.04 };
         if (status === 'grey') return { color:'#334155', weight:1.5, fillColor:'#334155', fillOpacity:0.04 };
@@ -224,7 +209,7 @@
         .then(geo => {
             geo.features.forEach(f => {
                 const props = f.properties || {};
-                const name = props.rayon || props.name || props.shapeName || props.NAME_2 || props.NAME_3 || "Невідомий район";
+                const name = props.rayon || props.name || props.shapeName || "Невідомий район";
                 const tempLayer = L.geoJSON(f);
                 const status = getRayonStatus(name, tempLayer);
                 
@@ -233,7 +218,7 @@
                     onEachFeature: (feature, layer) => {
                         layer.on('click', (e) => {
                             L.DomEvent.stopPropagation(e);
-                            layer.bindPopup(`<h3>${name}</h3><p>Статус: <b>${statusText(status)}</b></p>`).openPopup();
+                            layer.bindPopup(`<h3>Адмін-район: ${name}</h3><p>Статус контролю: <b>${statusText(status)}</b></p>`).openPopup();
                         });
                     }
                 }).addTo(map);
@@ -250,34 +235,34 @@
     let frontLine = L.polyline(frontCoords, { color: '#f87171', weight: 4, opacity: 0.9, dashArray: '10 8' }).addTo(map);
     let frontZone = L.polyline(frontCoords, { color: '#ef4444', weight: 18, opacity: 0.15, lineCap: 'round' }).addTo(map);
 
+    // НОВІ ПОДРОБИЦІ ДЛЯ МІСТ (З ОПИСОМ ТА ІНФОРМАЦІЄЮ)
     const cities = [
-        { id:'bakhmut', name:"Бахмут", lat:48.595, lng:38.000, status:'red', radius:5.0 },
-        { id:'chasivyar', name:"Часів Яр", lat:48.588, lng:37.836, status:'grey', radius:3.9 },
-        { id:'toretsk', name:"Торецьк", lat:48.392, lng:37.848, status:'grey', radius:4.2 },
-        { id:'newyork', name:"Нью-Йорк", lat:48.332, lng:37.836, status:'red', radius:3.3 },
-        { id:'avdiivka', name:"Авдіївка", lat:48.140, lng:37.742, status:'red', radius:3.7 },
-        { id:'kramatorsk', name:"Краматорськ", lat:48.723, lng:37.556, status:'green', radius:5.0 },
-        { id:'sloviansk', name:"Слов'янськ", lat:48.848, lng:37.606, status:'green', radius:4.6 },
-        { id:'kostiantynivka', name:"Костянтинівка", lat:48.522, lng:37.706, status:'green', radius:4.1 },
-        { id:'druzhkivka', name:"Дружківка", lat:48.621, lng:37.528, status:'green', radius:3.5 },
-        { id:'lyman', name:"Лиман", lat:48.988, lng:37.811, status:'green', radius:4.1 },
-        { id:'izium', name:"Ізюм", lat:49.212, lng:37.257, status:'green', radius:4.6 },
-        { id:'kupyansk', name:"Куп'янськ", lat:49.710, lng:37.597, status:'grey', radius:4.4 },
-        { id:'pokrovsk', name:"Покровськ", lat:48.282, lng:37.176, status:'green', radius:4.6 },
-        { id:'myrnohrad', name:"Мирноград", lat:48.305, lng:37.261, status:'green', radius:3.5 },
-        { id:'selidove', name:"Селидове", lat:48.147, lng:37.304, status:'grey', radius:3.5 },
-        { id:'ukrainsk', name:"Українськ", lat:48.100, lng:37.370, status:'grey', radius:3.0 },
-        { id:'orikhiv', name:"Оріхів", lat:47.697, lng:35.785, status:'green', radius:4.1 },
-        { id:'huliaipole', name:"Гуляйполе", lat:47.664, lng:36.263, status:'grey', radius:3.7 },
-        { id:'robotyne', name:"Роботине", lat:47.449, lng:35.859, status:'grey', radius:3.0 },
-        { id:'verbove', name:"Вербове", lat:47.430, lng:35.950, status:'red', radius:2.8 },
-        { id:'vuhledar', name:"Вугледар", lat:47.778, lng:37.238, status:'red', radius:3.7 },
-        { id:'velykanovoselivka', name:"Велика Новосілка", lat:47.841, lng:36.831, status:'green', radius:3.7 }
+        { id:'bakhmut', name:"Бахмут", lat:48.595, lng:38.000, status:'red', radius:5.0, desc:"Ключовий транспортний вузол Східного фронту." },
+        { id:'chasivyar', name:"Часів Яр", lat:48.588, lng:37.836, status:'grey', radius:3.9, desc:"Панівні висоти, потужний укріпрайон." },
+        { id:'toretsk', name:"Торецьк", lat:48.392, lng:37.848, status:'grey', radius:4.2, desc:"Сектор інтенсивних міських боїв." },
+        { id:'newyork', name:"Нью-Йорк", lat:48.332, lng:37.836, status:'red', radius:3.3, desc:"Селище міського типу з розвиненою промисловою зоною." },
+        { id:'avdiivka', name:"Авдіївка", lat:48.140, lng:37.742, status:'red', radius:3.7, desc:"Історичний плацдарм на Донецькому напрямку." },
+        { id:'kramatorsk', name:"Краматорськ", lat:48.723, lng:37.556, status:'green', radius:5.0, desc:"Адміністративний центр, штабне командування." },
+        { id:'sloviansk', name:"Слов'янськ", lat:48.848, lng:37.606, status:'green', radius:4.6, desc:"Важливий логістичний та оборонний вузол." },
+        { id:'kostiantynivka', name:"Костянтинівка", lat:48.522, lng:37.706, status:'green', radius:4.1, desc:"Прифронтове місто, ключова комунікація." },
+        { id:'druzhkivka', name:"Дружківка", lat:48.621, lng:37.528, status:'green', radius:3.5, desc:"Стійкий тиловий гарнізонний пункт." },
+        { id:'lyman', name:"Лиман", lat:48.988, lng:37.811, status:'green', radius:4.1, desc:"Лісовий залізничний вузол." },
+        { id:'izium', name:"Ізюм", lat:49.212, lng:37.257, status:'green', radius:4.6, desc:"Плацдарм на річці Сіверський Донець." },
+        { id:'kupyansk', name:"Куп'янськ", lat:49.710, lng:37.597, status:'grey', radius:4.4, desc:"Прикордонний рубіж активних зіткнень." },
+        { id:'pokrovsk', name:"Покровськ", lat:48.282, lng:37.176, status:'green', radius:4.6, desc:"Важлива логістична артерія та транспортний хаб." },
+        { id:'myrnohrad', name:"Мирноград", lat:48.305, lng:37.261, status:'green', radius:3.5, desc:"Шахтарське місто у прифронтовій зоні." },
+        { id:'selidove', name:"Селидове", lat:48.147, lng:37.304, status:'grey', radius:3.5, desc:"Зона маневреної оборони." },
+        { id:'ukrainsk', name:"Українськ", lat:48.100, lng:37.370, status:'grey', radius:3.0, desc:"Невеликий населений пункт на лінії зіткнення." },
+        { id:'orikhiv', name:"Оріхів", lat:47.697, lng:35.785, status:'green', radius:4.1, desc:"Південний опорний пункт оборони." },
+        { id:'huliaipole', name:"Гуляйполе", lat:47.664, lng:36.263, status:'grey', radius:3.7, desc:"Козацький край, стабільні позиційні бої." },
+        { id:'robotyne', name:"Роботине", lat:47.449, lng:35.859, status:'grey', radius:3.0, desc:"Звільнений плацдарм на Запорізькому напрямку." },
+        { id:'verbove', name:"Вербове", lat:47.430, lng:35.950, status:'red', radius:2.8, desc:"Ворожі укріплені позиції." },
+        { id:'vuhledar', name:"Вугледар", lat:47.778, lng:37.238, status:'red', radius:3.7, desc:"Висотний укріплений пункт." },
+        { id:'velykanovoselivka', name:"Велика Новосілка", lat:47.841, lng:36.831, status:'green', radius:3.7, desc:"Західний рубіж Донецької області." }
     ];
 
     const cityLayers = {};
 
-    // Тільки темні обводки для міст (без заповнення всередині)
     function cityStyle(s) {
         if (s === 'green') return { color:'#14532d', fillColor:'transparent', fillOpacity:0, weight:2.5 };
         if (s === 'grey')  return { color:'#334155', fillColor:'transparent', fillOpacity:0, weight:2.5 };
@@ -289,7 +274,7 @@
         return { color:'#7f1d1d', fillColor:'#7f1d1d', fillOpacity:0.08, weight:0 };
     }
     function statusText(s) {
-        return s === 'green' ? 'ЗСУ' : s === 'grey' ? 'Сіра зона' : 'Окуповано';
+        return s === 'green' ? 'Під контролем ЗСУ' : s === 'grey' ? 'Сіра зона / Бої' : 'Тимчасово окуповано';
     }
 
     function rebuildCities() {
@@ -321,12 +306,14 @@
         updatePower();
     }
 
+    // ПОКРАЩЕНИЙ ПОП-АП МІСТА З ОПИСОМ ТА КНОПКОЮ АТАКИ
     function showCityPopup(c, layer) {
         layer.bindPopup(`
-            <h3>⭐ ${c.name}</h3>
+            <h3>📍 ${c.name}</h3>
             <p>Статус: <b>${statusText(c.status)}</b></p>
-            ${selectedUnit && selectedUnit.side === 'friendly' ? `
-                <button class="pbtn pbtn-attack" onclick="attackCity('${c.id}')">⚔️ Штурмувати місто</button>
+            <p style="opacity: 0.85; margin-top: 4px;"><i>${c.desc}</i></p>
+            ${selectedUnit && selectedUnit.side === 'friendly' && c.status !== 'green' ? `
+                <button class="pbtn pbtn-attack" onclick="attackCity('${c.id}')">⚔️ Штурмувати та звільнити</button>
             ` : ''}
         `).openPopup();
     }
@@ -344,13 +331,14 @@
 
     rebuildCities();
 
+    // НОВА СИСТЕМА ПІДРОЗДІЛІВ (З НОВИМИ НАЗВАМИ ТА ХАРАКТЕРИСТИКАМИ)
     const units = [];
 
     function makeIcon(color, strength, entrenched) {
-        const size = 14 + Math.min(strength / 12, 7);
+        const size = 16 + Math.min(strength / 10, 8);
         const border = entrenched ? '3px solid #fbbf24' : '2px solid #fff';
         return L.divIcon({
-            html: `<div style="background:${color};width:${size}px;height:${size}px;border-radius:50%;border:${border};box-shadow:0 0 9px ${color};"></div>`,
+            html: `<div style="background:${color};width:${size}px;height:${size}px;border-radius:50%;border:${border};box-shadow:0 0 10px ${color}; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:#fff;"></div>`,
             iconSize: [size, size], className: ''
         });
     }
@@ -378,13 +366,14 @@
             L.DomEvent.stopPropagation(e);
             selectedUnit = unit;
             marker.bindPopup(`
-                <h3>${unit.name}</h3>
-                <p>Сторона: <b>${unit.side === 'friendly' ? 'ЗСУ' : 'Ворог'}</b></p>
-                <p>Сила: <b>${Math.round(unit.strength)}</b> · Орг: <b>${Math.round(unit.org)}%</b></p>
-                <p>${unit.entrenched ? '🛡️ В окопах' : 'Готовий до руху'}</p>
+                <h3>🛡️ ${unit.name}</h3>
+                <p>Тип: <b>${unit.type}</b></p>
+                <p>⚔️ Атака: <b>${unit.attack}</b> | 🛡️ Захист: <b>${unit.defense}</b></p>
+                <p>Живучість: <b>${Math.round(unit.strength)}</b> · Мораль: <b>${Math.round(unit.org)}%</b></p>
+                <p>${unit.entrenched ? '🛡️ В окопах (Бонус захисту)' : 'Готовий до маневру'}</p>
                 ${unit.side === 'friendly' ? `
                     <button class="pbtn pbtn-entrench" onclick="toggleEntrench('${unit.id}')">
-                        ${unit.entrenched ? 'Вийти з окопів' : '🛡️ Окопатися'}
+                        ${unit.entrenched ? 'Зняти з укріплень' : '🛡️ Окопатися / Закріпитись'}
                     </button>
                 ` : ''}
             `).openPopup();
@@ -394,14 +383,14 @@
             const pos = e.target.getLatLng();
             const target = findNearestCity(pos.lat, pos.lng);
 
-            const cost = unit.entrenched ? 12 : 5;
-            if (unit.org < cost + 8) {
-                alert('Організація занадто низька');
+            const cost = unit.entrenched ? 10 : 4;
+            if (unit.org < cost + 5) {
+                alert('Низька мораль/організація підрозділу для перекидання!');
                 marker.setLatLng([unit.lat, unit.lng]);
                 return;
             }
 
-            unit.org = Math.max(12, unit.org - cost);
+            unit.org = Math.max(10, unit.org - cost);
             unit.entrenched = false;
             unit.lat = target.lat;
             unit.lng = target.lng;
@@ -412,8 +401,7 @@
             if (target) {
                 const desired = unit.side === 'friendly' ? 'green' : 'red';
                 if (target.status !== desired) {
-                    if (target.status !== 'grey') setCityStatus(target.id, 'grey');
-                    else setCityStatus(target.id, desired);
+                    setCityStatus(target.id, target.status !== 'grey' ? 'grey' : desired);
                 }
             }
             updatePower();
@@ -430,53 +418,46 @@
         u.marker.setIcon(makeIcon(u.color, u.strength, u.entrenched));
         if (u.entrenched && u.currentCity && u.side === 'friendly') {
             setCityStatus(u.currentCity, 'green');
-            u.org = Math.min(100, u.org + 5);
+            u.org = Math.min(100, u.org + 8);
         }
         u.marker.closePopup();
         updatePower();
     };
 
+    // НОВА СИСТЕМА БОЮ З УРАХУВАННЯМ АТАКИ ТА ЗАХИСТУ
     window.attackCity = function(cityId) {
         if (!selectedUnit || selectedUnit.side !== 'friendly') {
-            alert('Спочатку вибери свій підрозділ');
+            alert('Оберіть свій бойовий підрозділ!');
             return;
         }
         const city = cityLayers[cityId];
         if (!city || city.status === 'green') return;
 
         const dist = map.distance([selectedUnit.lat, selectedUnit.lng], [city.lat, city.lng]) / 1000;
-        if (dist > 22) {
-            alert('Місто занадто далеко');
+        if (dist > 25) {
+            alert('Ціль занадто далеко для удару.');
             return;
         }
 
-        let power = selectedUnit.strength * (selectedUnit.org / 100);
-        if (selectedUnit.entrenched) power *= 0.85;
-
-        let support = 0;
-        units.forEach(u => {
-            if (u.side === 'friendly' && u.id !== selectedUnit.id) {
-                if (map.distance([selectedUnit.lat, selectedUnit.lng], [u.lat, u.lng]) / 1000 < 18) support++;
-            }
-        });
-        if (support) power *= 1.15;
-
-        power /= difficulty;
+        // Формула розрахунку бойової сили
+        let combatPower = (selectedUnit.attack * 1.2 + selectedUnit.strength * 0.5) * (selectedUnit.org / 100);
+        if (selectedUnit.entrenched) combatPower *= 1.1;
+        combatPower /= difficulty;
 
         const roll = Math.random();
-        if (roll < 0.45 + (power / 180)) {
+        if (roll < 0.50 + (combatPower / 200)) {
             setCityStatus(cityId, 'green');
-            selectedUnit.org = Math.min(100, selectedUnit.org + 4);
-            alert(`✅ ${city.name} захоплено!`);
-        } else if (roll < 0.75) {
+            selectedUnit.org = Math.min(100, selectedUnit.org + 6);
+            alert(`✅ Успіх! ${selectedUnit.name} звільнив місто ${city.name}!`);
+        } else if (roll < 0.78) {
             setCityStatus(cityId, 'grey');
-            selectedUnit.strength = Math.max(15, selectedUnit.strength - 6);
-            selectedUnit.org = Math.max(25, selectedUnit.org - 8);
-            alert(`Сіра зона в ${city.name}. Є втрати.`);
+            selectedUnit.strength = Math.max(20, selectedUnit.strength - 7);
+            selectedUnit.org = Math.max(25, selectedUnit.org - 10);
+            alert(`⚠️ Запеклі бої за ${city.name}. Ворог відкинутий у сіру зону, є втрати.`);
         } else {
-            selectedUnit.strength = Math.max(12, selectedUnit.strength - 10);
-            selectedUnit.org = Math.max(20, selectedUnit.org - 12);
-            alert(`Штурм відбито. Втрати значні.`);
+            selectedUnit.strength = Math.max(15, selectedUnit.strength - 14);
+            selectedUnit.org = Math.max(20, selectedUnit.org - 15);
+            alert(`❌ Штурм ${city.name} захлинувся. Ворог утримав позиції, підрозділ понесе втрати.`);
         }
         selectedUnit.marker.setIcon(makeIcon(selectedUnit.color, selectedUnit.strength, selectedUnit.entrenched));
         updatePower();
@@ -485,22 +466,22 @@
     function setMode(m) {
         mode = m;
         document.getElementById('btnMove').classList.toggle('active', m === 'move');
-        document.getElementById('btnAttack').classList.toggle('active', m === 'attack');
     }
     setMode('move');
 
     function endTurn() {
         units.forEach(u => {
-            if (u.side === 'friendly') u.org = Math.min(100, u.org + 4);
+            if (u.side === 'friendly') u.org = Math.min(100, u.org + 6);
         });
+        // Штучний інтелект ворога тисне на прифронтові міста
         units.filter(u => u.side === 'enemy').forEach(u => {
             const near = findNearestCity(u.lat, u.lng);
-            if (near && near.status === 'green' && Math.random() < 0.25) {
+            if (near && near.status === 'green' && Math.random() < 0.3) {
                 setCityStatus(near.id, 'grey');
             }
         });
         updatePower();
-        alert('Хід завершено. Організація трохи відновлена.');
+        alert('⏭ Хід завершено. Проведено ротацію, бойовий дух підрозділів частково відновлено.');
     }
 
     function openSettings() { document.getElementById('settingsModal').classList.add('open'); }
@@ -516,14 +497,15 @@
         closeSettings();
     }
 
-    createUnit({ id:'f1', name:"1-й батальйон 'Вовкодав'", side:'friendly', lat:48.70, lng:37.60, strength:90, org:92, color:'#38bdf8' });
-    createUnit({ id:'f2', name:"3-тя ОШБр", side:'friendly', lat:48.50, lng:37.45, strength:96, org:88, color:'#22c55e' });
-    createUnit({ id:'f3', name:"92-га ОМБр", side:'friendly', lat:48.95, lng:37.20, strength:85, org:86, color:'#a78bfa' });
-    createUnit({ id:'f4', name:"РДК", side:'friendly', lat:47.55, lng:36.10, strength:75, org:78, color:'#eab308' });
+    // СТВОРЕННЯ НОВИХ ПІДРОЗДІЛІВ З НОВИМИ СТАТАМИ
+    createUnit({ id:'f1', name:"1-й окремий штурмовий 'Вовкодав'", side:'friendly', type:'Штурмова піхота', lat:48.70, lng:37.60, strength:95, org:90, attack:85, defense:75, color:'#38bdf8' });
+    createUnit({ id:'f2', name:"Бригада спеціального призначення 'Хартія'", side:'friendly', type:'Мобільна гвардія', lat:48.50, lng:37.45, strength:90, org:92, attack:88, defense:80, color:'#22c55e' });
+    createUnit({ id:'f3', name:"92-га ОМБр ім. кошового отамана Сірка", side:'friendly', type:'Механізована', lat:48.95, lng:37.20, strength:100, org:85, attack:82, defense:85, color:'#a78bfa' });
+    createUnit({ id:'f4', name:"Російський Добровольчий Корпус (РДК)", side:'friendly', type:'Добровольчий рейдовий', lat:47.55, lng:36.10, strength:80, org:95, attack:90, defense:65, color:'#eab308' });
 
-    createUnit({ id:'e1', name:"51-а ОМСБр (РФ)", side:'enemy', lat:48.35, lng:37.95, strength:92, org:80, color:'#ef4444' });
-    createUnit({ id:'e2', name:"155-а ОБрМП (РФ)", side:'enemy', lat:47.40, lng:36.60, strength:78, org:72, color:'#f97316' });
-    createUnit({ id:'e3', name:"76-а ДШД (РФ)", side:'enemy', lat:48.85, lng:38.20, strength:86, org:76, color:'#dc2626' });
+    createUnit({ id:'e1', name:"76-а десантно-штурмова дивізія РФ", side:'enemy', type:'Елітне ДШВ', lat:48.35, lng:37.95, strength:98, org:80, attack:86, defense:78, color:'#ef4444' });
+    createUnit({ id:'e2', name:"155-та бригада морської піхоти РФ", side:'enemy', type:'Морська піхота', lat:47.40, lng:36.60, strength:88, org:72, attack:80, defense:70, color:'#f97316' });
+    createUnit({ id:'e3', name:"Гвардійська танкова армія РФ", side:'enemy', type:'Бронетанковий кулак', lat:48.85, lng:38.20, strength:110, org:75, attack:92, defense:88, color:'#dc2626' });
 
     function updatePower() {
         let f = 0, e = 0, g = 0;
