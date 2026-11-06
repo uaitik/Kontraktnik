@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Carlan Division — Fixed Frontline & Liberation System</title>
+    <title>Carlan Division — Fixed Frontline & Brush Engine</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
@@ -17,7 +17,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
         body, html { width: 100%; height: 100%; overflow: hidden; background: #020617; color: var(--text); }
 
-        /* SVG Frontline & Attack Dash Animations */
+        /* SVG Frontline & Targeting Dash Animations */
         @keyframes dash { to { stroke-dashoffset: -40px; } }
         @keyframes attackVector { to { stroke-dashoffset: -30px; } }
 
@@ -182,19 +182,19 @@
     const units = [];
     let currentRedPolygon = null;
 
-    // ЩІЛЬНИЙ НАБІР ОПОРНИХ ТОЧОК 2024 РОКУ ДЛЯ ПОВНОГО ПОКРИТТЯ ОКУПОВАНИХ ТЕРИТОРІЙ
+    // ЩІЛЬНИЙ НАБІР ОПОРНИХ ТОЧОК 2024 РОКУ
     const initialOccupiedNodes = [
-        // Крим (Повне покриття півострова)
+        // Крим
         [44.50, 33.50], [44.95, 34.10], [45.30, 33.04], [45.35, 35.75], [45.70, 34.40], [46.10, 33.60],
-        // Лівобережжя Херсонщини
+        // Херсонщина
         [46.40, 32.50], [46.55, 32.90], [46.70, 33.30], [46.85, 33.80], [46.95, 34.30],
-        // Запорізький фронт та Приазов'я (Мелітополь, Бердянськ, Токмак, Пологи, Василівка)
+        // Запоріжжя та Приазов'я
         [46.75, 35.00], [46.85, 35.37], [46.75, 36.78], [47.15, 35.30], [47.25, 35.80], [47.35, 36.30], [47.45, 35.90],
-        // Волноваха / Маріуполь / Донецьк / Мар'їнка / Авдіївка
+        // Донеччина
         [47.10, 37.55], [47.40, 37.40], [47.65, 37.30], [47.85, 37.40], [48.01, 37.80], [48.15, 37.75],
-        // Горлівка / Бахмут / Торецьк / Покровський напрямок
+        // Бахмут / Покровськ
         [48.30, 38.00], [48.55, 38.00], [48.65, 37.90], [48.80, 38.05],
-        // Луганщина (Лисичанськ, Сєвєродонецьк, Луганськ, Алчевськ, Сватове, Кремінна, Старобільськ)
+        // Луганщина
         [48.57, 39.31], [48.85, 38.25], [49.10, 38.30], [49.40, 38.15], [49.50, 38.90], [49.80, 38.00], [49.80, 39.60]
     ];
 
@@ -206,7 +206,6 @@
     L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18, opacity: 0.65 }).addTo(map);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // Завантаження базової карти України (Синя зона)
     fetch('https://raw.githubusercontent.com/slawomirmatuszak/ukrainian_geodata/master/regiony.geojson')
         .then(r => r.json())
         .then(data => {
@@ -216,7 +215,6 @@
             initOccupiedTerritory();
         });
 
-    // ПЕРВИННА ІНІЦІАЛІЗАЦІЯ СУЦІЛЬНОЇ ЧЕРВОНОЇ ЗОНИ
     function initOccupiedTerritory() {
         const pts = initialOccupiedNodes.map(p => turf.point([p[1], p[0]]));
         const bufs = pts.map(p => turf.buffer(p, 34, { units: 'kilometers' }));
@@ -240,7 +238,42 @@
         if (el.children.length > 25) el.lastChild.remove();
     }
 
-    // ===== BRUSH & TOUCH DRAWING ENGINE =====
+    // НАДІЙНА ФУНКЦІЯ ВИТИСКАННЯ ТЕРИТОРІЇ (SUBTRACTION HELPER)
+    function liberateArea(polyToLiberate) {
+        if (!currentRedPolygon || !polyToLiberate) return false;
+        try {
+            const diff = turf.difference(turf.featureCollection([currentRedPolygon, polyToLiberate]));
+            if (diff) {
+                currentRedPolygon = diff;
+                recalcFrontline();
+                return true;
+            }
+        } catch(err) {
+            console.warn("Помилка віднімання території:", err);
+        }
+        return false;
+    }
+
+    // СТВОРЕННЯ БЕЗПЕЧНОГО ПОЛІГОНУ З БУДЬ-ЯКОГО МАЗКА ПЕНЗЛЯ (УСУВАЄ ПОМИЛКИ САМОПЕРЕТИНІВ)
+    function getDrawnBrushPolygon() {
+        if (zonePoints.length < 1) return null;
+        if (zonePoints.length === 1) {
+            return turf.buffer(turf.point(zonePoints[0]), 10, { units: 'kilometers' });
+        }
+        try {
+            const line = turf.lineString(zonePoints);
+            return turf.buffer(line, 12, { units: 'kilometers' });
+        } catch(e) {
+            const ptBufs = zonePoints.map(pt => turf.buffer(turf.point(pt), 10, { units: 'kilometers' }));
+            let united = ptBufs[0];
+            for (let i = 1; i < ptBufs.length; i++) {
+                try { united = turf.union(turf.featureCollection([united, ptBufs[i]])); } catch(err){}
+            }
+            return united;
+        }
+    }
+
+    // ===== BRUSH & TOUCH ENGINE =====
     function toggleBrush() {
         brushOn = !brushOn;
         const btn = document.getElementById('brushBtn');
@@ -248,14 +281,14 @@
 
         if (brushOn) {
             btn.classList.add('active');
-            banner.textContent = '🖌️ Обведіть пензлем точну зону для визволення';
+            banner.textContent = '🖌️ Обведіть пензлем точну зону наступу (затисніть мишку)';
             banner.classList.add('show');
             disableMapControls();
             clearZone();
         } else {
             btn.classList.remove('active');
             enableMapControls();
-            if (zonePoints.length >= 3) {
+            if (zonePoints.length >= 1) {
                 updateAttackControls();
             } else {
                 banner.classList.remove('show');
@@ -293,7 +326,7 @@
     function handleEnd() {
         if (brushOn && isDrawing) {
             isDrawing = false;
-            if (zonePoints.length >= 3) {
+            if (zonePoints.length >= 1) {
                 updateAttackControls();
             }
         }
@@ -323,54 +356,42 @@
 
     function addZonePoint(ll) {
         zonePoints.push([ll.lng, ll.lat]);
-        if (zonePoints.length < 3) return;
         if (zoneLayer) map.removeLayer(zoneLayer);
-        try {
-            const poly = turf.polygon([[...zonePoints, zonePoints[0]]]);
-            const buf = turf.buffer(poly, 1, { units: 'kilometers' });
-            zoneLayer = L.geoJSON(buf, { style: { className: 'target-zone' } }).addTo(map);
-        } catch(e) {}
+        const poly = getDrawnBrushPolygon();
+        if (poly) {
+            zoneLayer = L.geoJSON(poly, { style: { className: 'target-zone' } }).addTo(map);
+        }
     }
 
     function updateAttackControls() {
         const attackBtn = document.getElementById('attackBtn');
         const banner = document.getElementById('banner');
         attackBtn.style.display = 'inline-block';
-        banner.textContent = `🎯 Зону наступу виділено. Клікніть по підрозділах ЗСУ (${selectedUnits.length} обрано) та тисніть «Наступати»!`;
+        banner.textContent = `🎯 Зону малюнка зафіксовано. Оберіть підрозділи ЗСУ (${selectedUnits.length} обрано) та тисніть «Наступати»!`;
         banner.classList.add('show');
     }
 
-    // ===== PRECISE LIBERATION ATTACK LOGIC (ТОЧНЕ ВИТИСКАННЯ ЗОНИ) =====
+    // ===== НАСТУП НА НАМАЛЬОВАНУ ЗОНУ =====
     function orderAttack() {
-        if (zonePoints.length < 3) return alert('Спочатку обведіть точну зону пензлем!');
-        if (selectedUnits.length === 0) return alert('Оберіть принаймні один підрозділ ЗСУ для наступу!');
+        if (zonePoints.length < 1) return alert('Спочатку намалюйте зону пензлем!');
+        if (selectedUnits.length === 0) return alert('Оберіть хоча б один підрозділ ЗСУ для наступу!');
 
-        let drawnPoly = null;
-        try {
-            drawnPoly = turf.polygon([[...zonePoints, zonePoints[0]]]);
-            drawnPoly = turf.buffer(drawnPoly, 0.5, { units: 'kilometers' });
-        } catch(e) {
-            return alert('Помилка контуру наступу. Намалюйте зону ще раз.');
-        }
+        const brushPoly = getDrawnBrushPolygon();
+        if (!brushPoly) return alert('Помилка малюнка. Намалюйте зону ще раз.');
 
-        const center = turf.center(drawnPoly);
+        const center = turf.center(brushPoly);
         const tLat = center.geometry.coordinates[1];
         const tLng = center.geometry.coordinates[0];
 
         log(`⚔️ Наступ підрозділів ЗСУ на виділений сектор!`, 'success');
 
-        // ТОЧНЕ ГЕОМЕТРИЧНЕ ВИТИСКАННЯ: Віднімаємо намальовану зону від Червоної окупаційної форми
-        try {
-            const diff = turf.difference(turf.featureCollection([currentRedPolygon, drawnPoly]));
-            if (diff) {
-                currentRedPolygon = diff;
-                log(`🚀 Намальовану територію успішно визволено та зафарбовано синім!`, 'success');
-            }
-        } catch(err) {
-            console.error("Помилка перерахунку полігону:", err);
+        // 1. ВИЗВОЛЕННЯ НАМАЛЬОВАНОЇ ЗОНИ
+        const success = liberateArea(brushPoly);
+        if (success) {
+            log(`🚀 Намальований сектор успішно визволено!`, 'success');
         }
 
-        // Анімація руху військ до цілі
+        // 2. РУХ ВІЙСЬК ТА АВТОМАТИЧНЕ ВИЗВОЛЕННЯ НАВКОЛО НИХ
         selectedUnits.forEach(unit => {
             if (unit.hasActed) return;
 
@@ -382,12 +403,15 @@
                 unit.lng = tLng + (Math.random() - 0.5) * 0.03;
                 unit.hasActed = true;
                 unit.entrenched = false;
+                
+                // Визволення радіусу навколо нової позиції
+                const capBuf = turf.buffer(turf.point([unit.lng, unit.lat]), 18, { units: 'kilometers' });
+                liberateArea(capBuf);
+
                 updateIcon(unit);
                 combat(unit);
             });
         });
-
-        recalcFrontline();
 
         // Скидання стану
         selectedUnits.forEach(u => {
@@ -417,7 +441,7 @@
             style: { color: '#ef4444', weight: 1, fillColor: '#dc2626', fillOpacity: 0.42 }
         }).addTo(map);
 
-        // 2. Сіра Зона Зіткнення (Буфер навколо червоної форми)
+        // 2. Сіра Зона Зіткнення
         try {
             const outerEnvelope = turf.buffer(currentRedPolygon, 12, { units: 'kilometers' });
             const greyZone = turf.difference(turf.featureCollection([outerEnvelope, currentRedPolygon]));
@@ -428,7 +452,7 @@
             }
         } catch(e) {}
 
-        // 3. Пульсуюча Світлодіодна Лінія Фронту
+        // 3. Анімована Біла Лінія Фронту
         frontLayer = L.geoJSON(currentRedPolygon, {
             style: { color: '#ffffff', weight: 3.5, fill: false, className: 'frontline-line' }
         }).addTo(map);
@@ -461,7 +485,7 @@
             L.DomEvent.stopPropagation(e);
             if (brushOn) return;
 
-            if (zonePoints.length >= 3 && unit.side === 'friendly' && !unit.hasActed) {
+            if (zonePoints.length >= 1 && unit.side === 'friendly' && !unit.hasActed) {
                 const idx = selectedUnits.findIndex(u => u.id === unit.id);
                 if (idx > -1) {
                     selectedUnits.splice(idx, 1);
@@ -479,7 +503,7 @@
                 <h3>🛡️ ${unit.name}</h3>
                 <p>Боєздатність: <b>${Math.round(unit.strength)} HP</b></p>
                 ${unit.side === 'friendly' && !unit.hasActed ? `
-                    <button class="pbtn pbtn-move" onclick="startMove('${unit.id}')">📍 Точковий маневр</button>
+                    <button class="pbtn pbtn-move" onclick="startMove('${unit.id}')">📍 Переміститися</button>
                     <button class="pbtn pbtn-entrench" onclick="entrench('${unit.id}')">🛡️ Окопатися</button>
                 ` : ''}
             `).openPopup();
@@ -493,6 +517,7 @@
         updatePower();
     }
 
+    // ТОЧКОВЕ ПЕРЕМІЩЕННЯ ВІЙСЬК З ВИЗВОЛЕННЯМ ТЕРИТОРІЇ НАВКОЛО НОВОЇ ТОЧКИ
     window.startMove = function(id) {
         const unit = units.find(u => u.id === id);
         if (!unit || unit.hasActed) return;
@@ -505,14 +530,23 @@
         const handler = (e) => {
             map.off('click', handler);
             banner.classList.remove('show');
-            const line = L.polyline([[unit.lat, unit.lng], [e.latlng.lat, e.latlng.lng]], { className: 'attack-line' }).addTo(map);
+            const targetLat = e.latlng.lat;
+            const targetLng = e.latlng.lng;
+
+            const line = L.polyline([[unit.lat, unit.lng], [targetLat, targetLng]], { className: 'attack-line' }).addTo(map);
             setTimeout(() => map.removeLayer(line), 1800);
 
-            animateMovement(unit, e.latlng.lat, e.latlng.lng, () => {
-                unit.lat = e.latlng.lat;
-                unit.lng = e.latlng.lng;
+            animateMovement(unit, targetLat, targetLng, () => {
+                unit.lat = targetLat;
+                unit.lng = targetLng;
                 unit.hasActed = true;
                 unit.entrenched = false;
+
+                // ВИЗВОЛЕННЯ ТЕРИТОРІЇ НАВКОЛО ТОЧКИ ПРИХОДУ ВІЙСЬКА
+                const capBuf = turf.buffer(turf.point([targetLng, targetLat]), 20, { units: 'kilometers' });
+                const liberated = liberateArea(capBuf);
+                if (liberation) log(`🚀 ${unit.name} визволив територію в районі переміщення!`, 'success');
+
                 updateIcon(unit);
                 combat(unit);
             });
