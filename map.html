@@ -3,667 +3,586 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carlan Division — Dynamic Tactical Frontline Strategy</title>
+    <title>Carlan Division — Advanced Tactical Frontline System</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
-            --panel-bg: rgba(10, 15, 26, 0.94);
+            --panel-bg: rgba(6, 11, 22, 0.95);
             --accent: #38bdf8;
             --text: #e2e8f0;
-            --heading: #f8fafc;
-            --danger: #ef4444;
             --success: #22c55e;
-            --warning: #f59e0b;
-            --grey-zone: #64748b;
+            --danger: #ef4444;
+            --warning: #fbbf24;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body, html { width: 100%; height: 100%; overflow: hidden; background: #070b14; color: var(--text); }
+        body, html { width: 100%; height: 100%; overflow: hidden; background: #020617; color: var(--text); }
 
-        /* SVG Glow & Frontline Dash Animations */
-        @keyframes frontlineDash {
-            to { stroke-dashoffset: -40px; }
-        }
+        /* SVG Frontline & Attack Dash Animations */
+        @keyframes dash { to { stroke-dashoffset: -40px; } }
+        @keyframes attackVector { to { stroke-dashoffset: -30px; } }
 
-        .leaflet-interactive.frontline-stroke {
-            stroke: #ef4444 !important;
+        .frontline-line {
+            stroke: #ffffff !important;
             stroke-width: 3.5px !important;
-            stroke-dasharray: 10px 6px !important;
-            animation: frontlineDash 2.5s linear infinite;
-            filter: drop-shadow(0px 0px 8px rgba(239, 68, 68, 0.95));
+            stroke-dasharray: 8 6 !important;
+            animation: dash 1.6s linear infinite;
+            filter: drop-shadow(0 0 8px #38bdf8) drop-shadow(0 0 3px #ffffff);
+        }
+        .greyzone-line {
+            stroke: #38bdf8 !important;
+            stroke-width: 2px !important;
+            stroke-dasharray: 6 4 !important;
+            filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.6));
+        }
+        .attack-line {
+            stroke: #fbbf24 !important;
+            stroke-width: 3px !important;
+            stroke-dasharray: 6 4 !important;
+            animation: attackVector 0.8s linear infinite;
+            filter: drop-shadow(0 0 8px #fbbf24);
+        }
+        .target-zone {
+            stroke: #38bdf8 !important;
+            stroke-width: 2.5px !important;
+            stroke-dasharray: 5 4 !important;
+            fill: #38bdf8 !important;
+            fill-opacity: 0.28 !important;
+            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.5));
         }
 
-        .leaflet-interactive.greyzone-stroke {
-            stroke: #94a3b8 !important;
-            stroke-width: 1.8px !important;
-            stroke-dasharray: 6px 4px !important;
-            filter: drop-shadow(0px 0px 4px rgba(148, 163, 184, 0.4));
+        /* Tactical Badges for Units */
+        .unit-badge {
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 800; font-size: 11px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.85);
+            transition: all 0.2s ease;
+        }
+        .unit-badge.selected {
+            border: 3px solid #fbbf24 !important;
+            box-shadow: 0 0 18px #fbbf24, 0 0 8px #ffffff !important;
+            transform: scale(1.25);
+            z-index: 9999 !important;
         }
 
-        /* Overlay Interface */
-        .menu-overlay {
-            position: fixed; inset: 0; background: rgba(7, 11, 20, 0.96); backdrop-filter: blur(16px);
-            z-index: 6000; display: flex; align-items: center; justify-content: center;
-        }
-        .menu-card {
-            background: #0f172a; border: 1px solid rgba(56,189,248,0.3);
-            border-radius: 16px; padding: 35px; width: 440px; text-align: center;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.9);
-        }
-        .menu-card h1 { color: var(--heading); font-size: 1.7rem; margin-bottom: 8px; letter-spacing: 0.5px; }
-        .menu-card p { color: #94a3b8; font-size: 0.88rem; margin-bottom: 24px; }
-        .menu-btn {
-            display: block; width: 100%; padding: 12px; margin-bottom: 12px;
-            border-radius: 8px; font-weight: 700; font-size: 0.95rem; cursor: pointer;
-            border: 1px solid; transition: 0.2s;
-        }
-        .menu-btn-solo { background: rgba(56,189,248,0.15); color: #38bdf8; border-color: rgba(56,189,248,0.4); }
-        .menu-btn-solo:hover { background: #38bdf8; color: #000; }
-        .menu-btn-coop { background: rgba(34,197,94,0.15); color: #4ade80; border-color: rgba(34,197,94,0.4); }
-        .menu-btn-coop:hover { background: #22c55e; color: #000; }
-
-        /* Top Bar & Metrics */
+        /* Top HUD Bar */
         .topbar {
-            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 56px;
             background: var(--panel-bg); backdrop-filter: blur(14px);
-            border-bottom: 1px solid rgba(56,189,248,0.25);
+            border-bottom: 1px solid rgba(56,189,248,0.3);
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 16px; z-index: 2000; gap: 10px;
+            padding: 0 14px; z-index: 2000; gap: 8px;
         }
-        .brand { font-weight: 800; font-size: 1rem; color: var(--heading); display: flex; align-items: center; gap: 8px; }
-        .stats { display: flex; gap: 8px; flex-wrap: wrap; }
+        .brand { font-weight: 800; font-size: 0.95rem; letter-spacing: 0.5px; }
+        .stats { display: flex; gap: 8px; }
         .stat {
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            padding: 5px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+            padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 600;
         }
         .stat span { color: var(--accent); }
-        .controls { display: flex; gap: 6px; flex-wrap: wrap; }
+        .controls { display: flex; gap: 6px; }
         .btn {
-            padding: 6px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 700;
-            border: 1px solid; cursor: pointer; transition: 0.15s; background: transparent; color: var(--text);
+            padding: 5px 12px; border-radius: 6px; font-size: 0.76rem; font-weight: 700;
+            border: 1px solid; cursor: pointer; background: transparent; color: var(--text);
+            transition: all 0.15s ease;
         }
         .btn:hover { filter: brightness(1.2); }
         .btn-blue { border-color: #38bdf8; color: #38bdf8; }
         .btn-green { border-color: #22c55e; color: #22c55e; }
         .btn-green:hover { background: #22c55e; color: #000; }
         .btn-red { border-color: #ef4444; color: #f87171; }
-        .btn-yellow { border-color: #f59e0b; color: #f59e0b; }
-        .btn-yellow:hover { background: #f59e0b; color: #000; }
+        .btn-brush.active { background: #38bdf8; color: #000; border-color: #38bdf8; box-shadow: 0 0 12px #38bdf8; }
 
-        #map { width: 100vw; height: 100vh; background: #070b14; }
+        #map { width: 100vw; height: 100vh; background: #020617; }
 
-        /* Map Popups */
         .leaflet-popup-content-wrapper {
-            background: #0f172a !important; color: #f1f5f9 !important;
+            background: #091124 !important; color: #f1f5f9 !important;
             border: 1px solid rgba(56,189,248,0.4); border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.85);
         }
-        .leaflet-popup-content h3 { color: #38bdf8; margin-bottom: 6px; font-size: 1rem; }
-        .leaflet-popup-content p { margin: 4px 0; font-size: 0.84rem; }
+        .leaflet-popup-content h3 { color: #38bdf8; margin-bottom: 4px; font-size: 0.95rem; }
+        .leaflet-popup-content p { margin: 2px 0; font-size: 0.82rem; }
         .pbtn {
-            display: block; width: 100%; margin-top: 6px; padding: 7px;
+            display: block; width: 100%; margin-top: 6px; padding: 6px;
             border: none; border-radius: 5px; font-weight: 700; cursor: pointer; color: #fff; font-size: 0.8rem;
-            transition: 0.15s;
         }
-        .pbtn:hover { filter: brightness(1.15); }
         .pbtn-move { background: #0ea5e9; }
         .pbtn-entrench { background: #22c55e; color: #000; }
 
-        /* HUD Panels */
         .legend {
-            position: fixed; bottom: 16px; left: 16px; z-index: 1000;
-            background: var(--panel-bg); padding: 12px 16px; border-radius: 10px;
-            border: 1px solid rgba(56,189,248,0.25); font-size: 0.8rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            position: fixed; bottom: 14px; left: 14px; z-index: 1000;
+            background: var(--panel-bg); padding: 10px 14px; border-radius: 8px;
+            border: 1px solid rgba(56,189,248,0.25); font-size: 0.75rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.7);
         }
-        .legend div { display: flex; align-items: center; gap: 10px; margin: 5px 0; }
-        .legend-color { width: 16px; height: 12px; border-radius: 3px; }
+        .legend div { display: flex; align-items: center; gap: 8px; margin: 3px 0; }
+        .legend-color { width: 14px; height: 10px; border-radius: 2px; }
 
-        .battle-log {
-            position: fixed; bottom: 16px; right: 16px; width: 340px; max-height: 200px;
-            background: var(--panel-bg); border: 1px solid rgba(56,189,248,0.3);
-            border-radius: 10px; padding: 12px; z-index: 3000; overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8); font-size: 0.78rem;
-            display: flex; flex-direction: column; gap: 6px;
+        .banner {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(9,17,36,0.96); border: 1px solid #38bdf8; color: #38bdf8;
+            padding: 9px 18px; border-radius: 8px; font-weight: 700; font-size: 0.84rem;
+            z-index: 2500; display: none; box-shadow: 0 5px 20px rgba(0,0,0,0.8);
         }
-        .battle-log-title { font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; }
-        .log-item { padding: 5px 8px; background: rgba(255,255,255,0.04); border-radius: 4px; border-left: 3px solid var(--accent); }
-        .log-item.danger { border-left-color: var(--danger); color: #fca5a5; }
+        .banner.show { display: block; }
+
+        .log {
+            position: fixed; bottom: 14px; right: 14px; width: 290px; max-height: 170px;
+            background: var(--panel-bg); border: 1px solid rgba(56,189,248,0.25);
+            border-radius: 8px; padding: 10px; z-index: 1000; overflow-y: auto; font-size: 0.74rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+        }
+        .log-title { font-weight: 700; color: #38bdf8; margin-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 3px; }
+        .log-item { padding: 4px 6px; margin-bottom: 3px; background: rgba(255,255,255,0.04); border-radius: 4px; border-left: 3px solid var(--accent); }
         .log-item.success { border-left-color: var(--success); color: #86efac; }
-
-        .action-banner {
-            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-            background: rgba(15, 23, 42, 0.95); border: 1px solid #38bdf8; color: #38bdf8;
-            padding: 10px 20px; border-radius: 8px; font-weight: 700; font-size: 0.88rem;
-            z-index: 2500; display: none; box-shadow: 0 5px 25px rgba(0,0,0,0.7);
-        }
-        .action-banner.show { display: block; }
-
-        /* Modal Screens */
-        .modal-bg {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.82);
-            z-index: 4000; align-items: center; justify-content: center;
-        }
-        .modal-bg.open { display: flex; }
-        .modal {
-            background: #0f172a; border: 1px solid rgba(56,189,248,0.3);
-            border-radius: 12px; padding: 25px; width: 520px; max-width: 95vw;
-        }
-        .modal h3 { color: var(--accent); margin-bottom: 14px; font-size: 1.15rem; }
-        .prod-card {
-            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
-            padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex;
-            justify-content: space-between; align-items: center;
-        }
-        .prod-info h4 { font-size: 0.92rem; color: #f8fafc; }
-        .prod-info p { font-size: 0.78rem; color: #94a3b8; }
+        .log-item.danger { border-left-color: var(--danger); color: #fca5a5; }
     </style>
 </head>
 <body>
 
-<div id="startMenu" class="menu-overlay">
-    <div class="menu-card">
-        <h1>🛡️ CARLAN DIVISION</h1>
-        <p>Тактичний розрахунок лінії фронту (Turf.js Dynamic Engine)</p>
-        <button class="menu-btn menu-btn-solo" onclick="startGame('solo')">🎮 Одиночна гра (Проти ШІ)</button>
-        <button class="menu-btn menu-btn-coop" onclick="startGame('coop')">👥 Режим Hotseat (2 Гравці)</button>
-    </div>
-</div>
-
-<div class="modal-bg" id="logisticsModal">
-    <div class="modal">
-        <h3>🏭 Виробництво та Резерви</h3>
-        <p style="font-size: 0.82rem; color: #94a3b8; margin-bottom: 12px;">Формуйте нові підрозділи та розгортайте їх на лінії фронту.</p>
-        
-        <div style="font-weight: bold; font-size: 0.85rem; color: #38bdf8; margin: 10px 0 6px;">📦 Доступно на складі:</div>
-        <div id="warehouseList" style="max-height: 130px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #334155; padding: 6px; border-radius: 6px;"></div>
-
-        <div style="font-weight: bold; font-size: 0.85rem; color: #f59e0b; margin: 10px 0 6px;">⚙️ Виробничі потужності:</div>
-        <div class="prod-card">
-            <div class="prod-info">
-                <h4>Механізований батальйон</h4>
-                <p>Вартість: 220 🪙 | Сила: 90 HP</p>
-            </div>
-            <button class="btn btn-green" onclick="produceItem('battalion')">Замовити</button>
-        </div>
-        <div class="prod-card">
-            <div class="prod-info">
-                <h4>Артилерійська бригада</h4>
-                <p>Вартість: 180 🪙 | Сила: 70 HP</p>
-            </div>
-            <button class="btn btn-green" onclick="produceItem('artillery')">Замовити</button>
-        </div>
-
-        <div style="margin-top: 15px; display: flex; justify-content: flex-end;">
-            <button class="btn btn-blue" onclick="closeLogisticsModal()">Закрити</button>
-        </div>
-    </div>
-</div>
-
-<div class="action-banner" id="actionBanner">Оберіть точку на мапі для здійснення маневру...</div>
-
-<div class="battle-log" id="battleLog">
-    <div class="battle-log-title">📋 Оперативне зведення</div>
-    <div id="logContent">
-        <div class="log-item success">Динамічна лінія фронту ініціалізована.</div>
-    </div>
-</div>
-
 <header class="topbar">
-    <div class="brand">🛡️ CARLAN DIVISION <span id="turnIndicator" style="font-size:0.78rem; color:#4ade80; margin-left:10px;"></span></div>
-
+    <div class="brand">🛡️ CARLAN DIVISION</div>
     <div class="stats">
-        <div class="stat">Ресурс: <span id="playerRes">500</span> 🪙</div>
         <div class="stat">ЗСУ Power: <span id="friendlyPower">0</span></div>
         <div class="stat">Ворог Power: <span id="enemyPower">0</span></div>
         <div class="stat">Час: <span id="gameTime">00:00</span></div>
     </div>
-
     <div class="controls">
-        <button class="btn btn-yellow" onclick="openLogisticsModal()">🏭 Склад / Заводи</button>
+        <button class="btn btn-blue btn-brush" id="brushBtn" onclick="toggleBrush()">🖌️ Пензель наступу</button>
+        <button class="btn btn-green" id="attackBtn" onclick="orderAttack()" style="display:none;">⚔️ Наступати на зону</button>
         <button class="btn btn-green" onclick="endTurn()">⏭ Наступний хід</button>
-        <button class="btn btn-red" onclick="location.reload()">Перезапуск</button>
+        <button class="btn btn-red" onclick="location.reload()">Рестарт</button>
     </div>
 </header>
 
 <div id="map"></div>
 
 <div class="legend">
-    <div><div class="legend-color" style="background:rgba(220, 38, 38, 0.55); border:1px solid #ef4444;"></div> Окупована зона (Червона)</div>
-    <div><div class="legend-color" style="background:rgba(100, 116, 139, 0.55); border:1px solid #94a3b8;"></div> Сіра зона (Лінія зіткнення)</div>
-    <div><div class="legend-color" style="background:rgba(2, 132, 199, 0.25); border:1px solid #38bdf8;"></div> Контроль ЗСУ (Синя зона)</div>
-    <div id="modeDisplay" style="margin-top:6px; font-size:0.75rem; color:#38bdf8; font-weight:bold;"></div>
+    <div><div class="legend-color" style="background:rgba(2, 132, 199, 0.5); border:1px solid #38bdf8;"></div> Синя зона (ЗСУ)</div>
+    <div><div class="legend-color" style="background:rgba(14, 116, 144, 0.6); border:1px solid #38bdf8;"></div> Сіра зона (Контакт)</div>
+    <div><div class="legend-color" style="background:rgba(220, 38, 38, 0.5); border:1px solid #ef4444;"></div> Окупаційна зона (Червона)</div>
 </div>
 
-<!-- Dependencies -->
+<div class="banner" id="banner"></div>
+
+<div class="log">
+    <div class="log-title">📋 Оперативна зводка</div>
+    <div id="logContent"></div>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
-
 <script>
-    let gameMode = 'solo';
-    let currentTurnSide = 'friendly';
-    let activeCommand = null;
-    let playerResources = 500;
-    
+    // ===== STATE =====
+    let brushOn = false;
+    let mouseDown = false;
+    let zonePoints = [];
+    let zoneLayer = null;
+    let selectedUnits = [];
     const units = [];
-    let warehouse = [
-        { type: 'battalion', name: 'Резервний механізований батальйон', strength: 90 },
-        { type: 'artillery', name: '155-мм Артилерійський дивізіон', strength: 75 }
-    ];
 
-    // Static Occupied Strategic Anchor Points (Chernobyl / Ivankov / Hostomel Sector)
+    // ЩІЛЬНИЙ ЗВ'ЯЗАНИЙ ЛАНЦЮГ КООРДИНАТ ЛІНІЇ ФРОНТУ 2024 (Усуває розриви та "партизанські ячейки")
     let enemyNodes = [
-        [51.27, 30.22], // Chernobyl
-        [51.16, 29.97], // Ivankov
-        [50.78, 30.29], // Dymer
-        [50.55, 30.25], // Hostomel
-        [50.51, 30.21], // Bucha
-        [50.62, 30.05]  // Katyuzhanka
+        // Куп'янсько-Лиманський напрямок
+        [49.80, 37.75], [49.65, 37.85], [49.50, 38.05], [49.35, 38.15], [49.10, 38.20], [48.95, 38.10],
+        // Сiversk / Бахмут / Часів Яр
+        [48.80, 38.05], [48.65, 37.95], [48.55, 37.90], [48.45, 37.90],
+        // Торецьк / Горлівка / Нью-Йорк
+        [48.35, 37.92], [48.25, 37.85],
+        // Покровсько-Авдіївський напрямок
+        [48.18, 37.70], [48.10, 37.60], [48.02, 37.48],
+        // Мар'їнка / Курахове / Вугледар
+        [47.92, 37.40], [47.85, 37.30], [47.78, 37.15], [47.70, 36.85],
+        // Запорізький напрямок (Велика Новосілка / Роботине / Пологи)
+        [47.55, 36.50], [47.45, 36.15], [47.40, 35.85], [47.45, 35.55],
+        // Дніпровський рубіж (Каховка / Лівобережжя Херсонщини)
+        [47.30, 35.15], [47.05, 34.40], [46.85, 33.65], [46.60, 32.75],
+        // Кримський сухопутний коридор та якір півдня
+        [46.10, 33.60], [45.50, 34.20], [44.95, 34.10]
     ];
 
-    // Leaflet Dynamic Spatial Layers
-    let redZoneLayer = null;
-    let greyZoneLayer = null;
-    let frontlineBorderLayer = null;
+    let redLayer = null, greyLayer = null, frontLayer = null;
 
-    function addLog(text, type = 'normal') {
-        const content = document.getElementById('logContent');
-        const item = document.createElement('div');
-        item.className = `log-item ${type}`;
-        item.textContent = `[${document.getElementById('gameTime').textContent}] ${text}`;
-        content.prepend(item);
-        if (content.children.length > 30) content.removeChild(content.lastChild);
-    }
-
-    // Map Setup
-    const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([50.80, 30.20], 8.5);
-    
+    // ===== MAP SETUP =====
+    const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([48.35, 36.20], 7);
     L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18 }).addTo(map);
-    L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18, opacity: 0.75 }).addTo(map);
+    L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18, opacity: 0.65 }).addTo(map);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    function startGame(mode) {
-        gameMode = mode;
-        document.getElementById('startMenu').style.display = 'none';
-        document.getElementById('modeDisplay').textContent = mode === 'solo' ? 'Режим: Кампанія проти ШІ' : 'Режим: Hotseat (2 Гравці)';
-        if (mode === 'coop') updateTurnIndicator();
-        setTimeout(() => { map.invalidateSize(); recalcFrontline(); }, 200);
-        addLog(`Операцію розпочато. Лінію фронту розраховано за алгоритмом Turf.js.`, 'success');
-    }
-
-    // ===================================================
-    // DYNAMIC FRONTLINE CALCULATION ENGINE (TURF.JS)
-    // ===================================================
-    function recalcFrontline() {
-        if (redZoneLayer) map.removeLayer(redZoneLayer);
-        if (greyZoneLayer) map.removeLayer(greyZoneLayer);
-        if (frontlineBorderLayer) map.removeLayer(frontlineBorderLayer);
-
-        // 1. Gather all hostile control coordinates (Static Nodes + Active Units)
-        const pointFeatures = enemyNodes.map(pt => turf.point([pt[1], pt[0]]));
-        
-        units.filter(u => u.side === 'enemy').forEach(u => {
-            pointFeatures.push(turf.point([u.lng, u.lat]));
+    // Завантаження базових кордонів України (Синя зона)
+    fetch('https://raw.githubusercontent.com/slawomirmatuszak/ukrainian_geodata/master/regiony.geojson')
+        .then(r => r.json())
+        .then(data => {
+            L.geoJSON(data, {
+                style: { color: '#0284c7', weight: 1.2, fillColor: '#0284c7', fillOpacity: 0.28 }
+            }).addTo(map);
+            setTimeout(recalcFrontline, 250);
         });
 
-        if (pointFeatures.length === 0) return;
+    function log(msg, type = 'normal') {
+        const el = document.getElementById('logContent');
+        const div = document.createElement('div');
+        div.className = `log-item ${type}`;
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        div.textContent = `[${time}] ${msg}`;
+        el.prepend(div);
+        if (el.children.length > 25) el.lastChild.remove();
+    }
 
-        // 2. Generate circular operational influence buffers (18 km radius)
-        const buffers = pointFeatures.map(pt => turf.buffer(pt, 18, { units: 'kilometers' }));
+    // ===== BRUSH TOOL & ACCURATE ZONE DRAWING =====
+    function toggleBrush() {
+        brushOn = !brushOn;
+        const btn = document.getElementById('brushBtn');
+        const banner = document.getElementById('banner');
 
-        // 3. Compute spatial union across all occupied buffers
-        let combinedRed = buffers[0];
-        for (let i = 1; i < buffers.length; i++) {
-            try {
-                combinedRed = turf.union(turf.featureCollection([combinedRed, buffers[i]]));
-            } catch(err) {
-                console.warn("Buffer union step skipped:", err);
+        if (brushOn) {
+            btn.classList.add('active');
+            banner.textContent = '🖌️ Обведіть пензлем точну зону наступу (затисніть мишку)';
+            banner.classList.add('show');
+            map.dragging.disable();
+            clearZone();
+        } else {
+            btn.classList.remove('active');
+            map.dragging.enable();
+            if (zonePoints.length >= 3) {
+                updateAttackControls();
+            } else {
+                banner.classList.remove('show');
             }
         }
+    }
 
-        // 4. Apply Chaikin's Corner-Cutting algorithm (3 iterations) for smooth organic lines
-        let smoothedRed = turf.polygonSmooth(combinedRed, { iterations: 3 });
+    function clearZone() {
+        zonePoints = [];
+        if (zoneLayer) { map.removeLayer(zoneLayer); zoneLayer = null; }
+        document.getElementById('attackBtn').style.display = 'none';
+    }
 
-        // 5. Derive the Contested Grey Zone via Spatial Difference
-        let outerGreyEnvelope = turf.buffer(smoothedRed, 7.5, { units: 'kilometers' });
-        let greyZoneGeoJSON = null;
+    map.on('mousedown', e => {
+        if (!brushOn) return;
+        mouseDown = true;
+        addZonePoint(e.latlng);
+    });
+    map.on('mousemove', e => {
+        if (!brushOn || !mouseDown) return;
+        addZonePoint(e.latlng);
+    });
+    map.on('mouseup', () => {
+        if (brushOn && mouseDown) {
+            mouseDown = false;
+            if (zonePoints.length >= 3) {
+                updateAttackControls();
+            }
+        }
+    });
+
+    function addZonePoint(ll) {
+        zonePoints.push([ll.lng, ll.lat]);
+        if (zonePoints.length < 3) return;
+        if (zoneLayer) map.removeLayer(zoneLayer);
         try {
-            greyZoneGeoJSON = turf.difference(turf.featureCollection([outerGreyEnvelope, smoothedRed]));
-        } catch(err) {
-            greyZoneGeoJSON = outerGreyEnvelope;
+            const poly = turf.polygon([[...zonePoints, zonePoints[0]]]);
+            const buf = turf.buffer(poly, 1.5, { units: 'kilometers' });
+            zoneLayer = L.geoJSON(buf, { style: { className: 'target-zone' } }).addTo(map);
+        } catch(e) {}
+    }
+
+    function updateAttackControls() {
+        const attackBtn = document.getElementById('attackBtn');
+        const banner = document.getElementById('banner');
+        attackBtn.style.display = 'inline-block';
+        banner.textContent = `🎯 Зону сформовано. Клікніть по своїх підрозділах (${selectedUnits.length} обрано), потім «Наступати на зону»!`;
+        banner.classList.add('show');
+    }
+
+    // ===== PRECISE ATTACK LOGIC (Виправлено захоплення чужих територій) =====
+    function orderAttack() {
+        if (zonePoints.length < 3) return alert('Спочатку намалюйте зону наступу!');
+        if (selectedUnits.length === 0) return alert('Оберіть принаймні один підрозділ ЗСУ!');
+
+        let drawnPoly = null;
+        try {
+            drawnPoly = turf.polygon([[...zonePoints, zonePoints[0]]]);
+        } catch(e) {
+            return alert('Помилка геометрії зони. Намалюйте контур повторно.');
         }
 
-        let smoothedGrey = turf.polygonSmooth(greyZoneGeoJSON, { iterations: 2 });
+        const center = turf.center(drawnPoly);
+        const tLat = center.geometry.coordinates[1];
+        const tLng = center.geometry.coordinates[0];
 
-        // Render Contested Grey Zone Ring
-        greyZoneLayer = L.geoJSON(smoothedGrey, {
-            style: {
-                color: '#94a3b8',
-                weight: 1.5,
-                fillColor: '#64748b',
-                fillOpacity: 0.48,
-                className: 'greyzone-stroke'
+        log(`⚔️ Розпочато наступ ${selectedUnits.length} підрозділів на виділений сектор!`, 'success');
+
+        selectedUnits.forEach(unit => {
+            if (unit.hasActed) return;
+
+            // Візуалізація анімованої стрілки авіаудару/наступу
+            const line = L.polyline([[unit.lat, unit.lng], [tLat, tLng]], { className: 'attack-line' }).addTo(map);
+            setTimeout(() => map.removeLayer(line), 2200);
+
+            animateMovement(unit, tLat, tLng, () => {
+                unit.lat = tLat + (Math.random() - 0.5) * 0.04;
+                unit.lng = tLng + (Math.random() - 0.5) * 0.04;
+                unit.hasActed = true;
+                unit.entrenched = false;
+                updateIcon(unit);
+
+                // ТОЧНА ПЕРЕВІРКА: Очищуються ЛИШЕ ворожі вузли всередині або поруч із намальованою зоною
+                const initialNodesCount = enemyNodes.length;
+                enemyNodes = enemyNodes.filter(node => {
+                    const pt = turf.point([node[1], node[0]]);
+                    const isInside = turf.booleanPointInPolygon(pt, drawnPoly);
+                    const distToCenter = map.distance([tLat, tLng], node);
+                    return !isInside && distToCenter > 18000;
+                });
+
+                if (enemyNodes.length < initialNodesCount) {
+                    log(`🚀 ${unit.name} звільнив виділений сектор фронту!`, 'success');
+                }
+
+                combat(unit);
+                recalcFrontline();
+            });
+        });
+
+        // Скидання вибору після атак
+        selectedUnits.forEach(u => {
+            if (u.marker && u.marker._icon) {
+                const el = u.marker._icon.querySelector('.unit-badge');
+                if (el) el.classList.remove('selected');
             }
+        });
+        selectedUnits = [];
+        clearZone();
+        document.getElementById('banner').classList.remove('show');
+        brushOn = false;
+        document.getElementById('brushBtn').classList.remove('active');
+        map.dragging.enable();
+    }
+
+    // ===== TURF.JS CONTINUOUS FRONTLINE CALCULATION =====
+    function recalcFrontline() {
+        if (redLayer) map.removeLayer(redLayer);
+        if (greyLayer) map.removeLayer(greyLayer);
+        if (frontLayer) map.removeLayer(frontLayer);
+
+        const pts = enemyNodes.map(p => turf.point([p[1], p[0]]));
+        units.filter(u => u.side === 'enemy').forEach(u => pts.push(turf.point([u.lng, u.lat])));
+        if (pts.length === 0) return;
+
+        // Радіус 28 км створює суцільне перекриття для сусідніх точок ЛБЗ
+        const bufs = pts.map(p => turf.buffer(p, 28, { units: 'kilometers' }));
+        let combined = bufs[0];
+        for (let i = 1; i < bufs.length; i++) {
+            try { 
+                combined = turf.union(turf.featureCollection([combined, bufs[i]])); 
+            } catch(e) {}
+        }
+
+        // Згладжування за алгоритмом Чайкіна (3 ітерації)
+        let smoothRed = turf.polygonSmooth(combined, { iterations: 3 });
+
+        // Формування Сірої Зони Контакту
+        try {
+            const outerEnvelope = turf.buffer(smoothRed, 14, { units: 'kilometers' });
+            const greyZone = turf.difference(turf.featureCollection([outerEnvelope, smoothRed]));
+            if (greyZone) {
+                greyLayer = L.geoJSON(turf.polygonSmooth(greyZone, { iterations: 2 }), {
+                    style: { color: '#38bdf8', weight: 1.8, fillColor: '#0e7490', fillOpacity: 0.52, className: 'greyzone-line' }
+                }).addTo(map);
+            }
+        } catch(e) {}
+
+        // Червона Зона Окупації
+        redLayer = L.geoJSON(smoothRed, {
+            style: { color: '#ef4444', weight: 1, fillColor: '#dc2626', fillOpacity: 0.42 }
         }).addTo(map);
 
-        // Render Occupied Red Zone Core
-        redZoneLayer = L.geoJSON(smoothedRed, {
-            style: {
-                color: 'transparent',
-                fillColor: '#dc2626',
-                fillOpacity: 0.40
-            }
-        }).addTo(map);
-
-        // Render Animated Line of Contact Perimeter
-        frontlineBorderLayer = L.geoJSON(smoothedRed, {
-            style: {
-                color: '#ef4444',
-                weight: 3.5,
-                fill: false,
-                className: 'frontline-stroke'
-            }
+        // Пульсуюча Біло-Блакитна Світлодіодна Лінія Фронту
+        frontLayer = L.geoJSON(smoothRed, {
+            style: { color: '#ffffff', weight: 3.5, fill: false, className: 'frontline-line' }
         }).addTo(map);
     }
 
-    // ===================================================
-    // TACTICAL UNIT MANAGEMENT ENGINE
-    // ===================================================
-    function makeIcon(color, strength, hasActed, entrenched) {
-        const size = 22;
-        const opacity = hasActed ? 0.6 : 1.0;
-        const border = entrenched ? '3px solid #fbbf24' : (hasActed ? '2px dashed #fff' : '2px solid #fff');
+    // ===== UNIT BADGES & INTERACTION =====
+    function makeIcon(strength, side, hasActed, entrenched, isSelected) {
+        const bg = side === 'friendly' ? 'rgba(2, 132, 199, 0.92)' : 'rgba(220, 38, 38, 0.92)';
+        const border = entrenched ? '3px solid #fbbf24' : (side === 'friendly' ? '2px solid #38bdf8' : '2px dashed #ffffff');
+        const opacity = hasActed ? 0.55 : 1;
+        const selectedClass = isSelected ? 'selected' : '';
+        const val = Math.round(strength);
+
         return L.divIcon({
-            html: `<div style="background:${color};width:${size}px;height:${size}px;border-radius:50%;border:${border};box-shadow:0 0 12px ${color}; opacity:${opacity}; display:flex; align-items:center; justify-content:center; font-size:10px; color:#fff; font-weight:bold;">${Math.round(strength)}</div>`,
-            iconSize: [size, size], className: ''
+            html: `<div class="unit-badge ${selectedClass}" style="background:${bg}; border:${border}; opacity:${opacity};">${val}</div>`,
+            iconSize: [32, 32],
+            className: ''
         });
     }
 
-    function updateUnitVisual(unit) {
+    function updateIcon(unit) {
         if (unit.marker) map.removeLayer(unit.marker);
+        const isSelected = selectedUnits.some(u => u.id === unit.id);
 
         unit.marker = L.marker([unit.lat, unit.lng], {
-            icon: makeIcon(unit.color, unit.strength, unit.hasActed, unit.entrenched)
+            icon: makeIcon(unit.strength, unit.side, unit.hasActed, unit.entrenched, isSelected)
         }).addTo(map);
 
-        unit.marker.on('click', (e) => {
+        unit.marker.on('click', e => {
             L.DomEvent.stopPropagation(e);
-            if (gameMode === 'solo' && unit.side === 'enemy') {
-                unit.marker.bindPopup(`<h3>🛡️ ${unit.name}</h3><p>Ворожий підрозділ ШІ.</p>`).openPopup();
-                return;
-            }
-            if (gameMode === 'coop' && unit.side !== currentTurnSide) return;
-            if (unit.hasActed) {
-                unit.marker.bindPopup(`<h3>🛡️ ${unit.name}</h3><p>Підрозділ вже виконав дію в цьому ході.</p>`).openPopup();
+            if (brushOn) return;
+
+            // Вибір підрозділу для наступу на малюнок
+            if (zonePoints.length >= 3 && unit.side === 'friendly' && !unit.hasActed) {
+                const idx = selectedUnits.findIndex(u => u.id === unit.id);
+                if (idx > -1) {
+                    selectedUnits.splice(idx, 1);
+                    log(`Знято вибір з ${unit.name}`);
+                } else {
+                    selectedUnits.push(unit);
+                    log(`Обрано для наступу: ${unit.name}`, 'success');
+                }
+                updateIcon(unit);
+                updateAttackControls();
                 return;
             }
 
             unit.marker.bindPopup(`
                 <h3>🛡️ ${unit.name}</h3>
                 <p>Боєздатність: <b>${Math.round(unit.strength)} HP</b></p>
-                <div style="margin-top:8px;">
-                    <button class="pbtn pbtn-move" onclick="startCommand('${unit.id}', 'move')">📍 Маневр / Атака</button>
-                    <button class="pbtn pbtn-entrench" onclick="executeEntrench('${unit.id}')">🛡️ Зайняти оборону</button>
-                </div>
+                ${unit.side === 'friendly' && !unit.hasActed ? `
+                    <button class="pbtn pbtn-move" onclick="startMove('${unit.id}')">📍 Точковий маневр</button>
+                    <button class="pbtn pbtn-entrench" onclick="entrench('${unit.id}')">🛡️ Окопатися</button>
+                ` : ''}
             `).openPopup();
         });
     }
 
     function createUnit(data) {
-        const unit = { ...data, hasActed: false, entrenched: false, marker: null };
-        updateUnitVisual(unit);
+        const unit = Object.assign({ hasActed: false, entrenched: false, marker: null }, data);
+        updateIcon(unit);
         units.push(unit);
         updatePower();
-        recalcFrontline();
     }
 
-    window.startCommand = function(unitId, type) {
-        const unit = units.find(u => u.id === unitId);
+    window.startMove = function(id) {
+        const unit = units.find(u => u.id === id);
         if (!unit || unit.hasActed) return;
-        activeCommand = { unit, type };
         unit.marker.closePopup();
-
-        const banner = document.getElementById('actionBanner');
-        banner.textContent = `📍 Клікніть на мапу для переміщення: ${unit.name}`;
-        banner.classList.add('show');
-    }
-
-    map.on('click', e => {
-        if (!activeCommand) return;
-        const { unit, type } = activeCommand;
         
-        if (type === 'move') {
-            const targetLat = e.latlng.lat;
-            const targetLng = e.latlng.lng;
-            
-            animateMovement(unit, targetLat, targetLng, () => {
-                unit.lat = targetLat;
-                unit.lng = targetLng;
+        const banner = document.getElementById('banner');
+        banner.textContent = `📍 Клікніть на мапі куди перемістити: ${unit.name}`;
+        banner.classList.add('show');
+
+        const handler = (e) => {
+            map.off('click', handler);
+            banner.classList.remove('show');
+            const line = L.polyline([[unit.lat, unit.lng], [e.latlng.lat, e.latlng.lng]], { className: 'attack-line' }).addTo(map);
+            setTimeout(() => map.removeLayer(line), 1800);
+
+            animateMovement(unit, e.latlng.lat, e.latlng.lng, () => {
+                unit.lat = e.latlng.lat;
+                unit.lng = e.latlng.lng;
                 unit.hasActed = true;
                 unit.entrenched = false;
-                updateUnitVisual(unit);
-
-                checkCombat(unit);
+                updateIcon(unit);
+                combat(unit);
                 recalcFrontline();
-
-                activeCommand = null;
-                document.getElementById('actionBanner').classList.remove('show');
             });
-        }
-    });
+        };
+        map.on('click', handler);
+    };
 
-    function checkCombat(attacker) {
-        units.forEach(defender => {
-            if (attacker.side !== defender.side) {
-                const dist = map.distance([attacker.lat, attacker.lng], [defender.lat, defender.lng]);
-                if (dist < 25000) { // 25 km Engagement Range
-                    const damageToDef = Math.floor(Math.random() * 22) + 18;
-                    const damageToAtk = defender.entrenched ? 10 : (Math.floor(Math.random() * 16) + 10);
-                    
-                    defender.strength -= damageToDef;
-                    attacker.strength -= damageToAtk;
-
-                    addLog(`💥 БІЙ! ${attacker.name} завдав ${damageToDef} HP шкоди ${defender.name}!`, 'danger');
-
-                    if (defender.strength <= 0) {
-                        addLog(`❌ Підрозділ ${defender.name} знищено!`, 'success');
-                        removeUnit(defender);
-                    }
-                    if (attacker.strength <= 0) {
-                        addLog(`❌ Наш підрозділ ${attacker.name} знищено в бою!`, 'danger');
-                        removeUnit(attacker);
-                    } else {
-                        updateUnitVisual(attacker);
-                    }
-                }
-            }
-        });
-    }
-
-    function removeUnit(unit) {
-        if (unit.marker) map.removeLayer(unit.marker);
-        const idx = units.indexOf(unit);
-        if (idx > -1) units.splice(idx, 1);
-        updatePower();
-        recalcFrontline();
-    }
-
-    window.executeEntrench = function(unitId) {
-        const unit = units.find(u => u.id === unitId);
+    window.entrench = function(id) {
+        const unit = units.find(u => u.id === id);
         if (!unit || unit.hasActed) return;
         unit.entrenched = true;
         unit.hasActed = true;
         unit.strength = Math.min(100, unit.strength + 12);
-        updateUnitVisual(unit);
+        updateIcon(unit);
         unit.marker.closePopup();
-        addLog(`🛡️ ${unit.name} займає підготовлені оборонні позиції (+12 HP).`, 'success');
-    }
+        log(`🛡️ ${unit.name} зайняв оборону (+12 HP)`, 'success');
+    };
 
-    function animateMovement(unit, targetLat, targetLng, callback) {
-        const startLat = unit.lat;
-        const startLng = unit.lng;
-        const duration = 1000;
-        const startTime = performance.now();
-
+    function animateMovement(unit, tLat, tLng, cb) {
+        const sLat = unit.lat, sLng = unit.lng;
+        const t0 = performance.now();
         function frame(now) {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const ease = 1 - Math.pow(1 - progress, 3);
-
-            const currLat = startLat + (targetLat - startLat) * ease;
-            const currLng = startLng + (targetLng - startLng) * ease;
-            if (unit.marker) unit.marker.setLatLng([currLat, currLng]);
-
-            if (progress < 1) requestAnimationFrame(frame);
-            else if (callback) callback();
+            const p = Math.min((now - t0) / 1100, 1);
+            const e = 1 - Math.pow(1 - p, 3);
+            if (unit.marker) unit.marker.setLatLng([sLat + (tLat - sLat) * e, sLng + (tLng - sLng) * e]);
+            if (p < 1) requestAnimationFrame(frame);
+            else if (cb) cb();
         }
         requestAnimationFrame(frame);
     }
 
-    // ===================================================
-    // LOGISTICS AND PRODUCTION UI
-    // ===================================================
-    window.openLogisticsModal = function() {
-        updateWarehouseUI();
-        document.getElementById('logisticsModal').classList.add('open');
-    }
-    window.closeLogisticsModal = function() { document.getElementById('logisticsModal').classList.remove('open'); }
-
-    function updateWarehouseUI() {
-        const container = document.getElementById('warehouseList');
-        container.innerHTML = '';
-        if (warehouse.length === 0) {
-            container.innerHTML = '<p style="font-size:0.8rem; color:#64748b; text-align:center;">Склад порожній</p>';
-            return;
-        }
-        warehouse.forEach((item, index) => {
-            container.innerHTML += `
-                <div class="prod-card">
-                    <div><b>${item.name}</b> (Сила: ${item.strength})</div>
-                    <button class="btn btn-blue" onclick="deployFromWarehouse(${index})">Розгорнути</button>
-                </div>
-            `;
-        });
-    }
-
-    window.produceItem = function(type) {
-        const cost = type === 'battalion' ? 220 : 180;
-        if (playerResources < cost) {
-            addLog(`❌ Недостатньо ресурсів! Потрібно ${cost} 🪙`, 'danger');
-            return;
-        }
-        playerResources -= cost;
-        document.getElementById('playerRes').textContent = playerResources;
-
-        if (type === 'battalion') {
-            warehouse.push({ type: 'battalion', name: 'Штурмовий батальйон ЗСУ', strength: 90 });
-        } else {
-            warehouse.push({ type: 'artillery', name: 'Артилерійський дивізіон', strength: 75 });
-        }
-        updateWarehouseUI();
-        addLog(`✅ Озброєння виготовлено та доставлено на склад!`, 'success');
-    }
-
-    window.deployFromWarehouse = function(index) {
-        const item = warehouse[index];
-        const center = map.getCenter();
-        createUnit({
-            id: 'u_' + Date.now(),
-            name: item.name,
-            side: 'friendly',
-            lat: center.lat + (Math.random() - 0.5) * 0.08,
-            lng: center.lng + (Math.random() - 0.5) * 0.08,
-            strength: item.strength,
-            color: '#38bdf8'
-        });
-        warehouse.splice(index, 1);
-        updateWarehouseUI();
-        closeLogisticsModal();
-        addLog(`🚀 Новий підрозділ ${item.name} введено в бій!`, 'success');
-    }
-
-    // AI Tactical Logic Engine
-    function runEnemyAI() {
-        if (Math.random() > 0.45) {
-            const baseEnemy = units.find(u => u.side === 'enemy');
-            if (baseEnemy) {
-                createUnit({
-                    id: 'e_gen_' + Date.now(),
-                    name: "Резервна БТГр РФ",
-                    side: 'enemy',
-                    lat: baseEnemy.lat + (Math.random() - 0.5) * 0.12,
-                    lng: baseEnemy.lng + (Math.random() - 0.5) * 0.12,
-                    strength: 85,
-                    color: '#ef4444'
-                });
-                addLog(`⚠️ Розвідка фіксує передислокацію нових ворожих резервів!`, 'danger');
-            }
-        }
-
-        units.filter(u => u.side === 'enemy').forEach(enemy => {
-            const destLat = enemy.lat + (Math.random() - 0.48) * 0.07;
-            const destLng = enemy.lng + (Math.random() - 0.52) * 0.07;
+    function combat(atk) {
+        units.forEach(def => {
+            if (atk.side === def.side) return;
+            if (map.distance([atk.lat, atk.lng], [def.lat, def.lng]) > 28000) return;
             
-            animateMovement(enemy, destLat, destLng, () => {
-                enemy.lat = destLat;
-                enemy.lng = destLng;
-                enemy.hasActed = true;
-                
-                units.forEach(f => {
-                    if (f.side === 'friendly' && map.distance([enemy.lat, enemy.lng], [f.lat, f.lng]) < 22000) {
-                        f.strength -= 12;
-                        addLog(`⚠️ Ворог завдав артилерійського удару по ${f.name} (-12 HP)!`, 'danger');
-                        if (f.strength <= 0) removeUnit(f);
-                        else updateUnitVisual(f);
-                    }
-                });
+            const dmgToDef = 18 + Math.floor(Math.random() * 16);
+            const dmgToAtk = def.entrenched ? 8 : (12 + Math.floor(Math.random() * 10));
 
-                updateUnitVisual(enemy);
-                recalcFrontline();
-            });
+            def.strength -= dmgToDef;
+            atk.strength -= dmgToAtk;
+            log(`💥 Вогневий контакт! ${atk.name} vs ${def.name}`, 'danger');
+
+            if (def.strength <= 0) { log(`❌ ${def.name} знищено!`, 'success'); removeUnit(def); }
+            if (atk.strength <= 0) { log(`❌ ${atk.name} знищено у бою!`, 'danger'); removeUnit(atk); }
+            else updateIcon(atk);
+            if (def.strength > 0) updateIcon(def);
         });
-    }
-
-    function endTurn() {
-        activeCommand = null;
-        document.getElementById('actionBanner').classList.remove('show');
-
-        playerResources += 120;
-        document.getElementById('playerRes').textContent = playerResources;
-
-        units.forEach(u => { u.hasActed = false; updateUnitVisual(u); });
-
-        if (gameMode === 'solo') {
-            addLog(`⏭ Хід завершено. Прибуток: +120 🪙. Хід ворожого угруповання...`);
-            runEnemyAI();
-        } else {
-            currentTurnSide = currentTurnSide === 'friendly' ? 'enemy' : 'friendly';
-            updateTurnIndicator();
-        }
         updatePower();
     }
 
-    function updateTurnIndicator() {
-        const ind = document.getElementById('turnIndicator');
-        ind.textContent = currentTurnSide === 'friendly' ? '👉 Хід: ЗСУ' : '👉 Хід: РФ';
+    function removeUnit(u) {
+        if (u.marker) map.removeLayer(u.marker);
+        const i = units.indexOf(u);
+        if (i > -1) units.splice(i, 1);
+        updatePower();
+        recalcFrontline();
+    }
+
+    function endTurn() {
+        units.forEach(u => { u.hasActed = false; updateIcon(u); });
+        
+        // ШІ розширює лінію та атакує
+        if (Math.random() > 0.40) {
+            const base = enemyNodes[Math.floor(Math.random() * enemyNodes.length)];
+            enemyNodes.push([base[0] + (Math.random() - 0.48) * 0.1, base[1] + (Math.random() - 0.52) * 0.1]);
+            log('⚠️ Ворог намагається просунутися на Сході!', 'danger');
+        }
+
+        units.filter(u => u.side === 'enemy').forEach(en => {
+            const tLat = en.lat + (Math.random() - 0.48) * 0.08;
+            const tLng = en.lng + (Math.random() - 0.52) * 0.08;
+            animateMovement(en, tLat, tLng, () => {
+                en.lat = tLat; en.lng = tLng; en.hasActed = true;
+                updateIcon(en);
+                combat(en);
+                recalcFrontline();
+            });
+        });
+        updatePower();
     }
 
     function updatePower() {
         let f = 0, e = 0;
-        units.forEach(u => {
-            if (u.side === 'friendly') f += u.strength;
-            else e += u.strength;
-        });
+        units.forEach(u => u.side === 'friendly' ? f += u.strength : e += u.strength);
         document.getElementById('friendlyPower').textContent = Math.round(f);
         document.getElementById('enemyPower').textContent = Math.round(e);
     }
 
-    // Initial Strategic Deployments
-    createUnit({ id:'f1', name:"72-га ОМБр ім. Чорних Запорожців", side:'friendly', lat:50.48, lng:30.35, strength:98, color:'#38bdf8' });
-    createUnit({ id:'f2', name:"14-та ОМБр ім. князя Романа Великого", side:'friendly', lat:50.60, lng:29.85, strength:92, color:'#38bdf8' });
+    // ===== ІНІЦІАЛІЗАЦІЯ ПІДРОЗДІЛІВ ВЗДОВЖ ЛБЗ =====
+    createUnit({ id:'f1', name:"93 ОМБр 'Холодний Яр'", side:'friendly', lat:48.58, lng:37.82, strength:98 });
+    createUnit({ id:'f2', name:"47 ОМБр 'Маґура'", side:'friendly', lat:48.18, lng:37.45, strength:95 });
+    createUnit({ id:'f3', name:"128 ОГШБр", side:'friendly', lat:47.48, lng:35.80, strength:89 });
+    createUnit({ id:'f4', name:"35 ОБрМП (Кринки)", side:'friendly', lat:46.75, lng:33.25, strength:84 });
 
-    createUnit({ id:'e1', name:"76-а ДШД РФ", side:'enemy', lat:50.55, lng:30.22, strength:95, color:'#ef4444' });
-    createUnit({ id:'e2', name:"98-ма ПДД РФ", side:'enemy', lat:51.05, lng:30.10, strength:90, color:'#ef4444' });
+    createUnit({ id:'e1', name:"1 АК 'ДНР'", side:'enemy', lat:48.05, lng:37.80, strength:92 });
+    createUnit({ id:'e2', name:"76 ДШД РФ", side:'enemy', lat:49.50, lng:38.05, strength:88 });
+    createUnit({ id:'e3', name:"58 Загальновійськова Армія", side:'enemy', lat:47.30, lng:36.10, strength:86 });
 
     setInterval(() => {
         const n = new Date();
