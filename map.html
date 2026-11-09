@@ -19,7 +19,7 @@
             height: 100%;
             overflow: hidden;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #0d1117;
+            background-color: #05080c;
             color: #c9d1d9;
         }
         #app-container {
@@ -30,7 +30,7 @@
         #map {
             width: 100%;
             height: 100%;
-            background: #090d13;
+            background: #05080c;
         }
         #canvas-overlay {
             position: absolute;
@@ -46,13 +46,13 @@
             top: 16px;
             left: 16px;
             z-index: 1000;
-            background: rgba(13, 17, 23, 0.92);
-            border: 1px solid rgba(48, 54, 61, 0.8);
+            background: rgba(10, 14, 20, 0.92);
+            border: 1px solid rgba(56, 68, 77, 0.8);
             border-radius: 8px;
             padding: 16px;
             width: 320px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(6px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
         }
         .ui-panel h2 {
             font-size: 15px;
@@ -71,11 +71,11 @@
             line-height: 1.45;
         }
         .status-tracker {
-            background: rgba(1, 4, 9, 0.6);
+            background: rgba(4, 7, 12, 0.7);
             border-radius: 6px;
             padding: 10px;
             font-size: 12px;
-            border: 1px solid rgba(48, 54, 61, 0.4);
+            border: 1px solid rgba(48, 54, 61, 0.5);
         }
         .status-row {
             display: flex;
@@ -99,52 +99,57 @@
             cursor: grabbing;
         }
         .unit-card {
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 11px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.8);
             border: 2px solid #ffffff;
-            transition: transform 0.15s ease;
+            transition: transform 0.15s ease, background 0.3s;
         }
         .unit-card:hover {
-            transform: scale(1.1);
+            transform: scale(1.12);
         }
         .unit-blue {
-            background: linear-gradient(135deg, #1f6beb, #58a6ff);
+            background: linear-gradient(135deg, #0d59c8, #418bee);
             color: #ffffff;
         }
         .unit-red {
-            background: linear-gradient(135deg, #da3633, #ff7b72);
+            background: linear-gradient(135deg, #c92a2a, #ff6b6b);
             color: #ffffff;
         }
+        .unit-retreated {
+            filter: grayscale(0.8);
+            opacity: 0.6;
+        }
         .unit-label {
-            background: rgba(13, 17, 23, 0.85);
+            background: rgba(10, 14, 20, 0.9);
             color: #f0f6fc;
             font-size: 9px;
-            padding: 2px 4px;
+            padding: 2px 5px;
             border-radius: 3px;
             margin-top: 3px;
             white-space: nowrap;
-            border: 1px solid rgba(240, 246, 252, 0.1);
+            border: 1px solid rgba(240, 246, 252, 0.15);
         }
         .hp-bar-bg {
-            width: 38px;
-            height: 4px;
-            background: rgba(1, 4, 9, 0.8);
-            border-radius: 2px;
+            width: 40px;
+            height: 5px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 3px;
             margin-top: 2px;
             overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.2);
         }
         .hp-bar-fill {
             height: 100%;
             background: #3fb950;
             width: 100%;
-            transition: width 0.2s ease;
+            transition: width 0.15s linear, background-color 0.3s;
         }
     </style>
 </head>
@@ -156,22 +161,22 @@
 
     <div class="ui-panel">
         <h2>ЛБЗ: Україна 2023 <span id="pulse-dot" style="height:8px;width:8px;background:#3fb950;border-radius:50%;display:inline-block;"></span></h2>
-        <p>Переміщуйте сині підрозділи ЗСУ для здійснення тиску на лінію фронту. Наближення до рубежу відсуває ЛБЗ та ініціює вогневий контакт із противником.</p>
+        <p>Переміщуйте сині підрозділи ЗСУ. Підсуньте підрозділ ближче до рубежу — лінія фронту відчутно відсунеться у відповідному секторі.</p>
         <div class="status-tracker">
             <div class="status-row">
-                <span>Стан лінії фронту:</span>
-                <span id="front-status" style="color:#c9d1d9;">Динамічна інтерполяція</span>
+                <span>Протяжність ЛБЗ:</span>
+                <span style="color:#c9d1d9;">Запоріжжя — Кордон РФ</span>
             </div>
             <div class="status-row">
                 <span>Підрозділи ЗСУ:</span>
-                <span class="val-blue" id="blue-count">4 Бригади</span>
+                <span class="val-blue" id="blue-count">5 Бригад</span>
             </div>
             <div class="status-row">
                 <span>Сили противника:</span>
-                <span class="val-red" id="red-count">3 Підрозділи</span>
+                <span class="val-red" id="red-count">4 Підрозділи</span>
             </div>
             <div class="status-row">
-                <span>Інтенсивність бою:</span>
+                <span>Стан боїв:</span>
                 <span id="combat-status" style="color:#d29922;">Моніторинг</span>
             </div>
         </div>
@@ -179,13 +184,14 @@
 </div>
 
 <!-- Leaflet JS & Turf JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/@turf/turf@6.5.0/turf.min.js"></script>
 
 <script>
     // 1. ІНІЦІАЛІЗАЦІЯ КАРТОГРАФІЧНОГО ЯДРА
     const map = L.map('map', {
-        center: [48.2, 36.8],
+        center: [48.5, 37.8],
         zoom: 7,
         minZoom: 6,
         maxZoom: 12,
@@ -194,66 +200,67 @@
 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // Підключення растрової картографічної підкладки CartoDB Dark Matter
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap &copy; CARTO',
-        subdomains: 'abcd',
-        maxZoom: 19
+    // Робоча супутникова карта Esri World Imagery (без вимоги API Key)
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+        maxZoom: 18
     }).addTo(map);
 
-    // 2. ОПОРНІ ГЕОГРАФІЧНІ ТОЧКИ ЛІНІЇ ФРОНТУ (Херсон - Куп'янськ)
+    // 2. ОПОРНІ ГЕОГРАФІЧНІ ТОЧКИ ЛІНІЇ ФРОНТУ (Від Дніпра/Запоріжжя до Кордону РФ)
     let baseFrontlinePoints = [
-        [46.47, 32.30], // Херсон / Олешки (Дніпро)
-        [46.75, 33.35], // Нова Каховка
-        [47.40, 35.50], // Кам'янське / Запорізький сектор
-        [47.50, 35.95], // Оріхів
+        [47.50, 35.20], // Правий/Лівий берег Дніпра нижче Запоріжжя
+        [47.48, 35.80], // Оріхів / Роботине
         [47.65, 36.25], // Гуляйполе
         [47.77, 36.85], // Вугледар
-        [47.95, 37.50], // Мар'їнка
+        [47.98, 37.50], // Мар'їнка
         [48.13, 37.75], // Авдіївка
         [48.60, 38.00], // Бахмут
-        [48.95, 38.10], // Кремінна
+        [48.95, 38.10], // Кремінна / Кремінські ліси
         [49.40, 38.00], // Сватівський сектор
-        [49.70, 37.60]  // Куп'янськ
+        [49.70, 37.60], // Куп'янськ
+        [49.88, 37.70], // Дворічна
+        [50.25, 36.90], // Вовчанськ
+        [50.40, 36.60]  // Кордон з РФ (Північ Харківщини)
     ];
 
     let currentFrontlinePoints = JSON.parse(JSON.stringify(baseFrontlinePoints));
 
-    // Налаштування додаткового шару Leaflet для зон контролю
     map.createPane('controlZonesPane');
     map.getPane('controlZonesPane').style.zIndex = 350;
 
     let redZoneLayer = L.polygon([], {
         color: 'transparent',
         fillColor: '#da3633',
-        fillOpacity: 0.22,
+        fillOpacity: 0.28,
         pane: 'controlZonesPane'
     }).addTo(map);
 
     let blueZoneLayer = L.polygon([], {
         color: 'transparent',
         fillColor: '#1f6beb',
-        fillOpacity: 0.18,
+        fillOpacity: 0.24,
         pane: 'controlZonesPane'
     }).addTo(map);
 
     let frontlinePolyline = L.polyline([], {
-        color: '#ff7b72',
-        weight: 3,
-        dashArray: '6, 6',
+        color: '#ff4d4d',
+        weight: 4,
+        dashArray: '8, 6',
         lineCap: 'round'
     }).addTo(map);
 
-    // 3. ДИФЕРЕНЦІЙОВАНІ ВІЙСЬКОВІ ПІДРОЗДІЛИ
+    // 3. ПІДРОЗДІЛИ ТА ЇХ СТАТУСИ
     let units = [
-        { id: 'b1', name: '47 ОМБр', side: 'blue', lat: 47.30, lng: 35.80, power: 92, hp: 100, range: 0.65 },
-        { id: 'b2', name: '3 ОШБр', side: 'blue', lat: 48.45, lng: 37.70, power: 95, hp: 100, range: 0.55 },
-        { id: 'b3', name: '80 ДШБр', side: 'blue', lat: 49.50, lng: 37.30, power: 88, hp: 100, range: 0.55 },
-        { id: 'b4', name: '35 ОБрМП', side: 'blue', lat: 46.55, lng: 32.10, power: 90, hp: 100, range: 0.60 },
+        { id: 'b1', name: '47 ОМБр', side: 'blue', lat: 47.45, lng: 35.60, homeLat: 47.45, homeLng: 35.60, power: 100, hp: 100, range: 0.75, status: 'active' },
+        { id: 'b2', name: '3 ОШБр', side: 'blue', lat: 48.55, lng: 37.75, homeLat: 48.55, homeLng: 37.75, power: 100, hp: 100, range: 0.70, status: 'active' },
+        { id: 'b3', name: '80 ДШБр', side: 'blue', lat: 49.35, lng: 37.70, homeLat: 49.35, homeLng: 37.70, power: 95, hp: 100, range: 0.70, status: 'active' },
+        { id: 'b4', name: '72 ОМБр', side: 'blue', lat: 47.72, lng: 36.65, homeLat: 47.72, homeLng: 36.65, power: 95, hp: 100, range: 0.70, status: 'active' },
+        { id: 'b5', name: '92 ОШБр', side: 'blue', lat: 50.15, lng: 36.70, homeLat: 50.15, homeLng: 36.70, power: 95, hp: 100, range: 0.75, status: 'active' },
 
-        { id: 'r1', name: '58 ЗВА', side: 'red', lat: 47.60, lng: 36.10, power: 82, hp: 100, range: 0.50 },
-        { id: 'r2', name: '2 АК', side: 'red', lat: 48.65, lng: 38.30, power: 84, hp: 100, range: 0.50 },
-        { id: 'r3', name: '1 ТА', side: 'red', lat: 49.60, lng: 38.10, power: 80, hp: 100, range: 0.50 }
+        { id: 'r1', name: '58 ЗВА', side: 'red', lat: 47.55, lng: 36.10, homeLat: 47.55, homeLng: 36.10, power: 85, hp: 100, range: 0.60, status: 'active' },
+        { id: 'r2', name: '1 АК', side: 'red', lat: 48.05, lng: 37.85, homeLat: 48.05, homeLng: 37.85, power: 85, hp: 100, range: 0.60, status: 'active' },
+        { id: 'r3', name: '2 АК', side: 'red', lat: 48.75, lng: 38.25, homeLat: 48.75, homeLng: 38.25, power: 85, hp: 100, range: 0.60, status: 'active' },
+        { id: 'r4', name: '1 ТА', side: 'red', lat: 49.65, lng: 38.20, homeLat: 49.65, homeLng: 38.20, power: 85, hp: 100, range: 0.60, status: 'active' }
     ];
 
     let unitMarkers = {};
@@ -262,8 +269,8 @@
         units.forEach(u => {
             const isBlue = u.side === 'blue';
             const iconHtml = `
-                <div class="unit-marker">
-                    <div class="unit-card ${isBlue ? 'unit-blue' : 'unit-red'}">
+                <div class="unit-marker" id="marker-cont-${u.id}">
+                    <div class="unit-card ${isBlue ? 'unit-blue' : 'unit-red'}" id="card-${u.id}">
                         ${isBlue ? 'ЗСУ' : 'ВС'}
                     </div>
                     <div class="unit-label">${u.name}</div>
@@ -274,8 +281,8 @@
             const customIcon = L.divIcon({
                 html: iconHtml,
                 className: '',
-                iconSize: [45, 55],
-                iconAnchor: [22, 27]
+                iconSize: [46, 58],
+                iconAnchor: [23, 29]
             });
 
             const marker = L.marker([u.lat, u.lng], {
@@ -285,6 +292,7 @@
 
             if (isBlue) {
                 marker.on('drag', function(e) {
+                    if (u.status === 'retreated') return;
                     const newLatLng = e.target.getLatLng();
                     u.lat = newLatLng.lat;
                     u.lng = newLatLng.lng;
@@ -299,7 +307,7 @@
         });
     }
 
-    // 4. МАТЕМАТИЧНИЙ ОБРОРОБИТЕЛЬ ДЕФОРМАЦІЇ ЛБЗ ТА БЕЗЬЄ-СПЛАЙНІВ
+    // 4. ПОСИЛЕНИЙ МАТЕМАТИЧНИЙ РОЗРАХУНОК ЗСУВУ ЛБЗ
     function recalculateFrontline() {
         let updatedPoints = [];
 
@@ -311,39 +319,34 @@
             let dLat = 0;
             let dLng = 0;
 
-            // Розрахунок впливу дружніх сил (ЗСУ)
-            units.filter(u => u.side === 'blue').forEach(u => {
+            // Вплив ЗСУ (підвищена чутливість зміщення)
+            units.filter(u => u.side === 'blue' && u.status === 'active').forEach(u => {
                 let dist = Math.hypot(ptLat - u.lat, ptLng - u.lng);
-                if (dist < 1.25) {
-                    let force = (u.power / 100) * Math.exp(-dist * 2.4);
+                if (dist < 1.6) {
+                    let force = (u.power / 100) * Math.exp(-dist * 1.6);
                     let vecLat = ptLat - u.lat;
                     let vecLng = ptLng - u.lng;
                     let len = Math.hypot(vecLat, vecLng) || 1;
 
-                    dLat += (vecLat / len) * force * 0.16;
-                    dLng += (vecLng / len) * force * 0.24;
+                    // Збільшені коефіцієнти для виразного поштовху фронту
+                    dLat += (vecLat / len) * force * 0.45;
+                    dLng += (vecLng / len) * force * 0.65;
                 }
             });
 
-            // Розрахунок опору сил противника
-            units.filter(u => u.side === 'red').forEach(u => {
+            // Опір противника
+            units.filter(u => u.side === 'red' && u.status === 'active').forEach(u => {
                 let dist = Math.hypot(ptLat - u.lat, ptLng - u.lng);
-                if (dist < 1.05) {
-                    let force = (u.power / 100) * Math.exp(-dist * 2.7);
+                if (dist < 1.4) {
+                    let force = (u.power / 100) * Math.exp(-dist * 1.8);
                     let vecLat = ptLat - u.lat;
                     let vecLng = ptLng - u.lng;
                     let len = Math.hypot(vecLat, vecLng) || 1;
 
-                    dLat += (vecLat / len) * force * 0.12;
-                    dLng += (vecLng / len) * force * 0.18;
+                    dLat += (vecLat / len) * force * 0.30;
+                    dLng += (vecLng / len) * force * 0.40;
                 }
             });
-
-            // Коефіцієнт демпфування для водного рубежу Дніпра
-            if (i < 2) {
-                dLng *= 0.12;
-                dLat *= 0.12;
-            }
 
             updatedPoints.push([ptLat + dLat, ptLng + dLng]);
         }
@@ -356,36 +359,34 @@
         let geojsonCoords = currentFrontlinePoints.map(p => [p[1], p[0]]);
         let lineFeature = turf.lineString(geojsonCoords);
 
-        // Генерація згладженого Безьє-сплайну за допомогою Turf.js
         let smoothed = turf.bezierSpline(lineFeature, {
-            resolution: 12000,
+            resolution: 10000,
             sharpness: 0.85
         });
 
-        let leafletCoords = smoothed.geometry.coordinates.map(c => [c[1], c0 = c[0], [c[1], c[0]]]);
-
+        let leafletCoords = smoothed.geometry.coordinates.map(c => [c[1], c[0]]);
         frontlinePolyline.setLatLngs(leafletCoords);
 
-        // Генерація замкненого векторного полігону для червоної зони
+        // Формування червоної зони контролю
         let redPolygonCoords = [
             ...leafletCoords,
-            [50.5, 40.5],
-            [45.0, 40.5],
+            [51.5, 41.0],
+            [46.0, 41.0],
             leafletCoords[0]
         ];
         redZoneLayer.setLatLngs(redPolygonCoords);
 
-        // Генерація замкненого векторного полігону для синьої зони
+        // Формування синьої зони контролю
         let bluePolygonCoords = [
             ...leafletCoords,
-            [45.0, 29.5],
-            [50.5, 29.5],
+            [46.0, 28.0],
+            [51.5, 28.0],
             leafletCoords[leafletCoords.length - 1]
         ];
         blueZoneLayer.setLatLngs(bluePolygonCoords);
     }
 
-    // 5. РЕНДЕРИНГ ВІЗУАЛЬНИХ ЕФЕКТІВ ВОГНЕВОГО КОНТАКТУ (Canvas Overlay)
+    // 5. ДИНАМІЧНИЙ БІЙ, ВТРАТИ ТА АНІМАЦІЯ ПОСТРІЛІВ
     const canvas = document.getElementById('canvas-overlay');
     const ctx = canvas.getContext('2d');
     let projectiles = [];
@@ -398,36 +399,99 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
+    function updateHpBar(unit) {
+        const bar = document.getElementById(`hp-${unit.id}`);
+        if (bar) {
+            bar.style.width = `${Math.max(0, unit.hp)}%`;
+            if (unit.hp < 30) {
+                bar.style.backgroundColor = '#ff4d4d';
+            } else if (unit.hp < 60) {
+                bar.style.backgroundColor = '#d29922';
+            } else {
+                bar.style.backgroundColor = '#3fb950';
+            }
+        }
+    }
+
+    function handleRetreat(unit) {
+        unit.status = 'retreated';
+        const card = document.getElementById(`card-${unit.id}`);
+        if (card) card.classList.add('unit-retreated');
+
+        // Відступ у тил та поступове відновлення
+        setTimeout(() => {
+            unit.lat = unit.homeLat;
+            unit.lng = unit.homeLng;
+            if (unitMarkers[unit.id]) {
+                unitMarkers[unit.id].setLatLng([unit.homeLat, unit.homeLng]);
+            }
+            recalculateFrontline();
+
+            let recoverInterval = setInterval(() => {
+                unit.hp += 15;
+                if (unit.hp >= 100) {
+                    unit.hp = 100;
+                    unit.status = 'active';
+                    if (card) card.classList.remove('unit-retreated');
+                    clearInterval(recoverInterval);
+                }
+                updateHpBar(unit);
+            }, 1000);
+
+        }, 1200);
+    }
+
     function triggerFirefight(uBlue, uRed) {
         let p1 = map.latLngToContainerPoint([uBlue.lat, uBlue.lng]);
         let p2 = map.latLngToContainerPoint([uRed.lat, uRed.lng]);
 
-        if (Math.random() < 0.45) {
+        // Анімація снарядів
+        if (Math.random() < 0.6) {
             projectiles.push({
                 x: p1.x,
                 y: p1.y,
                 targetX: p2.x,
                 targetY: p2.y,
                 progress: 0,
-                speed: 0.035 + Math.random() * 0.03,
-                color: uBlue.side === 'blue' ? '#58a6ff' : '#ff7b72'
+                speed: 0.045 + Math.random() * 0.03,
+                color: '#58a6ff'
+            });
+        }
+        if (Math.random() < 0.5) {
+            projectiles.push({
+                x: p2.x,
+                y: p2.y,
+                targetX: p1.x,
+                targetY: p1.y,
+                progress: 0,
+                speed: 0.045 + Math.random() * 0.03,
+                color: '#ff7b72'
             });
         }
 
-        if (Math.random() < 0.04) {
-            uRed.hp = Math.max(10, uRed.hp - 1);
-            uBlue.hp = Math.max(10, uBlue.hp - 0.5);
+        // Прискорене нанесення шкоди
+        if (Math.random() < 0.25) {
+            uRed.hp -= 3.5;
+            uBlue.hp -= 2.0;
 
-            document.getElementById(`hp-${uRed.id}`).style.width = `${uRed.hp}%`;
-            document.getElementById(`hp-${uBlue.id}`).style.width = `${uBlue.hp}%`;
+            updateHpBar(uRed);
+            updateHpBar(uBlue);
 
             explosions.push({
-                x: p2.x + (Math.random() - 0.5) * 24,
-                y: p2.y + (Math.random() - 0.5) * 24,
+                x: p2.x + (Math.random() - 0.5) * 20,
+                y: p2.y + (Math.random() - 0.5) * 20,
                 radius: 2,
-                maxRadius: 10 + Math.random() * 8,
+                maxRadius: 12 + Math.random() * 6,
                 alpha: 1
             });
+
+            // Перевірка на відступ при критичному виснаженні
+            if (uRed.hp <= 15 && uRed.status === 'active') {
+                handleRetreat(uRed);
+            }
+            if (uBlue.hp <= 15 && uBlue.status === 'active') {
+                handleRetreat(uBlue);
+            }
         }
     }
 
@@ -435,8 +499,8 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         let activeCombats = 0;
 
-        let blueUnits = units.filter(u => u.side === 'blue');
-        let redUnits = units.filter(u => u.side === 'red');
+        let blueUnits = units.filter(u => u.side === 'blue' && u.status === 'active');
+        let redUnits = units.filter(u => u.side === 'red' && u.status === 'active');
 
         blueUnits.forEach(b => {
             redUnits.forEach(r => {
@@ -450,7 +514,7 @@
 
         const combatStatusEl = document.getElementById('combat-status');
         if (activeCombats > 0) {
-            combatStatusEl.innerText = `Активний бій (${activeCombats})`;
+            combatStatusEl.innerText = `Інтенсивний бій (${activeCombats})`;
             combatStatusEl.style.color = '#ff7b72';
         } else {
             combatStatusEl.innerText = 'Спостереження';
@@ -464,15 +528,15 @@
             let currentX = p.x + (p.targetX - p.x) * p.progress;
             let currentY = p.y + (p.targetY - p.y) * p.progress;
 
-            let tailX = p.x + (p.targetX - p.x) * Math.max(0, p.progress - 0.18);
-            let tailY = p.y + (p.targetY - p.y) * Math.max(0, p.progress - 0.18);
+            let tailX = p.x + (p.targetX - p.x) * Math.max(0, p.progress - 0.2);
+            let tailY = p.y + (p.targetY - p.y) * Math.max(0, p.progress - 0.2);
 
             ctx.beginPath();
             ctx.moveTo(tailX, tailY);
             ctx.lineTo(currentX, currentY);
             ctx.strokeStyle = p.color;
-            ctx.lineWidth = 2.2;
-            ctx.shadowBlur = 6;
+            ctx.lineWidth = 2.5;
+            ctx.shadowBlur = 8;
             ctx.shadowColor = p.color;
             ctx.stroke();
             ctx.shadowBlur = 0;
@@ -482,7 +546,7 @@
                     x: p.targetX,
                     y: p.targetY,
                     radius: 2,
-                    maxRadius: 8,
+                    maxRadius: 10,
                     alpha: 1
                 });
                 projectiles.splice(i, 1);
@@ -491,12 +555,12 @@
 
         for (let i = explosions.length - 1; i >= 0; i--) {
             let ex = explosions[i];
-            ex.radius += 0.7;
-            ex.alpha -= 0.05;
+            ex.radius += 0.8;
+            ex.alpha -= 0.06;
 
             ctx.beginPath();
             ctx.arc(ex.x, ex.y, ex.radius, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 165, 0, ${Math.max(0, ex.alpha)})`;
+            ctx.fillStyle = `rgba(255, 140, 0, ${Math.max(0, ex.alpha)})`;
             ctx.fill();
 
             if (ex.alpha <= 0) {
@@ -512,7 +576,7 @@
         explosions = [];
     });
 
-    // 6. ІНІЦІАЛІЗАЦІЯ СИМУЛЯЦІЙНОГО ПРОЦЕСУ
+    // 6. ІНІЦІАЛІЗАЦІЯ
     createUnitMarkers();
     recalculateFrontline();
     animateCombat();
