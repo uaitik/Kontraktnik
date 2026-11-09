@@ -242,16 +242,10 @@
         { type: 'artillery', name: '155-мм Артилерійський дивізіон', strength: 75 }
     ];
 
-    // Опорні точки для побудови суцільної лінії фронту від Херсона до Харкова/Сходу
     let frontlineNodes = [
-        [46.60, 32.70], // Херсонщина (лівий берег)
-        [47.05, 33.80], // Степівка
-        [47.45, 35.50], // Запорізький напрямок
-        [47.85, 37.10], // Вугледар
-        [48.05, 37.75], // Донецьк
-        [48.55, 38.00], // Бахмут
-        [49.10, 38.20], // Кремінна
-        [49.80, 37.95]  // Куп'янськ
+        [46.60, 32.70], [47.05, 33.80], [47.45, 35.50], 
+        [47.85, 37.10], [48.05, 37.75], [48.55, 38.00], 
+        [49.10, 38.20], [49.80, 37.95]
     ];
 
     let redZoneLayer = null;
@@ -282,9 +276,6 @@
         addLog(`Суцільний фронт успішно згенеровано.`, 'success');
     }
 
-    // ===================================================
-    // ПОБУДОВА СУЦІЛЬНОЇ ЗОНИ ТА ЛБЗ ЧЕРЕЗ TURF.JS
-    // ===================================================
     function recalcFrontline() {
         if (redZoneLayer) map.removeLayer(redZoneLayer);
         if (greyZoneLayer) map.removeLayer(greyZoneLayer);
@@ -292,14 +283,12 @@
 
         let lineCoords = frontlineNodes.map(pt => [pt[1], pt[0]]);
 
-        // Додаємо вплив активних юнітів ворога
         units.filter(u => u.side === 'enemy').forEach(u => {
             lineCoords.push([u.lng, u.lat]);
         });
 
         const frontlineLine = turf.lineString(lineCoords);
 
-        // Формуємо суцільний полігон окупації на схід від ЛБЗ до тилу
         const rearPolygonCoords = [
             [37.95, 49.80], [40.00, 49.80], [40.00, 47.50], 
             [39.00, 45.00], [35.50, 44.50], [33.50, 45.20], 
@@ -309,11 +298,9 @@
         let occupiedPoly = turf.polygon([rearPolygonCoords]);
         let smoothedRed = turf.polygonSmooth(occupiedPoly, { iterations: 2 });
 
-        // Сіра зона (контактна смуга вздовж ЛБЗ)
         let greyZoneGeoJSON = turf.buffer(frontlineLine, 7, { units: 'kilometers' });
         let smoothedGrey = turf.polygonSmooth(greyZoneGeoJSON, { iterations: 2 });
 
-        // Рендеринг шарів
         greyZoneLayer = L.geoJSON(smoothedGrey, {
             style: {
                 color: '#94a3b8',
@@ -627,6 +614,7 @@
         document.getElementById('enemyPower').textContent = Math.round(e);
     }
 
+    // === ПОВНИЙ СТАРТОВИЙ НАБІР ЮНІТІВ (ЗСУ ТА ВОРОГ) ===
     createUnit({ id:'f1', name:"93 ОМБр 'Холодний Яр'", side:'friendly', lat:48.58, lng:37.82, strength:98, color:'#38bdf8' });
     createUnit({ id:'f2', name:"47 ОМБр 'Маґура'", side:'friendly', lat:48.18, lng:37.45, strength:95, color:'#38bdf8' });
     createUnit({ id:'f3', name:"128 ОГШБр", side:'friendly', lat:47.48, lng:35.80, strength:89, color:'#38bdf8' });
