@@ -1,631 +1,522 @@
 <!DOCTYPE html>
-<html lang="uk-UA">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carlan Division — Solid Frontline Strategy</title>
+    <title>Симуляція Лінії Бойового Зіткнення - Україна 2023</title>
+
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
     <style>
-        :root {
-            --panel-bg: rgba(10, 15, 26, 0.94);
-            --accent: #38bdf8;
-            --text: #e2e8f0;
-            --heading: #f8fafc;
-            --danger: #ef4444;
-            --success: #22c55e;
-            --warning: #f59e0b;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }
+        #app-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+            background: #090d13;
+        }
+        #canvas-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 500;
+        }
+        .ui-panel {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            z-index: 1000;
+            background: rgba(13, 17, 23, 0.92);
+            border: 1px solid rgba(48, 54, 61, 0.8);
+            border-radius: 8px;
+            padding: 16px;
+            width: 320px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(6px);
+        }
+        .ui-panel h2 {
+            font-size: 15px;
+            color: #58a6ff;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .ui-panel p {
+            font-size: 12px;
+            color: #8b949e;
+            margin-bottom: 12px;
+            line-height: 1.45;
+        }
+        .status-tracker {
+            background: rgba(1, 4, 9, 0.6);
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 12px;
+            border: 1px solid rgba(48, 54, 61, 0.4);
+        }
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .status-row:last-child {
+            margin-bottom: 0;
+        }
+        .val-blue { color: #58a6ff; font-weight: 600; }
+        .val-red { color: #ff7b72; font-weight: 600; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body, html { width: 100%; height: 100%; overflow: hidden; background: #070b14; color: var(--text); }
-
-        @keyframes frontlineDash {
-            to { stroke-dashoffset: -40px; }
+        .unit-marker {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
         }
-
-        .leaflet-interactive.frontline-stroke {
-            stroke: #ef4444 !important;
-            stroke-width: 3.5px !important;
-            stroke-dasharray: 10px 6px !important;
-            animation: frontlineDash 2.5s linear infinite;
-            filter: drop-shadow(0px 0px 8px rgba(239, 68, 68, 0.95));
+        .unit-marker:active {
+            cursor: grabbing;
         }
-
-        .leaflet-interactive.greyzone-stroke {
-            stroke: #94a3b8 !important;
-            stroke-width: 1.8px !important;
-            stroke-dasharray: 6px 4px !important;
-            filter: drop-shadow(0px 0px 4px rgba(148, 163, 184, 0.4));
+        .unit-card {
+            width: 38px;
+            height: 38px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 11px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            border: 2px solid #ffffff;
+            transition: transform 0.15s ease;
         }
-
-        .menu-overlay {
-            position: fixed; inset: 0; background: rgba(7, 11, 20, 0.96); backdrop-filter: blur(16px);
-            z-index: 6000; display: flex; align-items: center; justify-content: center;
+        .unit-card:hover {
+            transform: scale(1.1);
         }
-        .menu-card {
-            background: #0f172a; border: 1px solid rgba(56,189,248,0.3);
-            border-radius: 16px; padding: 35px; width: 440px; text-align: center;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.9);
+        .unit-blue {
+            background: linear-gradient(135deg, #1f6beb, #58a6ff);
+            color: #ffffff;
         }
-        .menu-card h1 { color: var(--heading); font-size: 1.7rem; margin-bottom: 8px; }
-        .menu-card p { color: #94a3b8; font-size: 0.88rem; margin-bottom: 24px; }
-        .menu-btn {
-            display: block; width: 100%; padding: 12px; margin-bottom: 12px;
-            border-radius: 8px; font-weight: 700; font-size: 0.95rem; cursor: pointer;
-            border: 1px solid; transition: 0.2s;
+        .unit-red {
+            background: linear-gradient(135deg, #da3633, #ff7b72);
+            color: #ffffff;
         }
-        .menu-btn-solo { background: rgba(56,189,248,0.15); color: #38bdf8; border-color: rgba(56,189,248,0.4); }
-        .menu-btn-solo:hover { background: #38bdf8; color: #000; }
-        .menu-btn-coop { background: rgba(34,197,94,0.15); color: #4ade80; border-color: rgba(34,197,94,0.4); }
-        .menu-btn-coop:hover { background: #22c55e; color: #000; }
-
-        .topbar {
-            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
-            background: var(--panel-bg); backdrop-filter: blur(14px);
-            border-bottom: 1px solid rgba(56,189,248,0.25);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 16px; z-index: 2000; gap: 10px;
+        .unit-label {
+            background: rgba(13, 17, 23, 0.85);
+            color: #f0f6fc;
+            font-size: 9px;
+            padding: 2px 4px;
+            border-radius: 3px;
+            margin-top: 3px;
+            white-space: nowrap;
+            border: 1px solid rgba(240, 246, 252, 0.1);
         }
-        .brand { font-weight: 800; font-size: 1rem; color: var(--heading); display: flex; align-items: center; gap: 8px; }
-        .stats { display: flex; gap: 8px; flex-wrap: wrap; }
-        .stat {
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            padding: 5px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600;
+        .hp-bar-bg {
+            width: 38px;
+            height: 4px;
+            background: rgba(1, 4, 9, 0.8);
+            border-radius: 2px;
+            margin-top: 2px;
+            overflow: hidden;
         }
-        .stat span { color: var(--accent); }
-        .controls { display: flex; gap: 6px; flex-wrap: wrap; }
-        .btn {
-            padding: 6px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 700;
-            border: 1px solid; cursor: pointer; transition: 0.15s; background: transparent; color: var(--text);
+        .hp-bar-fill {
+            height: 100%;
+            background: #3fb950;
+            width: 100%;
+            transition: width 0.2s ease;
         }
-        .btn:hover { filter: brightness(1.2); }
-        .btn-blue { border-color: #38bdf8; color: #38bdf8; }
-        .btn-green { border-color: #22c55e; color: #22c55e; }
-        .btn-green:hover { background: #22c55e; color: #000; }
-        .btn-red { border-color: #ef4444; color: #f87171; }
-        .btn-yellow { border-color: #f59e0b; color: #f59e0b; }
-        .btn-yellow:hover { background: #f59e0b; color: #000; }
-
-        #map { width: 100vw; height: 100vh; background: #070b14; }
-
-        .leaflet-popup-content-wrapper {
-            background: #0f172a !important; color: #f1f5f9 !important;
-            border: 1px solid rgba(56,189,248,0.4); border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.85);
-        }
-        .leaflet-popup-content h3 { color: #38bdf8; margin-bottom: 6px; font-size: 1rem; }
-        .leaflet-popup-content p { margin: 4px 0; font-size: 0.84rem; }
-        .pbtn {
-            display: block; width: 100%; margin-top: 6px; padding: 7px;
-            border: none; border-radius: 5px; font-weight: 700; cursor: pointer; color: #fff; font-size: 0.8rem;
-            transition: 0.15s;
-        }
-        .pbtn:hover { filter: brightness(1.15); }
-        .pbtn-move { background: #0ea5e9; }
-        .pbtn-entrench { background: #22c55e; color: #000; }
-
-        .legend {
-            position: fixed; bottom: 16px; left: 16px; z-index: 1000;
-            background: var(--panel-bg); padding: 12px 16px; border-radius: 10px;
-            border: 1px solid rgba(56,189,248,0.25); font-size: 0.8rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-        }
-        .legend div { display: flex; align-items: center; gap: 10px; margin: 5px 0; }
-        .legend-color { width: 16px; height: 12px; border-radius: 3px; }
-
-        .battle-log {
-            position: fixed; bottom: 16px; right: 16px; width: 340px; max-height: 200px;
-            background: var(--panel-bg); border: 1px solid rgba(56,189,248,0.3);
-            border-radius: 10px; padding: 12px; z-index: 3000; overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8); font-size: 0.78rem;
-            display: flex; flex-direction: column; gap: 6px;
-        }
-        .battle-log-title { font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; }
-        .log-item { padding: 5px 8px; background: rgba(255,255,255,0.04); border-radius: 4px; border-left: 3px solid var(--accent); }
-        .log-item.danger { border-left-color: var(--danger); color: #fca5a5; }
-        .log-item.success { border-left-color: var(--success); color: #86efac; }
-
-        .action-banner {
-            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-            background: rgba(15, 23, 42, 0.95); border: 1px solid #38bdf8; color: #38bdf8;
-            padding: 10px 20px; border-radius: 8px; font-weight: 700; font-size: 0.88rem;
-            z-index: 2500; display: none; box-shadow: 0 5px 25px rgba(0,0,0,0.7);
-        }
-        .action-banner.show { display: block; }
-
-        .modal-bg {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.82);
-            z-index: 4000; align-items: center; justify-content: center;
-        }
-        .modal-bg.open { display: flex; }
-        .modal {
-            background: #0f172a; border: 1px solid rgba(56,189,248,0.3);
-            border-radius: 12px; padding: 25px; width: 520px; max-width: 95vw;
-        }
-        .modal h3 { color: var(--accent); margin-bottom: 14px; font-size: 1.15rem; }
-        .prod-card {
-            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
-            padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex;
-            justify-content: space-between; align-items: center;
-        }
-        .prod-info h4 { font-size: 0.92rem; color: #f8fafc; }
-        .prod-info p { font-size: 0.78rem; color: #94a3b8; }
     </style>
 </head>
 <body>
 
-<div id="startMenu" class="menu-overlay">
-    <div class="menu-card">
-        <h1>🛡️ CARLAN DIVISION</h1>
-        <p>Суцільна стратегічна мапа фронту України</p>
-        <button class="menu-btn menu-btn-solo" onclick="startGame('solo')">🎮 Одиночна гра (Проти ШІ)</button>
-        <button class="menu-btn menu-btn-coop" onclick="startGame('coop')">👥 Режим Hotseat (2 Гравці)</button>
-    </div>
-</div>
+<div id="app-container">
+    <div id="map"></div>
+    <canvas id="canvas-overlay"></canvas>
 
-<div class="modal-bg" id="logisticsModal">
-    <div class="modal">
-        <h3>🏭 Виробництво та Резерви</h3>
-        <p style="font-size: 0.82rem; color: #94a3b8; margin-bottom: 12px;">Формуйте нові підрозділи та вводьте їх у бій.</p>
-        
-        <div style="font-weight: bold; font-size: 0.85rem; color: #38bdf8; margin: 10px 0 6px;">📦 Доступно на складі:</div>
-        <div id="warehouseList" style="max-height: 130px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #334155; padding: 6px; border-radius: 6px;"></div>
-
-        <div style="font-weight: bold; font-size: 0.85rem; color: #f59e0b; margin: 10px 0 6px;">⚙️ Виробничі потужності:</div>
-        <div class="prod-card">
-            <div class="prod-info">
-                <h4>Штурмовий батальйон</h4>
-                <p>Вартість: 220 🪙 | Сила: 90 HP</p>
+    <div class="ui-panel">
+        <h2>ЛБЗ: Україна 2023 <span id="pulse-dot" style="height:8px;width:8px;background:#3fb950;border-radius:50%;display:inline-block;"></span></h2>
+        <p>Переміщуйте сині підрозділи ЗСУ для здійснення тиску на лінію фронту. Наближення до рубежу відсуває ЛБЗ та ініціює вогневий контакт із противником.</p>
+        <div class="status-tracker">
+            <div class="status-row">
+                <span>Стан лінії фронту:</span>
+                <span id="front-status" style="color:#c9d1d9;">Динамічна інтерполяція</span>
             </div>
-            <button class="btn btn-green" onclick="produceItem('battalion')">Замовити</button>
-        </div>
-        <div class="prod-card">
-            <div class="prod-info">
-                <h4>Артилерійська бригада</h4>
-                <p>Вартість: 180 🪙 | Сила: 70 HP</p>
+            <div class="status-row">
+                <span>Підрозділи ЗСУ:</span>
+                <span class="val-blue" id="blue-count">4 Бригади</span>
             </div>
-            <button class="btn btn-green" onclick="produceItem('artillery')">Замовити</button>
+            <div class="status-row">
+                <span>Сили противника:</span>
+                <span class="val-red" id="red-count">3 Підрозділи</span>
+            </div>
+            <div class="status-row">
+                <span>Інтенсивність бою:</span>
+                <span id="combat-status" style="color:#d29922;">Моніторинг</span>
+            </div>
         </div>
-
-        <div style="margin-top: 15px; display: flex; justify-content: flex-end;">
-            <button class="btn btn-blue" onclick="closeLogisticsModal()">Закрити</button>
-        </div>
     </div>
 </div>
 
-<div class="action-banner" id="actionBanner">Оберіть точку на мапі для маневру...</div>
-
-<div class="battle-log" id="battleLog">
-    <div class="battle-log-title">📋 Оперативне зведення</div>
-    <div id="logContent">
-        <div class="log-item success">Суцільну лінію фронту успішно побудовано.</div>
-    </div>
-</div>
-
-<header class="topbar">
-    <div class="brand">🛡️ CARLAN DIVISION <span id="turnIndicator" style="font-size:0.78rem; color:#4ade80; margin-left:10px;"></span></div>
-
-    <div class="stats">
-        <div class="stat">Ресурс: <span id="playerRes">500</span> 🪙</div>
-        <div class="stat">ЗСУ Power: <span id="friendlyPower">0</span></div>
-        <div class="stat">Ворог Power: <span id="enemyPower">0</span></div>
-        <div class="stat">Час: <span id="gameTime">00:00</span></div>
-    </div>
-
-    <div class="controls">
-        <button class="btn btn-yellow" onclick="openLogisticsModal()">🏭 Склад</button>
-        <button class="btn btn-green" onclick="endTurn()">⏭ Наступний хід</button>
-        <button class="btn btn-red" onclick="location.reload()">Перезапуск</button>
-    </div>
-</header>
-
-<div id="map"></div>
-
-<div class="legend">
-    <div><div class="legend-color" style="background:rgba(220, 38, 38, 0.4); border:1px solid #ef4444;"></div> Суцільна зона окупації</div>
-    <div><div class="legend-color" style="background:rgba(100, 116, 139, 0.48); border:1px solid #94a3b8;"></div> Контактна зона (Сіра)</div>
-    <div id="modeDisplay" style="margin-top:6px; font-size:0.75rem; color:#38bdf8; font-weight:bold;"></div>
-</div>
-
+<!-- Leaflet JS & Turf JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+<script src="https://unpkg.com/@turf/turf@6.5.0/turf.min.js"></script>
 
 <script>
-    let gameMode = 'solo';
-    let currentTurnSide = 'friendly';
-    let activeCommand = null;
-    let playerResources = 500;
-    
-    const units = [];
-    let warehouse = [
-        { type: 'battalion', name: 'Резервний механізований батальйон', strength: 90 },
-        { type: 'artillery', name: '155-мм Артилерійський дивізіон', strength: 75 }
-    ];
-
-    let frontlineNodes = [
-        [46.60, 32.70], [47.05, 33.80], [47.45, 35.50], 
-        [47.85, 37.10], [48.05, 37.75], [48.55, 38.00], 
-        [49.10, 38.20], [49.80, 37.95]
-    ];
-
-    let redZoneLayer = null;
-    let greyZoneLayer = null;
-    let frontlineBorderLayer = null;
-
-    function addLog(text, type = 'normal') {
-        const content = document.getElementById('logContent');
-        const item = document.createElement('div');
-        item.className = `log-item ${type}`;
-        item.textContent = `[${document.getElementById('gameTime').textContent}] ${text}`;
-        content.prepend(item);
-        if (content.children.length > 30) content.removeChild(content.lastChild);
-    }
-
-    const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([48.15, 36.7], 6.5);
-    
-    L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18 }).addTo(map);
-    L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18, opacity: 0.75 }).addTo(map);
-    L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-    function startGame(mode) {
-        gameMode = mode;
-        document.getElementById('startMenu').style.display = 'none';
-        document.getElementById('modeDisplay').textContent = mode === 'solo' ? 'Режим: Кампанія проти ШІ' : 'Режим: Hotseat (2 Гравці)';
-        if (mode === 'coop') updateTurnIndicator();
-        setTimeout(() => { map.invalidateSize(); recalcFrontline(); }, 200);
-        addLog(`Суцільний фронт успішно згенеровано.`, 'success');
-    }
-
-    function recalcFrontline() {
-        if (redZoneLayer) map.removeLayer(redZoneLayer);
-        if (greyZoneLayer) map.removeLayer(greyZoneLayer);
-        if (frontlineBorderLayer) map.removeLayer(frontlineBorderLayer);
-
-        let lineCoords = frontlineNodes.map(pt => [pt[1], pt[0]]);
-
-        units.filter(u => u.side === 'enemy').forEach(u => {
-            lineCoords.push([u.lng, u.lat]);
-        });
-
-        const frontlineLine = turf.lineString(lineCoords);
-
-        const rearPolygonCoords = [
-            [37.95, 49.80], [40.00, 49.80], [40.00, 47.50], 
-            [39.00, 45.00], [35.50, 44.50], [33.50, 45.20], 
-            [32.70, 46.60], ...lineCoords.reverse()
-        ];
-
-        let occupiedPoly = turf.polygon([rearPolygonCoords]);
-        let smoothedRed = turf.polygonSmooth(occupiedPoly, { iterations: 2 });
-
-        let greyZoneGeoJSON = turf.buffer(frontlineLine, 7, { units: 'kilometers' });
-        let smoothedGrey = turf.polygonSmooth(greyZoneGeoJSON, { iterations: 2 });
-
-        greyZoneLayer = L.geoJSON(smoothedGrey, {
-            style: {
-                color: '#94a3b8',
-                weight: 1.5,
-                fillColor: '#64748b',
-                fillOpacity: 0.48,
-                className: 'greyzone-stroke'
-            }
-        }).addTo(map);
-
-        redZoneLayer = L.geoJSON(smoothedRed, {
-            style: {
-                color: 'transparent',
-                fillColor: '#dc2626',
-                fillOpacity: 0.40
-            }
-        }).addTo(map);
-
-        frontlineBorderLayer = L.geoJSON(frontlineLine, {
-            style: {
-                color: '#ef4444',
-                weight: 3.5,
-                fill: false,
-                className: 'frontline-stroke'
-            }
-        }).addTo(map);
-    }
-
-    function makeIcon(color, strength, hasActed, entrenched) {
-        const size = 22;
-        const opacity = hasActed ? 0.6 : 1.0;
-        const border = entrenched ? '3px solid #fbbf24' : (hasActed ? '2px dashed #fff' : '2px solid #fff');
-        return L.divIcon({
-            html: `<div style="background:${color};width:${size}px;height:${size}px;border-radius:50%;border:${border};box-shadow:0 0 12px ${color}; opacity:${opacity}; display:flex; align-items:center; justify-content:center; font-size:10px; color:#fff; font-weight:bold;">${Math.round(strength)}</div>`,
-            iconSize: [size, size], className: ''
-        });
-    }
-
-    function updateUnitVisual(unit) {
-        if (unit.marker) map.removeLayer(unit.marker);
-
-        unit.marker = L.marker([unit.lat, unit.lng], {
-            icon: makeIcon(unit.color, unit.strength, unit.hasActed, unit.entrenched)
-        }).addTo(map);
-
-        unit.marker.on('click', (e) => {
-            L.DomEvent.stopPropagation(e);
-            if (gameMode === 'solo' && unit.side === 'enemy') {
-                unit.marker.bindPopup(`<h3>🛡️ ${unit.name}</h3><p>Ворожий підрозділ ШІ.</p>`).openPopup();
-                return;
-            }
-            if (gameMode === 'coop' && unit.side !== currentTurnSide) return;
-            if (unit.hasActed) {
-                unit.marker.bindPopup(`<h3>🛡️ ${unit.name}</h3><p>Підрозділ вже виконав дію в цьому ході.</p>`).openPopup();
-                return;
-            }
-
-            unit.marker.bindPopup(`
-                <h3>🛡️ ${unit.name}</h3>
-                <p>Боєздатність: <b>${Math.round(unit.strength)} HP</b></p>
-                <div style="margin-top:8px;">
-                    <button class="pbtn pbtn-move" onclick="startCommand('${unit.id}', 'move')">📍 Маневр / Атака</button>
-                    <button class="pbtn pbtn-entrench" onclick="executeEntrench('${unit.id}')">🛡️ Зайняти оборону</button>
-                </div>
-            `).openPopup();
-        });
-    }
-
-    function createUnit(data) {
-        const unit = { ...data, hasActed: false, entrenched: false, marker: null };
-        updateUnitVisual(unit);
-        units.push(unit);
-        updatePower();
-        recalcFrontline();
-    }
-
-    window.startCommand = function(unitId, type) {
-        const unit = units.find(u => u.id === unitId);
-        if (!unit || unit.hasActed) return;
-        activeCommand = { unit, type };
-        unit.marker.closePopup();
-
-        const banner = document.getElementById('actionBanner');
-        banner.textContent = `📍 Клікніть на мапу для переміщення: ${unit.name}`;
-        banner.classList.add('show');
-    }
-
-    map.on('click', e => {
-        if (!activeCommand) return;
-        const { unit, type } = activeCommand;
-        
-        if (type === 'move') {
-            const targetLat = e.latlng.lat;
-            const targetLng = e.latlng.lng;
-            
-            animateMovement(unit, targetLat, targetLng, () => {
-                unit.lat = targetLat;
-                unit.lng = targetLng;
-                unit.hasActed = true;
-                unit.entrenched = false;
-                updateUnitVisual(unit);
-
-                checkCombat(unit);
-                recalcFrontline();
-
-                activeCommand = null;
-                document.getElementById('actionBanner').classList.remove('show');
-            });
-        }
+    // 1. ІНІЦІАЛІЗАЦІЯ КАРТОГРАФІЧНОГО ЯДРА
+    const map = L.map('map', {
+        center: [48.2, 36.8],
+        zoom: 7,
+        minZoom: 6,
+        maxZoom: 12,
+        zoomControl: false
     });
 
-    function checkCombat(attacker) {
-        units.forEach(defender => {
-            if (attacker.side !== defender.side) {
-                const dist = map.distance([attacker.lat, attacker.lng], [defender.lat, defender.lng]);
-                if (dist < 25000) {
-                    const damageToDef = Math.floor(Math.random() * 22) + 18;
-                    const damageToAtk = defender.entrenched ? 10 : (Math.floor(Math.random() * 16) + 10);
-                    
-                    defender.strength -= damageToDef;
-                    attacker.strength -= damageToAtk;
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-                    addLog(`💥 БІЙ! ${attacker.name} завдав ${damageToDef} HP шкоди ${defender.name}!`, 'danger');
+    // Підключення растрової картографічної підкладки CartoDB Dark Matter
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        subdomains: 'abcd',
+        maxZoom: 19
+    }).addTo(map);
 
-                    if (defender.strength <= 0) {
-                        addLog(`❌ Підрозділ ${defender.name} знищено!`, 'success');
-                        removeUnit(defender);
-                    }
-                    if (attacker.strength <= 0) {
-                        addLog(`❌ Наш підрозділ ${attacker.name} знищено в бою!`, 'danger');
-                        removeUnit(attacker);
-                    } else {
-                        updateUnitVisual(attacker);
-                    }
-                }
-            }
-        });
-    }
+    // 2. ОПОРНІ ГЕОГРАФІЧНІ ТОЧКИ ЛІНІЇ ФРОНТУ (Херсон - Куп'янськ)
+    let baseFrontlinePoints = [
+        [46.47, 32.30], // Херсон / Олешки (Дніпро)
+        [46.75, 33.35], // Нова Каховка
+        [47.40, 35.50], // Кам'янське / Запорізький сектор
+        [47.50, 35.95], // Оріхів
+        [47.65, 36.25], // Гуляйполе
+        [47.77, 36.85], // Вугледар
+        [47.95, 37.50], // Мар'їнка
+        [48.13, 37.75], // Авдіївка
+        [48.60, 38.00], // Бахмут
+        [48.95, 38.10], // Кремінна
+        [49.40, 38.00], // Сватівський сектор
+        [49.70, 37.60]  // Куп'янськ
+    ];
 
-    function removeUnit(unit) {
-        if (unit.marker) map.removeLayer(unit.marker);
-        const idx = units.indexOf(unit);
-        if (idx > -1) units.splice(idx, 1);
-        updatePower();
-        recalcFrontline();
-    }
+    let currentFrontlinePoints = JSON.parse(JSON.stringify(baseFrontlinePoints));
 
-    window.executeEntrench = function(unitId) {
-        const unit = units.find(u => u.id === unitId);
-        if (!unit || unit.hasActed) return;
-        unit.entrenched = true;
-        unit.hasActed = true;
-        unit.strength = Math.min(100, unit.strength + 12);
-        updateUnitVisual(unit);
-        unit.marker.closePopup();
-        addLog(`🛡️ ${unit.name} займає підготовлені оборонні позиції (+12 HP).`, 'success');
-    }
+    // Налаштування додаткового шару Leaflet для зон контролю
+    map.createPane('controlZonesPane');
+    map.getPane('controlZonesPane').style.zIndex = 350;
 
-    function animateMovement(unit, targetLat, targetLng, callback) {
-        const startLat = unit.lat;
-        const startLng = unit.lng;
-        const duration = 1000;
-        const startTime = performance.now();
+    let redZoneLayer = L.polygon([], {
+        color: 'transparent',
+        fillColor: '#da3633',
+        fillOpacity: 0.22,
+        pane: 'controlZonesPane'
+    }).addTo(map);
 
-        function frame(now) {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const ease = 1 - Math.pow(1 - progress, 3);
+    let blueZoneLayer = L.polygon([], {
+        color: 'transparent',
+        fillColor: '#1f6beb',
+        fillOpacity: 0.18,
+        pane: 'controlZonesPane'
+    }).addTo(map);
 
-            const currLat = startLat + (targetLat - startLat) * ease;
-            const currLng = startLng + (targetLng - startLng) * ease;
-            if (unit.marker) unit.marker.setLatLng([currLat, currLng]);
+    let frontlinePolyline = L.polyline([], {
+        color: '#ff7b72',
+        weight: 3,
+        dashArray: '6, 6',
+        lineCap: 'round'
+    }).addTo(map);
 
-            if (progress < 1) requestAnimationFrame(frame);
-            else if (callback) callback();
-        }
-        requestAnimationFrame(frame);
-    }
+    // 3. ДИФЕРЕНЦІЙОВАНІ ВІЙСЬКОВІ ПІДРОЗДІЛИ
+    let units = [
+        { id: 'b1', name: '47 ОМБр', side: 'blue', lat: 47.30, lng: 35.80, power: 92, hp: 100, range: 0.65 },
+        { id: 'b2', name: '3 ОШБр', side: 'blue', lat: 48.45, lng: 37.70, power: 95, hp: 100, range: 0.55 },
+        { id: 'b3', name: '80 ДШБр', side: 'blue', lat: 49.50, lng: 37.30, power: 88, hp: 100, range: 0.55 },
+        { id: 'b4', name: '35 ОБрМП', side: 'blue', lat: 46.55, lng: 32.10, power: 90, hp: 100, range: 0.60 },
 
-    window.openLogisticsModal = function() {
-        updateWarehouseUI();
-        document.getElementById('logisticsModal').classList.add('open');
-    }
-    window.closeLogisticsModal = function() { document.getElementById('logisticsModal').classList.remove('open'); }
+        { id: 'r1', name: '58 ЗВА', side: 'red', lat: 47.60, lng: 36.10, power: 82, hp: 100, range: 0.50 },
+        { id: 'r2', name: '2 АК', side: 'red', lat: 48.65, lng: 38.30, power: 84, hp: 100, range: 0.50 },
+        { id: 'r3', name: '1 ТА', side: 'red', lat: 49.60, lng: 38.10, power: 80, hp: 100, range: 0.50 }
+    ];
 
-    function updateWarehouseUI() {
-        const container = document.getElementById('warehouseList');
-        container.innerHTML = '';
-        if (warehouse.length === 0) {
-            container.innerHTML = '<p style="font-size:0.8rem; color:#64748b; text-align:center;">Склад порожній</p>';
-            return;
-        }
-        warehouse.forEach((item, index) => {
-            container.innerHTML += `
-                <div class="prod-card">
-                    <div><b>${item.name}</b> (Сила: ${item.strength})</div>
-                    <button class="btn btn-blue" onclick="deployFromWarehouse(${index})">Розгорнути</button>
+    let unitMarkers = {};
+
+    function createUnitMarkers() {
+        units.forEach(u => {
+            const isBlue = u.side === 'blue';
+            const iconHtml = `
+                <div class="unit-marker">
+                    <div class="unit-card ${isBlue ? 'unit-blue' : 'unit-red'}">
+                        ${isBlue ? 'ЗСУ' : 'ВС'}
+                    </div>
+                    <div class="unit-label">${u.name}</div>
+                    <div class="hp-bar-bg"><div class="hp-bar-fill" id="hp-${u.id}" style="width: ${u.hp}%"></div></div>
                 </div>
             `;
-        });
-    }
 
-    window.produceItem = function(type) {
-        const cost = type === 'battalion' ? 220 : 180;
-        if (playerResources < cost) {
-            addLog(`❌ Недостатньо ресурсів! Потрібно ${cost} 🪙`, 'danger');
-            return;
-        }
-        playerResources -= cost;
-        document.getElementById('playerRes').textContent = playerResources;
+            const customIcon = L.divIcon({
+                html: iconHtml,
+                className: '',
+                iconSize: [45, 55],
+                iconAnchor: [22, 27]
+            });
 
-        if (type === 'battalion') {
-            warehouse.push({ type: 'battalion', name: 'Штурмовий батальйон ЗСУ', strength: 90 });
-        } else {
-            warehouse.push({ type: 'artillery', name: 'Артилерійський дивізіон', strength: 75 });
-        }
-        updateWarehouseUI();
-        addLog(`✅ Озброєння виготовлено та доставлено на склад!`, 'success');
-    }
+            const marker = L.marker([u.lat, u.lng], {
+                icon: customIcon,
+                draggable: isBlue
+            }).addTo(map);
 
-    window.deployFromWarehouse = function(index) {
-        const item = warehouse[index];
-        const center = map.getCenter();
-        createUnit({
-            id: 'u_' + Date.now(),
-            name: item.name,
-            side: 'friendly',
-            lat: center.lat + (Math.random() - 0.5) * 0.08,
-            lng: center.lng + (Math.random() - 0.5) * 0.08,
-            strength: item.strength,
-            color: '#38bdf8'
-        });
-        warehouse.splice(index, 1);
-        updateWarehouseUI();
-        closeLogisticsModal();
-        addLog(`🚀 Новий підрозділ ${item.name} введено в бій!`, 'success');
-    }
-
-    function runEnemyAI() {
-        if (Math.random() > 0.45) {
-            const baseEnemy = units.find(u => u.side === 'enemy');
-            if (baseEnemy) {
-                createUnit({
-                    id: 'e_gen_' + Date.now(),
-                    name: "Резервна БТГр РФ",
-                    side: 'enemy',
-                    lat: baseEnemy.lat + (Math.random() - 0.5) * 0.12,
-                    lng: baseEnemy.lng + (Math.random() - 0.5) * 0.12,
-                    strength: 85,
-                    color: '#ef4444'
+            if (isBlue) {
+                marker.on('drag', function(e) {
+                    const newLatLng = e.target.getLatLng();
+                    u.lat = newLatLng.lat;
+                    u.lng = newLatLng.lng;
+                    recalculateFrontline();
                 });
-                addLog(`⚠️ Розвідка фіксує передислокацію нових ворожих резервів!`, 'danger');
+                marker.on('dragend', function() {
+                    recalculateFrontline();
+                });
+            }
+
+            unitMarkers[u.id] = marker;
+        });
+    }
+
+    // 4. МАТЕМАТИЧНИЙ ОБРОРОБИТЕЛЬ ДЕФОРМАЦІЇ ЛБЗ ТА БЕЗЬЄ-СПЛАЙНІВ
+    function recalculateFrontline() {
+        let updatedPoints = [];
+
+        for (let i = 0; i < baseFrontlinePoints.length; i++) {
+            let basePt = baseFrontlinePoints[i];
+            let ptLat = basePt[0];
+            let ptLng = basePt[1];
+
+            let dLat = 0;
+            let dLng = 0;
+
+            // Розрахунок впливу дружніх сил (ЗСУ)
+            units.filter(u => u.side === 'blue').forEach(u => {
+                let dist = Math.hypot(ptLat - u.lat, ptLng - u.lng);
+                if (dist < 1.25) {
+                    let force = (u.power / 100) * Math.exp(-dist * 2.4);
+                    let vecLat = ptLat - u.lat;
+                    let vecLng = ptLng - u.lng;
+                    let len = Math.hypot(vecLat, vecLng) || 1;
+
+                    dLat += (vecLat / len) * force * 0.16;
+                    dLng += (vecLng / len) * force * 0.24;
+                }
+            });
+
+            // Розрахунок опору сил противника
+            units.filter(u => u.side === 'red').forEach(u => {
+                let dist = Math.hypot(ptLat - u.lat, ptLng - u.lng);
+                if (dist < 1.05) {
+                    let force = (u.power / 100) * Math.exp(-dist * 2.7);
+                    let vecLat = ptLat - u.lat;
+                    let vecLng = ptLng - u.lng;
+                    let len = Math.hypot(vecLat, vecLng) || 1;
+
+                    dLat += (vecLat / len) * force * 0.12;
+                    dLng += (vecLng / len) * force * 0.18;
+                }
+            });
+
+            // Коефіцієнт демпфування для водного рубежу Дніпра
+            if (i < 2) {
+                dLng *= 0.12;
+                dLat *= 0.12;
+            }
+
+            updatedPoints.push([ptLat + dLat, ptLng + dLng]);
+        }
+
+        currentFrontlinePoints = updatedPoints;
+        renderSmoothedFrontline();
+    }
+
+    function renderSmoothedFrontline() {
+        let geojsonCoords = currentFrontlinePoints.map(p => [p[1], p[0]]);
+        let lineFeature = turf.lineString(geojsonCoords);
+
+        // Генерація згладженого Безьє-сплайну за допомогою Turf.js
+        let smoothed = turf.bezierSpline(lineFeature, {
+            resolution: 12000,
+            sharpness: 0.85
+        });
+
+        let leafletCoords = smoothed.geometry.coordinates.map(c => [c[1], c0 = c[0], [c[1], c[0]]]);
+
+        frontlinePolyline.setLatLngs(leafletCoords);
+
+        // Генерація замкненого векторного полігону для червоної зони
+        let redPolygonCoords = [
+            ...leafletCoords,
+            [50.5, 40.5],
+            [45.0, 40.5],
+            leafletCoords[0]
+        ];
+        redZoneLayer.setLatLngs(redPolygonCoords);
+
+        // Генерація замкненого векторного полігону для синьої зони
+        let bluePolygonCoords = [
+            ...leafletCoords,
+            [45.0, 29.5],
+            [50.5, 29.5],
+            leafletCoords[leafletCoords.length - 1]
+        ];
+        blueZoneLayer.setLatLngs(bluePolygonCoords);
+    }
+
+    // 5. РЕНДЕРИНГ ВІЗУАЛЬНИХ ЕФЕКТІВ ВОГНЕВОГО КОНТАКТУ (Canvas Overlay)
+    const canvas = document.getElementById('canvas-overlay');
+    const ctx = canvas.getContext('2d');
+    let projectiles = [];
+    let explosions = [];
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function triggerFirefight(uBlue, uRed) {
+        let p1 = map.latLngToContainerPoint([uBlue.lat, uBlue.lng]);
+        let p2 = map.latLngToContainerPoint([uRed.lat, uRed.lng]);
+
+        if (Math.random() < 0.45) {
+            projectiles.push({
+                x: p1.x,
+                y: p1.y,
+                targetX: p2.x,
+                targetY: p2.y,
+                progress: 0,
+                speed: 0.035 + Math.random() * 0.03,
+                color: uBlue.side === 'blue' ? '#58a6ff' : '#ff7b72'
+            });
+        }
+
+        if (Math.random() < 0.04) {
+            uRed.hp = Math.max(10, uRed.hp - 1);
+            uBlue.hp = Math.max(10, uBlue.hp - 0.5);
+
+            document.getElementById(`hp-${uRed.id}`).style.width = `${uRed.hp}%`;
+            document.getElementById(`hp-${uBlue.id}`).style.width = `${uBlue.hp}%`;
+
+            explosions.push({
+                x: p2.x + (Math.random() - 0.5) * 24,
+                y: p2.y + (Math.random() - 0.5) * 24,
+                radius: 2,
+                maxRadius: 10 + Math.random() * 8,
+                alpha: 1
+            });
+        }
+    }
+
+    function animateCombat() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let activeCombats = 0;
+
+        let blueUnits = units.filter(u => u.side === 'blue');
+        let redUnits = units.filter(u => u.side === 'red');
+
+        blueUnits.forEach(b => {
+            redUnits.forEach(r => {
+                let dist = Math.hypot(b.lat - r.lat, b.lng - r.lng);
+                if (dist < (b.range + r.range)) {
+                    triggerFirefight(b, r);
+                    activeCombats++;
+                }
+            });
+        });
+
+        const combatStatusEl = document.getElementById('combat-status');
+        if (activeCombats > 0) {
+            combatStatusEl.innerText = `Активний бій (${activeCombats})`;
+            combatStatusEl.style.color = '#ff7b72';
+        } else {
+            combatStatusEl.innerText = 'Спостереження';
+            combatStatusEl.style.color = '#d29922';
+        }
+
+        for (let i = projectiles.length - 1; i >= 0; i--) {
+            let p = projectiles[i];
+            p.progress += p.speed;
+
+            let currentX = p.x + (p.targetX - p.x) * p.progress;
+            let currentY = p.y + (p.targetY - p.y) * p.progress;
+
+            let tailX = p.x + (p.targetX - p.x) * Math.max(0, p.progress - 0.18);
+            let tailY = p.y + (p.targetY - p.y) * Math.max(0, p.progress - 0.18);
+
+            ctx.beginPath();
+            ctx.moveTo(tailX, tailY);
+            ctx.lineTo(currentX, currentY);
+            ctx.strokeStyle = p.color;
+            ctx.lineWidth = 2.2;
+            ctx.shadowBlur = 6;
+            ctx.shadowColor = p.color;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            if (p.progress >= 1) {
+                explosions.push({
+                    x: p.targetX,
+                    y: p.targetY,
+                    radius: 2,
+                    maxRadius: 8,
+                    alpha: 1
+                });
+                projectiles.splice(i, 1);
             }
         }
 
-        units.filter(u => u.side === 'enemy').forEach(enemy => {
-            const destLat = enemy.lat + (Math.random() - 0.48) * 0.07;
-            const destLng = enemy.lng + (Math.random() - 0.52) * 0.07;
-            
-            animateMovement(enemy, destLat, destLng, () => {
-                enemy.lat = destLat;
-                enemy.lng = destLng;
-                enemy.hasActed = true;
-                
-                units.forEach(f => {
-                    if (f.side === 'friendly' && map.distance([enemy.lat, enemy.lng], [f.lat, f.lng]) < 22000) {
-                        f.strength -= 12;
-                        addLog(`⚠️ Ворог завдав удару по ${f.name} (-12 HP)!`, 'danger');
-                        if (f.strength <= 0) removeUnit(f);
-                        else updateUnitVisual(f);
-                    }
-                });
+        for (let i = explosions.length - 1; i >= 0; i--) {
+            let ex = explosions[i];
+            ex.radius += 0.7;
+            ex.alpha -= 0.05;
 
-                updateUnitVisual(enemy);
-                recalcFrontline();
-            });
-        });
-    }
+            ctx.beginPath();
+            ctx.arc(ex.x, ex.y, ex.radius, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 165, 0, ${Math.max(0, ex.alpha)})`;
+            ctx.fill();
 
-    function endTurn() {
-        activeCommand = null;
-        document.getElementById('actionBanner').classList.remove('show');
-
-        playerResources += 120;
-        document.getElementById('playerRes').textContent = playerResources;
-
-        units.forEach(u => { u.hasActed = false; updateUnitVisual(u); });
-
-        if (gameMode === 'solo') {
-            addLog(`⏭ Хід завершено. Прибуток: +120 🪙. Хід ворожого угруповання...`);
-            runEnemyAI();
-        } else {
-            currentTurnSide = currentTurnSide === 'friendly' ? 'enemy' : 'friendly';
-            updateTurnIndicator();
+            if (ex.alpha <= 0) {
+                explosions.splice(i, 1);
+            }
         }
-        updatePower();
+
+        requestAnimationFrame(animateCombat);
     }
 
-    function updateTurnIndicator() {
-        const ind = document.getElementById('turnIndicator');
-        ind.textContent = currentTurnSide === 'friendly' ? '👉 Хід: ЗСУ' : '👉 Хід: РФ';
-    }
+    map.on('move', function() {
+        projectiles = [];
+        explosions = [];
+    });
 
-    function updatePower() {
-        let f = 0, e = 0;
-        units.forEach(u => {
-            if (u.side === 'friendly') f += u.strength;
-            else e += u.strength;
-        });
-        document.getElementById('friendlyPower').textContent = Math.round(f);
-        document.getElementById('enemyPower').textContent = Math.round(e);
-    }
+    // 6. ІНІЦІАЛІЗАЦІЯ СИМУЛЯЦІЙНОГО ПРОЦЕСУ
+    createUnitMarkers();
+    recalculateFrontline();
+    animateCombat();
 
-    // === ПОВНИЙ СТАРТОВИЙ НАБІР ЮНІТІВ (ЗСУ ТА ВОРОГ) ===
-    createUnit({ id:'f1', name:"93 ОМБр 'Холодний Яр'", side:'friendly', lat:48.58, lng:37.82, strength:98, color:'#38bdf8' });
-    createUnit({ id:'f2', name:"47 ОМБр 'Маґура'", side:'friendly', lat:48.18, lng:37.45, strength:95, color:'#38bdf8' });
-    createUnit({ id:'f3', name:"128 ОГШБр", side:'friendly', lat:47.48, lng:35.80, strength:89, color:'#38bdf8' });
-
-    createUnit({ id:'e1', name:"1 АК 'ДНР'", side:'enemy', lat:48.05, lng:37.80, strength:92, color:'#ef4444' });
-    createUnit({ id:'e2', name:"76 ДШД РФ", side:'enemy', lat:49.50, lng:38.05, strength:88, color:'#ef4444' });
-
-    setInterval(() => {
-        const n = new Date();
-        document.getElementById('gameTime').textContent = String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
-    }, 1000);
 </script>
 </body>
 </html>
