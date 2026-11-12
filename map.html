@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мультиплеєр Симуляція ЛБЗ - Україна 2023</title>
+    <title>Симуляція Інтерактивної ЛБЗ — Україна 2023 (Мультиплеєр)</title>
 
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -50,7 +50,8 @@
             border: 1px solid rgba(56, 68, 77, 0.8);
             border-radius: 8px;
             padding: 16px;
-            width: 330px;
+            width: 335px;
+            max-width: calc(100vw - 32px);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(8px);
         }
@@ -123,9 +124,13 @@
             color: #d29922;
         }
 
+        .action-row {
+            display: flex;
+            gap: 6px;
+        }
         .control-btn {
-            width: 100%;
-            padding: 8px;
+            flex: 1;
+            padding: 8px 6px;
             background: #21262d;
             border: 1px solid #30363d;
             color: #c9d1d9;
@@ -139,6 +144,10 @@
             background: #30363d;
             border-color: #58a6ff;
         }
+        .control-btn.reset-btn:hover {
+            border-color: #ff7b72;
+            color: #ff7b72;
+        }
 
         .unit-marker {
             display: flex;
@@ -151,14 +160,14 @@
             cursor: grabbing;
         }
         .unit-card {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 11px;
+            font-size: 10px;
             box-shadow: 0 4px 14px rgba(0,0,0,0.8);
             border: 2px solid #ffffff;
             transition: transform 0.15s ease, background 0.3s;
@@ -189,7 +198,7 @@
             border: 1px solid rgba(240, 246, 252, 0.15);
         }
         .hp-bar-bg {
-            width: 40px;
+            width: 38px;
             height: 5px;
             background: rgba(0, 0, 0, 0.8);
             border-radius: 3px;
@@ -217,7 +226,7 @@
 
     <div class="ui-panel">
         <h2>ЛБЗ: Мультиплеєр <span id="pulse-dot" style="height:8px;width:8px;background:#3fb950;border-radius:50%;display:inline-block;"></span></h2>
-        <p>Мережева симуляція: переміщуйте підрозділи, захоплюйте територію. Зміни бачать усі підключені гравці!</p>
+        <p>ЛБЗ пролягає від Херсона вздовж Дніпра до кордону. Прорив зміщує лише локальну ділянку фронту.</p>
         <div class="status-tracker">
             <div class="status-row">
                 <span>Дата симуляції:</span>
@@ -245,7 +254,10 @@
             <button class="speed-btn active" id="btn-speed-5" onclick="setGameSpeed(5)">5x</button>
         </div>
 
-        <button class="control-btn" id="toggle-ai-btn" onclick="toggleRedAI()">Переключити ШІ Ворога (Авто/Ручне)</button>
+        <div class="action-row">
+            <button class="control-btn" id="toggle-ai-btn" onclick="toggleRedAI()">ШІ Ворога: Ручний</button>
+            <button class="control-btn reset-btn" onclick="resetFrontline()">↺ Скинути ЛБЗ</button>
+        </div>
     </div>
 </div>
 
@@ -254,7 +266,7 @@
 <script src="https://unpkg.com/@turf/turf@6.5.0/turf.min.js"></script>
 
 <script>
-    // Ініціалізація Firebase (використовуємо твою конфігурацію)
+    // Ініціалізація Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyCeWM1wdHdN6bIXFXTqHXO7WgJNJK53nwk",
         authDomain: "storinka-d7bd6.firebaseapp.com",
@@ -268,14 +280,13 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    const gameRef = db.ref('multiplayer_lbz_session');
+    const gameRef = db.ref('multiplayer_lbz_session_v3');
 
-    // Облік гравців онлайн (Presence)
-    const presenceRef = db.ref('multiplayer_presence');
+    // Облік гравців онлайн
+    const presenceRef = db.ref('multiplayer_presence_v3');
     const myPresenceRef = presenceRef.push();
-    database = db; // сумісність
 
-    database.ref('.info/connected').on('value', (snapshot) => {
+    db.ref('.info/connected').on('value', (snapshot) => {
         if (snapshot.val() === true) {
             myPresenceRef.onDisconnect().remove();
             myPresenceRef.set({ timestamp: firebase.database.ServerValue.TIMESTAMP });
@@ -285,13 +296,14 @@
     presenceRef.on('value', (snapshot) => {
         let count = 0;
         snapshot.forEach(() => { count++; });
-        document.getElementById('online-players').innerText = Math.max(1, count);
+        const el = document.getElementById('online-players');
+        if (el) el.innerText = Math.max(1, count);
     });
 
-    // 1. ІНІЦІАЛІЗАЦІЯ КАРТИ
+    // 1. ІНІЦІАЛІЗАЦІЯ КАРТИ (Охоплює від Херсона до Харківщини)
     const map = L.map('map', {
-        center: [48.5, 37.8],
-        zoom: 7,
+        center: [48.1, 35.8],
+        zoom: 6,
         minZoom: 6,
         maxZoom: 12,
         zoomControl: false
@@ -304,22 +316,31 @@
         maxZoom: 18
     }).addTo(map);
 
-    // 2. ОПОРНІ ТОЧКИ ЛІНІЇ ФРОНТУ
-    let currentFrontlinePoints = [
-        [47.35, 35.15],
-        [47.48, 35.80],
-        [47.65, 36.25],
-        [47.77, 36.85],
-        [47.98, 37.50],
-        [48.13, 37.75],
-        [48.60, 38.00],
-        [48.95, 38.10],
-        [49.40, 38.00],
-        [49.70, 37.60],
-        [49.95, 37.70],
-        [50.25, 36.90],
-        [50.45, 36.60]
+    // 2. ДЕТАЛІЗОВАНА ЛІНІЯ ФРОНТУ ВІД ЧОРНОГО МОРЯ / ХЕРСОНА ПО ДНІПРУ ДО КОРДОНУ РФ
+    const initialFrontlinePoints = [
+        [46.52, 31.85], // Дніпровсько-Бузький лиман / Кінбурн
+        [46.63, 32.65], // Херсон / Антонівський міст
+        [46.74, 33.12], // Кринки / Тягинка
+        [46.82, 33.42], // Нова Каховка
+        [47.08, 33.75], // Берислав / Велика Лепетиха
+        [47.36, 34.18], // Верхній Рогачик / Нікополь
+        [47.50, 34.65], // Енергодар / Кам'янка-Дніпровська
+        [47.42, 35.25], // Василівка / Каховське водосховище
+        [47.48, 35.80], // Оріхів
+        [47.65, 36.25], // Гуляйполе
+        [47.77, 36.85], // Вугледар
+        [47.98, 37.50], // Мар'їнка
+        [48.13, 37.75], // Авдіївка
+        [48.60, 38.00], // Бахмут
+        [48.95, 38.10], // Кремінна
+        [49.40, 38.00], // Сватівський сектор
+        [49.70, 37.60], // Куп'янськ
+        [49.95, 37.70], // Дворічна
+        [50.25, 36.90], // Вовчанськ
+        [50.45, 36.60]  // Кордон з РФ
     ];
+
+    let currentFrontlinePoints = initialFrontlinePoints.map(pt => [...pt]);
 
     map.createPane('controlZonesPane');
     map.getPane('controlZonesPane').style.zIndex = 350;
@@ -345,39 +366,56 @@
         lineCap: 'round'
     }).addTo(map);
 
-    // 3. ПІДРОЗДІЛИ
+    // 3. ПІДРОЗДІЛИ (Додано Херсонський напрямок по Дніпру)
     let isRedAIEnabled = false;
     let gameSpeed = 5;
     let simDate = new Date(2023, 0, 1);
     let dateAccumulator = 0;
     let lastFrameTime = performance.now();
     let localDraggingId = null;
+    let lastFrontlineSync = 0;
 
-    let units = [
-        { id: 'b1', name: '47 ОМБр', side: 'blue', lat: 47.38, lng: 35.45, power: 100, hp: 100, range: 0.85, status: 'active' },
-        { id: 'b2', name: '3 ОШБр', side: 'blue', lat: 48.50, lng: 37.50, power: 100, hp: 100, range: 0.80, status: 'active' },
-        { id: 'b3', name: '80 ДШБр', side: 'blue', lat: 49.30, lng: 37.40, power: 95, hp: 100, range: 0.80, status: 'active' },
-        { id: 'b4', name: '72 ОМБр', side: 'blue', lat: 47.70, lng: 36.40, power: 95, hp: 100, range: 0.80, status: 'active' },
-        { id: 'b5', name: '92 ОШБр', side: 'blue', lat: 50.10, lng: 36.40, power: 95, hp: 100, range: 0.85, status: 'active' },
+    const initialUnitsData = [
+        // ЗСУ (Сині)
+        { id: 'b_kh1', name: '35 ОБрМП', side: 'blue', lat: 46.72, lng: 32.55, power: 100, hp: 100, range: 0.65, status: 'active' },
+        { id: 'b_kh2', name: '124 ОБрТрО', side: 'blue', lat: 47.05, lng: 33.45, power: 90, hp: 100, range: 0.65, status: 'active' },
+        { id: 'b1', name: '47 ОМБр', side: 'blue', lat: 47.55, lng: 35.65, power: 100, hp: 100, range: 0.75, status: 'active' },
+        { id: 'b4', name: '72 ОМБр', side: 'blue', lat: 47.82, lng: 36.65, power: 95, hp: 100, range: 0.75, status: 'active' },
+        { id: 'b2', name: '3 ОШБр', side: 'blue', lat: 48.55, lng: 37.65, power: 100, hp: 100, range: 0.75, status: 'active' },
+        { id: 'b3', name: '80 ДШБр', side: 'blue', lat: 49.30, lng: 37.55, power: 95, hp: 100, range: 0.75, status: 'active' },
+        { id: 'b5', name: '92 ОШБр', side: 'blue', lat: 50.10, lng: 36.55, power: 95, hp: 100, range: 0.75, status: 'active' },
 
-        { id: 'r1', name: '58 ЗВА', side: 'red', lat: 47.60, lng: 36.45, power: 90, hp: 100, range: 0.70, status: 'active' },
-        { id: 'r2', name: '1 АК', side: 'red', lat: 48.10, lng: 38.10, power: 90, hp: 100, range: 0.70, status: 'active' },
-        { id: 'r3', name: '2 АК', side: 'red', lat: 48.80, lng: 38.45, power: 90, hp: 100, range: 0.70, status: 'active' },
-        { id: 'r4', name: '1 ТА', side: 'red', lat: 49.70, lng: 38.40, power: 90, hp: 100, range: 0.70, status: 'active' }
+        // ВС РФ (Червоні)
+        { id: 'r_kh1', name: '18 ЗВА', side: 'red', lat: 46.55, lng: 32.95, power: 90, hp: 100, range: 0.65, status: 'active' },
+        { id: 'r_kh2', name: '7 ДШД', side: 'red', lat: 46.95, lng: 33.95, power: 90, hp: 100, range: 0.65, status: 'active' },
+        { id: 'r1', name: '58 ЗВА', side: 'red', lat: 47.38, lng: 35.95, power: 90, hp: 100, range: 0.70, status: 'active' },
+        { id: 'r2', name: '1 АК', side: 'red', lat: 48.10, lng: 38.05, power: 90, hp: 100, range: 0.70, status: 'active' },
+        { id: 'r3', name: '2 АК', side: 'red', lat: 48.80, lng: 38.40, power: 90, hp: 100, range: 0.70, status: 'active' },
+        { id: 'r4', name: '1 ТА', side: 'red', lat: 49.70, lng: 38.20, power: 90, hp: 100, range: 0.70, status: 'active' }
     ];
 
+    let units = initialUnitsData.map(u => ({ ...u }));
     let unitMarkers = {};
 
-    // Ініціалізація або завантаження з Firebase
-    gameRef.child('units').once('value', (snapshot) => {
+    // Ініціалізація або завантаження сесії з Firebase
+    gameRef.once('value', (snapshot) => {
         if (!snapshot.exists()) {
-            let initObj = {};
-            units.forEach(u => { initObj[u.id] = { lat: u.lat, lng: u.lng, hp: u.hp, status: u.status }; });
-            gameRef.child('units').set(initObj);
+            syncFullStateToFirebase();
         }
     });
 
-    // Слухаємо реальний час від інших гравців
+    function syncFullStateToFirebase() {
+        let initUnits = {};
+        units.forEach(u => {
+            initUnits[u.id] = { lat: u.lat, lng: u.lng, hp: u.hp, status: u.status };
+        });
+        gameRef.set({
+            units: initUnits,
+            frontline: currentFrontlinePoints
+        });
+    }
+
+    // Синхронізація юнітів від інших гравців
     gameRef.child('units').on('value', (snapshot) => {
         if (!snapshot.exists()) return;
         const remoteUnits = snapshot.val();
@@ -394,7 +432,6 @@
                     else card.classList.remove('unit-retreated');
                 }
 
-                // Оновлюємо позицію, якщо не тягнемо самі в цей момент
                 if (localDraggingId !== u.id) {
                     if (Math.abs(u.lat - ru.lat) > 0.0005 || Math.abs(u.lng - ru.lng) > 0.0005) {
                         u.lat = ru.lat;
@@ -406,8 +443,32 @@
                 }
             }
         });
-        updateFrontlineTerritory(0.05);
     });
+
+    // Синхронізація лінії фронту від інших гравців
+    gameRef.child('frontline').on('value', (snapshot) => {
+        if (!snapshot.exists() || localDraggingId !== null) return;
+        const remoteFrontline = snapshot.val();
+        if (Array.isArray(remoteFrontline) && remoteFrontline.length === currentFrontlinePoints.length) {
+            currentFrontlinePoints = remoteFrontline.map(pt => [...pt]);
+            renderSmoothedFrontline(currentFrontlinePoints);
+        }
+    });
+
+    function resetFrontline() {
+        currentFrontlinePoints = initialFrontlinePoints.map(pt => [...pt]);
+        units = initialUnitsData.map(u => ({ ...u }));
+        units.forEach(u => {
+            if (unitMarkers[u.id]) {
+                unitMarkers[u.id].setLatLng([u.lat, u.lng]);
+            }
+            const card = document.getElementById(`card-${u.id}`);
+            if (card) card.classList.remove('unit-retreated');
+            updateHpBar(u);
+        });
+        renderSmoothedFrontline(currentFrontlinePoints);
+        syncFullStateToFirebase();
+    }
 
     function createUnitMarkers() {
         units.forEach(u => {
@@ -425,8 +486,8 @@
             const customIcon = L.divIcon({
                 html: iconHtml,
                 className: '',
-                iconSize: [46, 58],
-                iconAnchor: [23, 29]
+                iconSize: [46, 56],
+                iconAnchor: [23, 28]
             });
 
             const marker = L.marker([u.lat, u.lng], {
@@ -443,7 +504,7 @@
                 const newLatLng = e.target.getLatLng();
                 u.lat = newLatLng.lat;
                 u.lng = newLatLng.lng;
-                updateFrontlineTerritory(0.35);
+                updateFrontlineTerritory(0.45, true);
 
                 gameRef.child('units/' + u.id).update({
                     lat: u.lat,
@@ -455,13 +516,14 @@
 
             marker.on('dragend', function() {
                 localDraggingId = null;
-                updateFrontlineTerritory(0.5);
+                updateFrontlineTerritory(0.6, true);
                 gameRef.child('units/' + u.id).update({
                     lat: u.lat,
                     lng: u.lng,
                     hp: u.hp,
                     status: u.status
                 });
+                gameRef.child('frontline').set(currentFrontlinePoints);
             });
 
             unitMarkers[u.id] = marker;
@@ -470,10 +532,11 @@
 
     function toggleRedAI() {
         isRedAIEnabled = !isRedAIEnabled;
-        const textEl = document.getElementById('control-mode-text');
-        if (textEl) {
-            textEl.innerText = isRedAIEnabled ? 'Авто' : 'Ручний';
-            textEl.style.color = isRedAIEnabled ? '#ff7b72' : '#58a6ff';
+        const btn = document.getElementById('toggle-ai-btn');
+        if (btn) {
+            btn.innerText = isRedAIEnabled ? 'ШІ Ворога: Авто' : 'ШІ Ворога: Ручний';
+            btn.style.color = isRedAIEnabled ? '#ff7b72' : '#c9d1d9';
+            btn.style.borderColor = isRedAIEnabled ? '#ff7b72' : '#30363d';
         }
     }
 
@@ -490,93 +553,123 @@
 
         if (speed === 0) {
             activeBtn.classList.add('paused-active');
-            pulseDot.style.background = '#d29922';
-            speedLabel.innerText = 'Пауза';
-            speedLabel.style.color = '#d29922';
-            combatStatusEl.innerText = 'Пауза';
-            combatStatusEl.style.color = '#d29922';
+            if (pulseDot) pulseDot.style.background = '#d29922';
+            if (speedLabel) {
+                speedLabel.innerText = 'Пауза';
+                speedLabel.style.color = '#d29922';
+            }
+            if (combatStatusEl) {
+                combatStatusEl.innerText = 'Пауза';
+                combatStatusEl.style.color = '#d29922';
+            }
         } else {
             activeBtn.classList.add('active');
-            pulseDot.style.background = '#3fb950';
-            speedLabel.style.color = '#58a6ff';
-            if (speed === 1) speedLabel.innerText = '1x (Повільно)';
-            if (speed === 2) speedLabel.innerText = '2x (Середньо)';
-            if (speed === 5) speedLabel.innerText = '5x (Макс)';
+            if (pulseDot) pulseDot.style.background = '#3fb950';
+            if (speedLabel) {
+                speedLabel.style.color = '#58a6ff';
+                if (speed === 1) speedLabel.innerText = '1x (Повільно)';
+                if (speed === 2) speedLabel.innerText = '2x (Середньо)';
+                if (speed === 5) speedLabel.innerText = '5x (Макс)';
+            }
         }
     }
 
-    // 4. ОРГАНІЧНІ КРИВОЛІНІЙНІ ЗОНИ ТА ПРОСУВАННЯ ЛБЗ
-    function updateFrontlineTerritory(captureRate = 0.04) {
+    // 4. ЛОКАЛЬНИЙ СЕКТОРНИЙ РУХ ЛБЗ (Рухається лише ділянка прориву, решта фронту нерухома)
+    function updateFrontlineTerritory(captureRate = 0.05, forceRender = false) {
         const activeBlues = units.filter(u => u.side === 'blue' && u.status === 'active');
         const activeReds = units.filter(u => u.side === 'red' && u.status === 'active');
+
+        let changed = false;
 
         for (let i = 0; i < currentFrontlinePoints.length; i++) {
             let ptLat = currentFrontlinePoints[i][0];
             let ptLng = currentFrontlinePoints[i][1];
+            let originalLng = ptLng;
 
+            // Перевіряємо просування ЗСУ (на схід / південний схід через Дніпро)
             activeBlues.forEach(b => {
-                let latDiff = Math.abs(ptLat - b.lat);
-                if (latDiff < 0.85 && b.lng > ptLng - 0.12) {
-                    let isBlockedByRed = activeReds.some(r => Math.hypot(r.lat - b.lat, r.lng - b.lng) < 0.45 && r.hp > 25);
+                let dist = Math.hypot(ptLat - b.lat, ptLng - b.lng);
+                // Вузький радіус впливу (0.52 градуса), щоб рухалась ТІЛЬКИ локальна ділянка!
+                if (dist < 0.52 && b.lng > ptLng - 0.06) {
+                    let isBlockedByRed = activeReds.some(r => Math.hypot(r.lat - b.lat, r.lng - b.lng) < 0.35 && r.hp > 25);
                     if (!isBlockedByRed) {
-                        let influence = Math.exp(-latDiff * 1.8);
-                        let targetLng = b.lng + 0.14;
+                        // Гаусове затухання: максимум у центрі підрозділу, нуль на краях ділянки
+                        let localWeight = Math.exp(-(dist * dist) / (2 * 0.18 * 0.18));
+                        let targetLng = b.lng + 0.09;
                         if (targetLng > ptLng) {
-                            ptLng += (targetLng - ptLng) * captureRate * influence;
+                            ptLng += (targetLng - ptLng) * captureRate * localWeight;
                         }
                     }
                 }
             });
 
+            // Перевіряємо просування ВС РФ (на захід / північний захід)
             activeReds.forEach(r => {
-                let latDiff = Math.abs(ptLat - r.lat);
-                if (latDiff < 0.85 && r.lng < ptLng + 0.12) {
-                    let isBlockedByBlue = activeBlues.some(b => Math.hypot(b.lat - r.lat, b.lng - r.lng) < 0.45 && b.hp > 25);
+                let dist = Math.hypot(ptLat - r.lat, ptLng - r.lng);
+                if (dist < 0.52 && r.lng < ptLng + 0.06) {
+                    let isBlockedByBlue = activeBlues.some(b => Math.hypot(b.lat - r.lat, b.lng - r.lng) < 0.35 && b.hp > 25);
                     if (!isBlockedByBlue) {
-                        let influence = Math.exp(-latDiff * 1.8);
-                        let targetLng = r.lng - 0.14;
+                        let localWeight = Math.exp(-(dist * dist) / (2 * 0.18 * 0.18));
+                        let targetLng = r.lng - 0.09;
                         if (targetLng < ptLng) {
-                            ptLng += (targetLng - ptLng) * captureRate * influence;
+                            ptLng += (targetLng - ptLng) * captureRate * localWeight;
                         }
                     }
                 }
             });
 
-            currentFrontlinePoints[i][1] = ptLng;
+            if (Math.abs(ptLng - originalLng) > 0.0001) {
+                currentFrontlinePoints[i][1] = ptLng;
+                changed = true;
+            }
         }
 
-        let smoothedCoords = [];
-        for (let i = 0; i < currentFrontlinePoints.length; i++) {
-            let prevLng = (currentFrontlinePoints[i - 1] || currentFrontlinePoints[i])[1];
-            let currLng = currentFrontlinePoints[i][1];
-            let nextLng = (currentFrontlinePoints[i + 1] || currentFrontlinePoints[i])[1];
+        if (changed || forceRender) {
+            renderSmoothedFrontline(currentFrontlinePoints);
 
-            let elasticLng = (prevLng + currLng * 2 + nextLng) / 4;
-            currentFrontlinePoints[i][1] = currLng * 0.85 + elasticLng * 0.15;
-            smoothedCoords.push([currentFrontlinePoints[i][0], currentFrontlinePoints[i][1]]);
+            // Періодично синхронізуємо лінію фронту в Firebase
+            const now = Date.now();
+            if (now - lastFrontlineSync > 1200) {
+                lastFrontlineSync = now;
+                gameRef.child('frontline').set(currentFrontlinePoints);
+            }
         }
-
-        renderSmoothedFrontline(smoothedCoords);
     }
 
     function renderSmoothedFrontline(points) {
         let geojsonCoords = points.map(p => [p[1], p[0]]);
         let lineFeature = turf.lineString(geojsonCoords);
 
+        // Помірна різкість (0.62) зберігає природну форму Дніпра та чіткі локальні плацдарми
         let smoothed = turf.bezierSpline(lineFeature, {
-            resolution: 12000,
-            sharpness: 0.88
+            resolution: 14000,
+            sharpness: 0.62
         });
 
         let leafletCoords = smoothed.geometry.coordinates.map(c => [c[1], c[0]]);
         frontlinePolyline.setLatLngs(leafletCoords);
 
-        // Органічні криволінійні зони, що повторюють вигин фронту замість прямих гігантських трикутників
-        let redSideCoords = leafletCoords.map(pt => [pt[0], pt[1] + 3.2]);
-        let blueSideCoords = leafletCoords.slice().reverse().map(pt => [pt[0], pt[1] - 3.2]);
+        // Закриваємо полігони контролю далеко за межами карти
+        let firstPt = leafletCoords[0]; // Херсон / Чорне море
+        let lastPt = leafletCoords[leafletCoords.length - 1]; // Північний кордон РФ
 
-        redZoneLayer.setLatLngs([...leafletCoords, ...redSideCoords]);
-        blueZoneLayer.setLatLngs([...leafletCoords.slice().reverse(), ...blueSideCoords]);
+        let redPolygonCoords = [
+            ...leafletCoords,
+            [lastPt[0] + 2.0, 58.0],
+            [40.0, 58.0],
+            [40.0, firstPt[1]],
+            firstPt
+        ];
+        redZoneLayer.setLatLngs(redPolygonCoords);
+
+        let bluePolygonCoords = [
+            ...leafletCoords.slice().reverse(),
+            [firstPt[0] - 2.0, 20.0],
+            [56.0, 20.0],
+            [56.0, lastPt[1]],
+            lastPt
+        ];
+        blueZoneLayer.setLatLngs(bluePolygonCoords);
     }
 
     // 5. ДИНАМІКА БОЇВ ТА CANVAS
@@ -586,6 +679,7 @@
     let explosions = [];
 
     function resizeCanvas() {
+        if (!canvas) return;
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     }
@@ -633,7 +727,7 @@
                 unit.status = 'active';
                 if (card) card.classList.remove('unit-retreated');
                 clearInterval(recoverInterval);
-                updateFrontlineTerritory(0.2);
+                updateFrontlineTerritory(0.25, true);
             }
             updateHpBar(unit);
             
@@ -698,7 +792,7 @@
                 }
             });
 
-            if (closestBlue && minDist > 0.4 && minDist < 1.8) {
+            if (closestBlue && minDist > 0.35 && minDist < 1.6) {
                 r.lat += (closestBlue.lat - r.lat) * 0.004 * speedMult;
                 r.lng += (closestBlue.lng - r.lng) * 0.004 * speedMult;
                 if (unitMarkers[r.id]) {
@@ -726,10 +820,11 @@
                 const day = String(simDate.getDate()).padStart(2, '0');
                 const month = String(simDate.getMonth() + 1).padStart(2, '0');
                 const year = simDate.getFullYear();
-                document.getElementById('sim-date').innerText = `${day}.${month}.${year}`;
+                const dateEl = document.getElementById('sim-date');
+                if (dateEl) dateEl.innerText = `${day}.${month}.${year}`;
             }
 
-            updateFrontlineTerritory(0.05 * speedMult);
+            updateFrontlineTerritory(0.06 * speedMult, false);
 
             let activeCombats = 0;
             let blueUnits = units.filter(u => u.side === 'blue' && u.status === 'active');
@@ -802,9 +897,8 @@
 
     // Ініціалізація
     createUnitMarkers();
-    updateFrontlineTerritory(0.5);
+    renderSmoothedFrontline(currentFrontlinePoints);
     requestAnimationFrame(animateCombat);
-
 </script>
 </body>
 </html>
