@@ -44,8 +44,14 @@
         .nav-links { display: flex; list-style: none; gap: 2.2rem; align-items: center; }
         .nav-links a { color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: color var(--transition-speed) ease; }
         .nav-links a:hover { color: var(--accent); }
-        .nav-game-link { color: var(--accent) !important; border: 1px solid var(--accent-border); padding: 5px 12px; border-radius: 6px; background: rgba(56, 189, 248, 0.08); }
+        .nav-game-link { color: var(--accent) !important; border: 1px solid var(--accent-border); padding: 5px 12px; border-radius: 6px; background: rgba(56, 189, 248, 0.08); display: flex; align-items: center; gap: 6px; }
         .nav-game-link:hover { background: var(--accent) !important; color: var(--bg-dark) !important; }
+        
+        .online-counter-badge {
+            font-size: 0.8rem; background: rgba(34, 197, 94, 0.12); color: var(--status-online);
+            border: 1px solid rgba(34, 197, 94, 0.3); padding: 5px 10px; border-radius: 6px; font-weight: 700;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
 
         /* Мобільна панель */
         .mobile-bottom-bar {
@@ -232,6 +238,12 @@
             <li><a href="#calc">Калькулятор</a></li>
             <li><a href="#steps">Етапи</a></li>
             <li><a href="#faq">FAQ</a></li>
+            <li>
+                <div class="online-counter-badge" id="onlineCounterBadge">
+                    <span style="width:7px; height:7px; background:var(--status-online); border-radius:50%; box-shadow:0 0 6px var(--status-online); display:inline-block;"></span>
+                    <span id="onlineCountText">Онлайн: 1</span>
+                </div>
+            </li>
             <li><a href="map.html" class="nav-game-link">🎮 Тактична гра</a></li>
             <li><a href="#contacts">Контакт</a></li>
         </ul>
@@ -366,7 +378,7 @@
             </div>
             <div class="faq-item" onclick="toggleFaq(this)">
                 <div class="faq-header">Чи надається спорядження? <span>+</span></div>
-                <div class="faq-body">Так, бійці повністю забезпечуються бронезахистом 4+ класу, шоломами, формою та індивідуальною зброєю.</div>
+                <div class="faq-body">Так, бійці повністю забезпечуються бронезахистом 4+ класу, шоломами, формою та індівідуальною зброєю.</div>
             </div>
         </div>
     </section>
@@ -489,7 +501,8 @@
             clearChatBtn: document.getElementById('clearChatBtn'),
             chatTitleName: document.getElementById('chatTitleName'),
             cryptoBtn: document.getElementById('cryptoBtn'),
-            adminCandidatesList: document.getElementById('adminCandidatesList')
+            adminCandidatesList: document.getElementById('adminCandidatesList'),
+            onlineCountText: document.getElementById('onlineCountText')
         };
         
         let globalSenderName = "Гість";
@@ -497,6 +510,31 @@
         let currentRoomId = null;
         let activeRoomRef = null;
         let isCheckingCrypto = false;
+
+        // Firebase Realtime Presence (Система відстеження хто в мережі)
+        const presenceRef = database.ref('presence');
+        const myPresenceRef = presenceRef.push();
+
+        database.ref('.info/connected').on('value', (snapshot) => {
+            if (snapshot.val() === true) {
+                myPresenceRef.onDisconnect().remove();
+                myPresenceRef.set({
+                    name: "Доброволець #" + Math.floor(Math.random() * 900 + 100),
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                });
+            }
+        });
+
+        // Слухаємо кількість активних людей онлайн
+        presenceRef.on('value', (snapshot) => {
+            let onlineCount = 0;
+            snapshot.forEach(() => {
+                onlineCount++;
+            });
+            if (DOM.onlineCountText) {
+                DOM.onlineCountText.innerText = `Онлайн: ${onlineCount}`;
+            }
+        });
 
         const BOT_RESPONSES = {
             docs: "📋 Для контракту потрібні: Паспорт/ID, ІПН, військовий квиток (за наявності). Для іноземців — закордонний паспорт.",
@@ -566,6 +604,9 @@
 
             globalSenderName = nameInput;
             isRecruiter = (nameInput.toUpperCase() === 'REK' && contactInput.toUpperCase() === 'REK');
+
+            // Оновлюємо ім'я у присутності онлайн
+            myPresenceRef.update({ name: nameInput + (isRecruiter ? ' (Адмін)' : '') });
 
             DOM.formStage.classList.add('hidden');
 
