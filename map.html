@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Симуляція Лінії Бойового Зіткнення - Україна 2023</title>
+    <title>Симуляція Інтерактивної ЛБЗ - Україна 2023</title>
 
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -76,6 +76,7 @@
             padding: 10px;
             font-size: 12px;
             border: 1px solid rgba(48, 54, 61, 0.5);
+            margin-bottom: 10px;
         }
         .status-row {
             display: flex;
@@ -87,6 +88,23 @@
         }
         .val-blue { color: #58a6ff; font-weight: 600; }
         .val-red { color: #ff7b72; font-weight: 600; }
+
+        .control-btn {
+            width: 100%;
+            padding: 8px;
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .control-btn:hover {
+            background: #30363d;
+            border-color: #58a6ff;
+        }
 
         .unit-marker {
             display: flex;
@@ -124,7 +142,7 @@
         }
         .unit-retreated {
             filter: grayscale(0.8);
-            opacity: 0.6;
+            opacity: 0.5;
         }
         .unit-label {
             background: rgba(10, 14, 20, 0.9);
@@ -161,7 +179,7 @@
 
     <div class="ui-panel">
         <h2>ЛБЗ: Україна 2023 <span id="pulse-dot" style="height:8px;width:8px;background:#3fb950;border-radius:50%;display:inline-block;"></span></h2>
-        <p>Переміщуйте сині підрозділи ЗСУ. Підсуньте підрозділ ближче до рубежу — лінія фронту відчутно відсунеться у відповідному секторі.</p>
+        <p>Переміщуйте маркери підрозділів. Лінія фронту рухається плавно, зберігаючи цілісність завдяки системі згладжування.</p>
         <div class="status-tracker">
             <div class="status-row">
                 <span>Протяжність ЛБЗ:</span>
@@ -176,15 +194,19 @@
                 <span class="val-red" id="red-count">4 Підрозділи</span>
             </div>
             <div class="status-row">
+                <span>Режим підрозділів ВС:</span>
+                <span id="control-mode-text" style="color:#58a6ff;">Ручне керування</span>
+            </div>
+            <div class="status-row">
                 <span>Стан боїв:</span>
                 <span id="combat-status" style="color:#d29922;">Моніторинг</span>
             </div>
         </div>
+        <button class="control-btn" id="toggle-ai-btn" onclick="toggleRedAI()">Переключити ШІ Ворога (Авто/Ручне)</button>
     </div>
 </div>
 
 <!-- Leaflet JS & Turf JS -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/@turf/turf@6.5.0/turf.min.js"></script>
 
@@ -200,30 +222,28 @@
 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // Робоча супутникова карта Esri World Imagery (без вимоги API Key)
+    // Супутниковий шар Esri World Imagery
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP',
         maxZoom: 18
     }).addTo(map);
 
-    // 2. ОПОРНІ ГЕОГРАФІЧНІ ТОЧКИ ЛІНІЇ ФРОНТУ (Від Дніпра/Запоріжжя до Кордону РФ)
-    let baseFrontlinePoints = [
-        [47.50, 35.20], // Правий/Лівий берег Дніпра нижче Запоріжжя
-        [47.48, 35.80], // Оріхів / Роботине
-        [47.65, 36.25], // Гуляйполе
-        [47.77, 36.85], // Вугледар
-        [47.98, 37.50], // Мар'їнка
-        [48.13, 37.75], // Авдіївка
-        [48.60, 38.00], // Бахмут
-        [48.95, 38.10], // Кремінна / Кремінські ліси
-        [49.40, 38.00], // Сватівський сектор
-        [49.70, 37.60], // Куп'янськ
-        [49.88, 37.70], // Дворічна
-        [50.25, 36.90], // Вовчанськ
-        [50.40, 36.60]  // Кордон з РФ (Північ Харківщини)
+    // 2. БАЗОВІ ОПОРНІ ТОЧКИ ЛІНІЇ ФРОНТУ
+    const baseFrontlinePoints = [
+        [47.35, 35.15],
+        [47.48, 35.80],
+        [47.65, 36.25],
+        [47.77, 36.85],
+        [47.98, 37.50],
+        [48.13, 37.75],
+        [48.60, 38.00],
+        [48.95, 38.10],
+        [49.40, 38.00],
+        [49.70, 37.60],
+        [49.95, 37.70],
+        [50.25, 36.90],
+        [50.45, 36.60]
     ];
-
-    let currentFrontlinePoints = JSON.parse(JSON.stringify(baseFrontlinePoints));
 
     map.createPane('controlZonesPane');
     map.getPane('controlZonesPane').style.zIndex = 350;
@@ -249,18 +269,20 @@
         lineCap: 'round'
     }).addTo(map);
 
-    // 3. ПІДРОЗДІЛИ ТА ЇХ СТАТУСИ
-    let units = [
-        { id: 'b1', name: '47 ОМБр', side: 'blue', lat: 47.45, lng: 35.60, homeLat: 47.45, homeLng: 35.60, power: 100, hp: 100, range: 0.75, status: 'active' },
-        { id: 'b2', name: '3 ОШБр', side: 'blue', lat: 48.55, lng: 37.75, homeLat: 48.55, homeLng: 37.75, power: 100, hp: 100, range: 0.70, status: 'active' },
-        { id: 'b3', name: '80 ДШБр', side: 'blue', lat: 49.35, lng: 37.70, homeLat: 49.35, homeLng: 37.70, power: 95, hp: 100, range: 0.70, status: 'active' },
-        { id: 'b4', name: '72 ОМБр', side: 'blue', lat: 47.72, lng: 36.65, homeLat: 47.72, homeLng: 36.65, power: 95, hp: 100, range: 0.70, status: 'active' },
-        { id: 'b5', name: '92 ОШБр', side: 'blue', lat: 50.15, lng: 36.70, homeLat: 50.15, homeLng: 36.70, power: 95, hp: 100, range: 0.75, status: 'active' },
+    // 3. ПІДРОЗДІЛИ
+    let isRedAIEnabled = false;
 
-        { id: 'r1', name: '58 ЗВА', side: 'red', lat: 47.55, lng: 36.10, homeLat: 47.55, homeLng: 36.10, power: 85, hp: 100, range: 0.60, status: 'active' },
-        { id: 'r2', name: '1 АК', side: 'red', lat: 48.05, lng: 37.85, homeLat: 48.05, homeLng: 37.85, power: 85, hp: 100, range: 0.60, status: 'active' },
-        { id: 'r3', name: '2 АК', side: 'red', lat: 48.75, lng: 38.25, homeLat: 48.75, homeLng: 38.25, power: 85, hp: 100, range: 0.60, status: 'active' },
-        { id: 'r4', name: '1 ТА', side: 'red', lat: 49.65, lng: 38.20, homeLat: 49.65, homeLng: 38.20, power: 85, hp: 100, range: 0.60, status: 'active' }
+    let units = [
+        { id: 'b1', name: '47 ОМБр', side: 'blue', lat: 47.38, lng: 35.45, power: 100, hp: 100, range: 0.85, status: 'active' },
+        { id: 'b2', name: '3 ОШБр', side: 'blue', lat: 48.50, lng: 37.50, power: 100, hp: 100, range: 0.80, status: 'active' },
+        { id: 'b3', name: '80 ДШБр', side: 'blue', lat: 49.30, lng: 37.40, power: 95, hp: 100, range: 0.80, status: 'active' },
+        { id: 'b4', name: '72 ОМБр', side: 'blue', lat: 47.70, lng: 36.40, power: 95, hp: 100, range: 0.80, status: 'active' },
+        { id: 'b5', name: '92 ОШБр', side: 'blue', lat: 50.10, lng: 36.40, power: 95, hp: 100, range: 0.85, status: 'active' },
+
+        { id: 'r1', name: '58 ЗВА', side: 'red', lat: 47.60, lng: 36.45, power: 90, hp: 100, range: 0.70, status: 'active' },
+        { id: 'r2', name: '1 АК', side: 'red', lat: 48.10, lng: 38.10, power: 90, hp: 100, range: 0.70, status: 'active' },
+        { id: 'r3', name: '2 АК', side: 'red', lat: 48.80, lng: 38.45, power: 90, hp: 100, range: 0.70, status: 'active' },
+        { id: 'r4', name: '1 ТА', side: 'red', lat: 49.70, lng: 38.40, power: 90, hp: 100, range: 0.70, status: 'active' }
     ];
 
     let unitMarkers = {};
@@ -287,106 +309,132 @@
 
             const marker = L.marker([u.lat, u.lng], {
                 icon: customIcon,
-                draggable: isBlue
+                draggable: true
             }).addTo(map);
 
-            if (isBlue) {
-                marker.on('drag', function(e) {
-                    if (u.status === 'retreated') return;
-                    const newLatLng = e.target.getLatLng();
-                    u.lat = newLatLng.lat;
-                    u.lng = newLatLng.lng;
-                    recalculateFrontline();
-                });
-                marker.on('dragend', function() {
-                    recalculateFrontline();
-                });
-            }
+            marker.on('drag', function(e) {
+                if (u.status === 'retreated') return;
+                const newLatLng = e.target.getLatLng();
+                u.lat = newLatLng.lat;
+                u.lng = newLatLng.lng;
+                recalculateFrontline();
+            });
+
+            marker.on('dragend', function() {
+                recalculateFrontline();
+            });
 
             unitMarkers[u.id] = marker;
         });
     }
 
-    // 4. ПОСИЛЕНИЙ МАТЕМАТИЧНИЙ РОЗРАХУНОК ЗСУВУ ЛБЗ
-    function recalculateFrontline() {
-        let updatedPoints = [];
+    function toggleRedAI() {
+        isRedAIEnabled = !isRedAIEnabled;
+        const textEl = document.getElementById('control-mode-text');
+        if (isRedAIEnabled) {
+            textEl.innerText = 'Автоматичний ШІ';
+            textEl.style.color = '#ff7b72';
+        } else {
+            textEl.innerText = 'Ручне керування';
+            textEl.style.color = '#58a6ff';
+        }
+    }
 
+    // 4. ПЛАВНИЙ ЗСУВ ТА ЗГЛАДЖУВАННЯ ЛБЗ (Усунення ефекту викривлення)
+    function recalculateFrontline() {
+        let rawShifts = [];
+
+        // Крок 1: Обчислюємо первинні зсуви для кожної точки
         for (let i = 0; i < baseFrontlinePoints.length; i++) {
             let basePt = baseFrontlinePoints[i];
             let ptLat = basePt[0];
             let ptLng = basePt[1];
 
-            let dLat = 0;
-            let dLng = 0;
+            let shiftLat = 0;
+            let shiftLng = 0;
 
-            // Вплив ЗСУ (підвищена чутливість зміщення)
+            // Вплив підрозділів ЗСУ
             units.filter(u => u.side === 'blue' && u.status === 'active').forEach(u => {
                 let dist = Math.hypot(ptLat - u.lat, ptLng - u.lng);
-                if (dist < 1.6) {
-                    let force = (u.power / 100) * Math.exp(-dist * 1.6);
+                if (dist < 2.0) {
+                    let weight = (u.power / 100) * Math.exp(-dist * 1.2);
                     let vecLat = ptLat - u.lat;
                     let vecLng = ptLng - u.lng;
                     let len = Math.hypot(vecLat, vecLng) || 1;
 
-                    // Збільшені коефіцієнти для виразного поштовху фронту
-                    dLat += (vecLat / len) * force * 0.45;
-                    dLng += (vecLng / len) * force * 0.65;
+                    shiftLat += (vecLat / len) * weight * 0.35;
+                    shiftLng += (vecLng / len) * weight * 0.55;
                 }
             });
 
-            // Опір противника
+            // Вплив сил противника
             units.filter(u => u.side === 'red' && u.status === 'active').forEach(u => {
                 let dist = Math.hypot(ptLat - u.lat, ptLng - u.lng);
-                if (dist < 1.4) {
-                    let force = (u.power / 100) * Math.exp(-dist * 1.8);
+                if (dist < 2.0) {
+                    let weight = (u.power / 100) * Math.exp(-dist * 1.2);
                     let vecLat = ptLat - u.lat;
                     let vecLng = ptLng - u.lng;
                     let len = Math.hypot(vecLat, vecLng) || 1;
 
-                    dLat += (vecLat / len) * force * 0.30;
-                    dLng += (vecLng / len) * force * 0.40;
+                    shiftLat += (vecLat / len) * weight * 0.35;
+                    shiftLng += (vecLng / len) * weight * 0.55;
                 }
             });
 
-            updatedPoints.push([ptLat + dLat, ptLng + dLng]);
+            rawShifts.push({ lat: shiftLat, lng: shiftLng });
         }
 
-        currentFrontlinePoints = updatedPoints;
-        renderSmoothedFrontline();
+        // Крок 2: Згладжування ковзним середнім (Moving Average) для запобігання гострим викривленням
+        let smoothedPoints = [];
+        for (let i = 0; i < baseFrontlinePoints.length; i++) {
+            let basePt = baseFrontlinePoints[i];
+            
+            let prev = rawShifts[i - 1] || rawShifts[i];
+            let curr = rawShifts[i];
+            let next = rawShifts[i + 1] || rawShifts[i];
+
+            let avgShiftLat = (prev.lat + curr.lat * 2 + next.lat) / 4;
+            let avgShiftLng = (prev.lng + curr.lng * 2 + next.lng) / 4;
+
+            smoothedPoints.push([basePt[0] + avgShiftLat, basePt[1] + avgShiftLng]);
+        }
+
+        renderSmoothedFrontline(smoothedPoints);
     }
 
-    function renderSmoothedFrontline() {
-        let geojsonCoords = currentFrontlinePoints.map(p => [p[1], p[0]]);
+    function renderSmoothedFrontline(points) {
+        let geojsonCoords = points.map(p => [p[1], p[0]]);
         let lineFeature = turf.lineString(geojsonCoords);
 
         let smoothed = turf.bezierSpline(lineFeature, {
-            resolution: 10000,
-            sharpness: 0.85
+            resolution: 12000,
+            sharpness: 0.88
         });
 
         let leafletCoords = smoothed.geometry.coordinates.map(c => [c[1], c[0]]);
         frontlinePolyline.setLatLngs(leafletCoords);
 
-        // Формування червоної зони контролю
+        let firstPt = leafletCoords[0];
+        let lastPt = leafletCoords[leafletCoords.length - 1];
+
         let redPolygonCoords = [
             ...leafletCoords,
-            [51.5, 41.0],
-            [46.0, 41.0],
-            leafletCoords[0]
+            [lastPt[0] + 1.2, lastPt[1] + 3.5],
+            [firstPt[0] - 1.2, firstPt[1] + 3.5],
+            firstPt
         ];
         redZoneLayer.setLatLngs(redPolygonCoords);
 
-        // Формування синьої зони контролю
         let bluePolygonCoords = [
             ...leafletCoords,
-            [46.0, 28.0],
-            [51.5, 28.0],
-            leafletCoords[leafletCoords.length - 1]
+            [lastPt[0] + 1.2, lastPt[1] - 3.5],
+            [firstPt[0] - 1.2, firstPt[1] - 3.5],
+            firstPt
         ];
         blueZoneLayer.setLatLngs(bluePolygonCoords);
     }
 
-    // 5. ДИНАМІЧНИЙ БІЙ, ВТРАТИ ТА АНІМАЦІЯ ПОСТРІЛІВ
+    // 5. ДИНАМІКА БОЇВ ТА CANVAS-СИСТЕМА
     const canvas = document.getElementById('canvas-overlay');
     const ctx = canvas.getContext('2d');
     let projectiles = [];
@@ -414,38 +462,44 @@
     }
 
     function handleRetreat(unit) {
+        if (unit.status === 'retreated') return;
         unit.status = 'retreated';
+
         const card = document.getElementById(`card-${unit.id}`);
         if (card) card.classList.add('unit-retreated');
 
-        // Відступ у тил та поступове відновлення
-        setTimeout(() => {
-            unit.lat = unit.homeLat;
-            unit.lng = unit.homeLng;
-            if (unitMarkers[unit.id]) {
-                unitMarkers[unit.id].setLatLng([unit.homeLat, unit.homeLng]);
+        const retreatDist = 0.25;
+        if (unit.side === 'blue') {
+            unit.lng -= retreatDist;
+        } else {
+            unit.lng += retreatDist;
+        }
+
+        if (unitMarkers[unit.id]) {
+            unitMarkers[unit.id].setLatLng([unit.lat, unit.lng]);
+        }
+
+        recalculateFrontline();
+
+        let recoverInterval = setInterval(() => {
+            unit.hp += 20;
+            if (unit.hp >= 100) {
+                unit.hp = 100;
+                unit.status = 'active';
+                if (card) card.classList.remove('unit-retreated');
+                clearInterval(recoverInterval);
+                recalculateFrontline();
             }
-            recalculateFrontline();
-
-            let recoverInterval = setInterval(() => {
-                unit.hp += 15;
-                if (unit.hp >= 100) {
-                    unit.hp = 100;
-                    unit.status = 'active';
-                    if (card) card.classList.remove('unit-retreated');
-                    clearInterval(recoverInterval);
-                }
-                updateHpBar(unit);
-            }, 1000);
-
-        }, 1200);
+            updateHpBar(unit);
+        }, 1000);
     }
 
     function triggerFirefight(uBlue, uRed) {
+        if (uBlue.status !== 'active' || uRed.status !== 'active') return;
+
         let p1 = map.latLngToContainerPoint([uBlue.lat, uBlue.lng]);
         let p2 = map.latLngToContainerPoint([uRed.lat, uRed.lng]);
 
-        // Анімація снарядів
         if (Math.random() < 0.6) {
             projectiles.push({
                 x: p1.x,
@@ -469,7 +523,6 @@
             });
         }
 
-        // Прискорене нанесення шкоди
         if (Math.random() < 0.25) {
             uRed.hp -= 3.5;
             uBlue.hp -= 2.0;
@@ -485,7 +538,6 @@
                 alpha: 1
             });
 
-            // Перевірка на відступ при критичному виснаженні
             if (uRed.hp <= 15 && uRed.status === 'active') {
                 handleRetreat(uRed);
             }
@@ -493,6 +545,33 @@
                 handleRetreat(uBlue);
             }
         }
+    }
+
+    function updateRedAI() {
+        if (!isRedAIEnabled) return;
+
+        units.filter(u => u.side === 'red' && u.status === 'active').forEach(r => {
+            let closestBlue = null;
+            let minDist = 999;
+            units.filter(b => b.side === 'blue' && b.status === 'active').forEach(b => {
+                let d = Math.hypot(b.lat - r.lat, b.lng - r.lng);
+                if (d < minDist) {
+                    minDist = d;
+                    closestBlue = b;
+                }
+            });
+
+            if (closestBlue && minDist > 0.4 && minDist < 1.8) {
+                let stepLat = (closestBlue.lat - r.lat) * 0.004;
+                let stepLng = (closestBlue.lng - r.lng) * 0.004;
+                r.lat += stepLat;
+                r.lng += stepLng;
+                if (unitMarkers[r.id]) {
+                    unitMarkers[r.id].setLatLng([r.lat, r.lng]);
+                }
+                recalculateFrontline();
+            }
+        });
     }
 
     function animateCombat() {
@@ -511,6 +590,8 @@
                 }
             });
         });
+
+        updateRedAI();
 
         const combatStatusEl = document.getElementById('combat-status');
         if (activeCombats > 0) {
