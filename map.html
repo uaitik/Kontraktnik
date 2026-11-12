@@ -88,9 +88,14 @@
         }
         .val-blue { color: #58a6ff; font-weight: 600; }
         .val-red { color: #ff7b72; font-weight: 600; }
+        .val-date { color: #3fb950; font-weight: 600; }
 
+        .btn-container {
+            display: flex;
+            gap: 8px;
+        }
         .control-btn {
-            width: 100%;
+            flex: 1;
             padding: 8px;
             background: #21262d;
             border: 1px solid #30363d;
@@ -179,11 +184,11 @@
 
     <div class="ui-panel">
         <h2>ЛБЗ: Україна 2023 <span id="pulse-dot" style="height:8px;width:8px;background:#3fb950;border-radius:50%;display:inline-block;"></span></h2>
-        <p>Переміщуйте маркери підрозділів. Лінія фронту рухається плавно, зберігаючи цілісність завдяки системі згладжування.</p>
+        <p>Керуйте часом за допомогою паузи та переміщуйте маркери підрозділів на карті.</p>
         <div class="status-tracker">
             <div class="status-row">
-                <span>Протяжність ЛБЗ:</span>
-                <span style="color:#c9d1d9;">Запоріжжя — Кордон РФ</span>
+                <span>Дата симуляції:</span>
+                <span class="val-date" id="sim-date">01.01.2023</span>
             </div>
             <div class="status-row">
                 <span>Підрозділи ЗСУ:</span>
@@ -194,15 +199,18 @@
                 <span class="val-red" id="red-count">4 Підрозділи</span>
             </div>
             <div class="status-row">
-                <span>Режим підрозділів ВС:</span>
-                <span id="control-mode-text" style="color:#58a6ff;">Ручне керування</span>
+                <span>Режим ШІ Ворога:</span>
+                <span id="control-mode-text" style="color:#58a6ff;">Ручний</span>
             </div>
             <div class="status-row">
                 <span>Стан боїв:</span>
                 <span id="combat-status" style="color:#d29922;">Моніторинг</span>
             </div>
         </div>
-        <button class="control-btn" id="toggle-ai-btn" onclick="toggleRedAI()">Переключити ШІ Ворога (Авто/Ручне)</button>
+        <div class="btn-container">
+            <button class="control-btn" id="toggle-pause-btn" onclick="togglePause()">Пауза</button>
+            <button class="control-btn" id="toggle-ai-btn" onclick="toggleRedAI()">ШІ Ворога</button>
+        </div>
     </div>
 </div>
 
@@ -222,7 +230,6 @@
 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // Супутниковий шар Esri World Imagery
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP',
         maxZoom: 18
@@ -269,8 +276,10 @@
         lineCap: 'round'
     }).addTo(map);
 
-    // 3. ПІДРОЗДІЛИ
+    // 3. СТАН СИМУЛЯЦІЇ ТА ПІДРОЗДІЛИ
     let isRedAIEnabled = false;
+    let isPaused = false;
+    let simDate = new Date(2023, 0, 1); // Початок: 01.01.2023
 
     let units = [
         { id: 'b1', name: '47 ОМБр', side: 'blue', lat: 47.38, lng: 35.45, power: 100, hp: 100, range: 0.85, status: 'active' },
@@ -332,19 +341,47 @@
         isRedAIEnabled = !isRedAIEnabled;
         const textEl = document.getElementById('control-mode-text');
         if (isRedAIEnabled) {
-            textEl.innerText = 'Автоматичний ШІ';
+            textEl.innerText = 'Авто';
             textEl.style.color = '#ff7b72';
         } else {
-            textEl.innerText = 'Ручне керування';
+            textEl.innerText = 'Ручний';
             textEl.style.color = '#58a6ff';
         }
     }
 
-    // 4. ПЛАВНИЙ ЗСУВ ТА ЗГЛАДЖУВАННЯ ЛБЗ (Усунення ефекту викривлення)
+    function togglePause() {
+        isPaused = !isPaused;
+        const pauseBtn = document.getElementById('toggle-pause-btn');
+        const pulseDot = document.getElementById('pulse-dot');
+        const combatStatusEl = document.getElementById('combat-status');
+
+        if (isPaused) {
+            pauseBtn.innerText = 'Продовжити';
+            pauseBtn.style.borderColor = '#d29922';
+            pulseDot.style.background = '#d29922';
+            combatStatusEl.innerText = 'Пауза';
+            combatStatusEl.style.color = '#d29922';
+        } else {
+            pauseBtn.innerText = 'Пауза';
+            pauseBtn.style.borderColor = '#30363d';
+            pulseDot.style.background = '#3fb950';
+        }
+    }
+
+    // Таймер дати (1 секунда реального часу = 1 день симуляції)
+    setInterval(() => {
+        if (isPaused) return;
+        simDate.setDate(simDate.getDate() + 1);
+        const day = String(simDate.getDate()).padStart(2, '0');
+        const month = String(simDate.getMonth() + 1).padStart(2, '0');
+        const year = simDate.getFullYear();
+        document.getElementById('sim-date').innerText = `${day}.${month}.${year}`;
+    }, 1000);
+
+    // 4. ПЛАВНИЙ ЗСУВ ТА ЗГЛАДЖУВАННЯ ЛБЗ
     function recalculateFrontline() {
         let rawShifts = [];
 
-        // Крок 1: Обчислюємо первинні зсуви для кожної точки
         for (let i = 0; i < baseFrontlinePoints.length; i++) {
             let basePt = baseFrontlinePoints[i];
             let ptLat = basePt[0];
@@ -353,7 +390,6 @@
             let shiftLat = 0;
             let shiftLng = 0;
 
-            // Вплив підрозділів ЗСУ
             units.filter(u => u.side === 'blue' && u.status === 'active').forEach(u => {
                 let dist = Math.hypot(ptLat - u.lat, ptLng - u.lng);
                 if (dist < 2.0) {
@@ -367,7 +403,6 @@
                 }
             });
 
-            // Вплив сил противника
             units.filter(u => u.side === 'red' && u.status === 'active').forEach(u => {
                 let dist = Math.hypot(ptLat - u.lat, ptLng - u.lng);
                 if (dist < 2.0) {
@@ -384,7 +419,6 @@
             rawShifts.push({ lat: shiftLat, lng: shiftLng });
         }
 
-        // Крок 2: Згладжування ковзним середнім (Moving Average) для запобігання гострим викривленням
         let smoothedPoints = [];
         for (let i = 0; i < baseFrontlinePoints.length; i++) {
             let basePt = baseFrontlinePoints[i];
@@ -482,6 +516,7 @@
         recalculateFrontline();
 
         let recoverInterval = setInterval(() => {
+            if (isPaused) return; // Зупиняємо відновлення під час паузи
             unit.hp += 20;
             if (unit.hp >= 100) {
                 unit.hp = 100;
@@ -548,7 +583,7 @@
     }
 
     function updateRedAI() {
-        if (!isRedAIEnabled) return;
+        if (!isRedAIEnabled || isPaused) return;
 
         units.filter(u => u.side === 'red' && u.status === 'active').forEach(r => {
             let closestBlue = null;
@@ -576,76 +611,79 @@
 
     function animateCombat() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        let activeCombats = 0;
 
-        let blueUnits = units.filter(u => u.side === 'blue' && u.status === 'active');
-        let redUnits = units.filter(u => u.side === 'red' && u.status === 'active');
+        if (!isPaused) {
+            let activeCombats = 0;
 
-        blueUnits.forEach(b => {
-            redUnits.forEach(r => {
-                let dist = Math.hypot(b.lat - r.lat, b.lng - r.lng);
-                if (dist < (b.range + r.range)) {
-                    triggerFirefight(b, r);
-                    activeCombats++;
-                }
-            });
-        });
+            let blueUnits = units.filter(u => u.side === 'blue' && u.status === 'active');
+            let redUnits = units.filter(u => u.side === 'red' && u.status === 'active');
 
-        updateRedAI();
-
-        const combatStatusEl = document.getElementById('combat-status');
-        if (activeCombats > 0) {
-            combatStatusEl.innerText = `Інтенсивний бій (${activeCombats})`;
-            combatStatusEl.style.color = '#ff7b72';
-        } else {
-            combatStatusEl.innerText = 'Спостереження';
-            combatStatusEl.style.color = '#d29922';
-        }
-
-        for (let i = projectiles.length - 1; i >= 0; i--) {
-            let p = projectiles[i];
-            p.progress += p.speed;
-
-            let currentX = p.x + (p.targetX - p.x) * p.progress;
-            let currentY = p.y + (p.targetY - p.y) * p.progress;
-
-            let tailX = p.x + (p.targetX - p.x) * Math.max(0, p.progress - 0.2);
-            let tailY = p.y + (p.targetY - p.y) * Math.max(0, p.progress - 0.2);
-
-            ctx.beginPath();
-            ctx.moveTo(tailX, tailY);
-            ctx.lineTo(currentX, currentY);
-            ctx.strokeStyle = p.color;
-            ctx.lineWidth = 2.5;
-            ctx.shadowBlur = 8;
-            ctx.shadowColor = p.color;
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-
-            if (p.progress >= 1) {
-                explosions.push({
-                    x: p.targetX,
-                    y: p.targetY,
-                    radius: 2,
-                    maxRadius: 10,
-                    alpha: 1
+            blueUnits.forEach(b => {
+                redUnits.forEach(r => {
+                    let dist = Math.hypot(b.lat - r.lat, b.lng - r.lng);
+                    if (dist < (b.range + r.range)) {
+                        triggerFirefight(b, r);
+                        activeCombats++;
+                    }
                 });
-                projectiles.splice(i, 1);
+            });
+
+            updateRedAI();
+
+            const combatStatusEl = document.getElementById('combat-status');
+            if (activeCombats > 0) {
+                combatStatusEl.innerText = `Інтенсивний бій (${activeCombats})`;
+                combatStatusEl.style.color = '#ff7b72';
+            } else {
+                combatStatusEl.innerText = 'Спостереження';
+                combatStatusEl.style.color = '#d29922';
             }
-        }
 
-        for (let i = explosions.length - 1; i >= 0; i--) {
-            let ex = explosions[i];
-            ex.radius += 0.8;
-            ex.alpha -= 0.06;
+            for (let i = projectiles.length - 1; i >= 0; i--) {
+                let p = projectiles[i];
+                p.progress += p.speed;
 
-            ctx.beginPath();
-            ctx.arc(ex.x, ex.y, ex.radius, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 140, 0, ${Math.max(0, ex.alpha)})`;
-            ctx.fill();
+                let currentX = p.x + (p.targetX - p.x) * p.progress;
+                let currentY = p.y + (p.targetY - p.y) * p.progress;
 
-            if (ex.alpha <= 0) {
-                explosions.splice(i, 1);
+                let tailX = p.x + (p.targetX - p.x) * Math.max(0, p.progress - 0.2);
+                let tailY = p.y + (p.targetY - p.y) * Math.max(0, p.progress - 0.2);
+
+                ctx.beginPath();
+                ctx.moveTo(tailX, tailY);
+                ctx.lineTo(currentX, currentY);
+                ctx.strokeStyle = p.color;
+                ctx.lineWidth = 2.5;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = p.color;
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+
+                if (p.progress >= 1) {
+                    explosions.push({
+                        x: p.targetX,
+                        y: p.targetY,
+                        radius: 2,
+                        maxRadius: 10,
+                        alpha: 1
+                    });
+                    projectiles.splice(i, 1);
+                }
+            }
+
+            for (let i = explosions.length - 1; i >= 0; i--) {
+                let ex = explosions[i];
+                ex.radius += 0.8;
+                ex.alpha -= 0.06;
+
+                ctx.beginPath();
+                ctx.arc(ex.x, ex.y, ex.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 140, 0, ${Math.max(0, ex.alpha)})`;
+                ctx.fill();
+
+                if (ex.alpha <= 0) {
+                    explosions.splice(i, 1);
+                }
             }
         }
 
